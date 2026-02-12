@@ -1,2 +1,55 @@
 # Lecture 1: Why we render?
 I don't know man!
+
+export const HighlightBox = ({ children, color = "yellow" }) => (
+  <div style={{
+    backgroundColor: color,
+    padding: "20px",
+    borderRadius: "8px",
+    margin: "20px 0",
+    border: "2px solid #333"
+  }}>
+    {children}
+  </div>
+);
+
+export const InteractiveCounter = () => {
+  const [count, setCount] = React.useState(0);
+  
+  return (
+    <div style={{
+      padding: "20px",
+      border: "2px solid #4CAF50",
+      borderRadius: "8px",
+      textAlign: "center",
+      margin: "20px 0"
+    }}>
+      <h3>Renders: {count}</h3>
+      <button 
+        onClick={() => setCount(count + 1)}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
+        Click to Re-render
+      </button>
+    </div>
+  );
+};
+
+## Using JSX Components in MDX
+
+<HighlightBox color="#2c2c2c">
+  **Important:** Every time you interact with a component, React re-renders it to update the UI!
+</HighlightBox>
+
+Try clicking the button below to see rendering in action:
+
+<InteractiveCounter />
+
