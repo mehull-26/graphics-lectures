@@ -40,6 +40,7 @@ const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith
     </script>
   </head>
   <body>
+    <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div>
     <div class="site-shell">
       <header class="site-header">
         <a class="site-brand" href={withBase('')}> Mehul Yadav</a>
@@ -108,8 +109,69 @@ const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith
           syncToggleState();
         };
 
+        const bindCustomCursor = () => {
+          const blob = document.getElementById('cursor-blob');
+          if (!blob || blob.dataset.boundCustomCursor === 'true') return;
+
+          if (!window.matchMedia('(pointer: fine)').matches) {
+            document.documentElement.classList.remove('custom-cursor');
+            blob.remove();
+            return;
+          }
+
+          document.documentElement.classList.add('custom-cursor');
+
+          const interactiveSelector = 'a, button, [role="button"], summary, input, textarea, select, label';
+          let latestX = -100;
+          let latestY = -100;
+          let frameId = 0;
+
+          const render = () => {
+            blob.style.transform = `translate3d(${latestX}px, ${latestY}px, 0) translate(-50%, -50%)`;
+            frameId = 0;
+          };
+
+          const handleMove = (event) => {
+            latestX = event.clientX;
+            latestY = event.clientY;
+
+            if (!blob.classList.contains('is-visible')) {
+              blob.classList.add('is-visible');
+            }
+
+            if (event.target instanceof Element) {
+              const interactive = event.target.closest(interactiveSelector);
+              blob.classList.toggle('is-hover', Boolean(interactive));
+            } else {
+              blob.classList.remove('is-hover');
+            }
+
+            if (!frameId) {
+              frameId = window.requestAnimationFrame(render);
+            }
+          };
+
+          const handleLeave = () => {
+            blob.classList.remove('is-visible');
+            blob.classList.remove('is-hover');
+          };
+
+          const handleDown = () => blob.classList.add('is-pressed');
+          const handleUp = () => blob.classList.remove('is-pressed');
+
+          window.addEventListener('pointermove', handleMove, { passive: true });
+          window.addEventListener('mousemove', handleMove, { passive: true });
+          window.addEventListener('pointerdown', handleDown, { passive: true });
+          window.addEventListener('pointerup', handleUp, { passive: true });
+          document.addEventListener('mouseleave', handleLeave);
+
+          blob.dataset.boundCustomCursor = 'true';
+        };
+
         bindThemeToggle();
+        bindCustomCursor();
         document.addEventListener('astro:page-load', bindThemeToggle);
+        document.addEventListener('astro:page-load', bindCustomCursor);
       })();
     </script>
   </body>

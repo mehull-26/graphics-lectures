@@ -17,8 +17,18 @@ const lectures = defineCollection({
         lectureNumber: z.number().int().positive(),
         summary: z.string().default(''),
         publishedAt: z.date().optional(),
-        starterRepo: z.string().url().optional(),
-        finishedRepo: z.string().url().optional()
+        readings: z.array(z.object({
+            label: z.string().min(1),
+            href: z.string().url()
+        })).default([]),
+        assignments: z.array(z.object({
+            label: z.string().min(1),
+            href: z.string().url()
+        })).default([]),
+        resources: z.array(z.object({
+            label: z.string().min(1),
+            href: z.string().url()
+        })).default([])
     })
 });
 

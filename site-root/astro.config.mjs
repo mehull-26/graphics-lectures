@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import expressiveCode from 'astro-expressive-code';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
@@ -36,6 +37,7 @@ export default defineConfig({
     base: '/',
     output: 'static',
     integrations: [
+        react(),
         expressiveCode({
             themes: ['github-light', 'github-dark'],
             useDarkModeMediaQuery: false,
