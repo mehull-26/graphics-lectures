@@ -270,6 +270,12 @@ a {
     font-style: normal;
 }
 
+.site-nav-link:visited,
+.site-nav-link:hover,
+.site-nav-link:focus-visible {
+    color: var(--fg);
+}
+
 a:hover,
 a:focus-visible {
     transform: translateY(-1px) scale(1.02);
