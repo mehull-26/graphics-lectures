@@ -1,0 +1,61 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import SiteLayout from '../../../components/SiteLayout.astro';
+
+type LectureEntry = CollectionEntry<'lectures'>;
+
+export async function getStaticPaths() {
+  const lectureEntries = await getCollection('lectures');
+
+  return lectureEntries.map((lectureEntry) => {
+    const parts = lectureEntry.id.split('/');
+    const series = parts[0];
+    const lecture = parts[1];
+
+    return {
+      params: { series, lecture },
+      props: { lectureEntry }
+    };
+  });
+}
+
+const { lectureEntry } = Astro.props as {
+  lectureEntry: LectureEntry;
+};
+
+const { Content } = await render(lectureEntry);
+const seriesSlug = Astro.params.series ?? '';
+const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+const publishedDate = lectureEntry.data.publishedAt
+  ? lectureEntry.data.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  : null;
+---
+
+<SiteLayout title={`${lectureEntry.data.title} | Graphics Lectures`}>
+  <main>
+    {publishedDate ? <p class="muted">{publishedDate}</p> : null}
+    <h1>{lectureEntry.data.title}</h1>
+    <div class="meta">
+      <p class="meta-label">Lecture {lectureEntry.data.lectureNumber}</p>
+      {lectureEntry.data.summary ? <p class="meta-summary">{lectureEntry.data.summary}</p> : null}
+      {(lectureEntry.data.starterRepo || lectureEntry.data.finishedRepo) ? (
+        <>
+          <p class="meta-title">External code repositories</p>
+          <ul class="repos">
+            {lectureEntry.data.starterRepo ? (
+              <li><a href={lectureEntry.data.starterRepo}>Starter repository</a></li>
+            ) : null}
+            {lectureEntry.data.finishedRepo ? (
+              <li><a href={lectureEntry.data.finishedRepo}>Finished repository</a></li>
+            ) : null}
+          </ul>
+        </>
+      ) : null}
+    </div>
+
+    <article>
+      <Content />
+    </article>
+    <p><a href={withBase(`series/${seriesSlug}`)}>Back to series</a></p>
+  </main>
+</SiteLayout>

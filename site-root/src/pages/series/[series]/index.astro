@@ -1,0 +1,57 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import SiteLayout from '../../../components/SiteLayout.astro';
+
+type SeriesEntry = CollectionEntry<'series'>;
+type LectureEntry = CollectionEntry<'lectures'>;
+
+export async function getStaticPaths() {
+  const seriesEntries = await getCollection('series');
+  const lectureEntries = await getCollection('lectures');
+
+  return seriesEntries.map((seriesEntry) => {
+    const seriesSlug = seriesEntry.id.split('/')[0];
+    const lectures = lectureEntries
+      .filter((lectureEntry) => lectureEntry.id.split('/')[0] === seriesSlug)
+      .sort((a, b) => a.data.lectureNumber - b.data.lectureNumber);
+
+    return {
+      params: { series: seriesSlug },
+      props: {
+        seriesEntry,
+        lectures
+      }
+    };
+  });
+}
+
+const { seriesEntry, lectures } = Astro.props as {
+  seriesEntry: SeriesEntry;
+  lectures: LectureEntry[];
+};
+
+const seriesSlug = Astro.params.series ?? '';
+const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+---
+
+<SiteLayout title={`${seriesEntry.data.title} | Graphics Lectures`}>
+  <main>
+    <h1>{seriesEntry.data.title}</h1>
+    <p>{seriesEntry.data.description}</p>
+
+    <h2>Lectures</h2>
+    <ul>
+      {lectures.map((lecture) => {
+        const lectureSlug = lecture.id.split('/')[1];
+        return (
+          <li>
+            <a href={withBase(`series/${seriesSlug}/${lectureSlug}`)}>{lecture.data.title}</a>
+            {lecture.data.summary ? <p>{lecture.data.summary}</p> : null}
+          </li>
+        );
+      })}
+    </ul>
+
+    <p><a href={withBase('series')}>Back to series</a></p>
+  </main>
+</SiteLayout>

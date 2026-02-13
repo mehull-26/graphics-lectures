@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../components/SiteLayout.astro';
+
+const seriesEntries = (await getCollection('series')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const toSeriesSlug = (entryId: string) => entryId.split('/')[0];
+const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+---
+
+<SiteLayout title="Graphics Lectures">
+  <main>
+    <h1>Graphics Lectures</h1>
+    <p class="muted">Structured lecture archive</p>
+    <ul>
+      {seriesEntries.map((entry) => {
+        const slug = toSeriesSlug(entry.id);
+        return (
+          <li>
+            <a href={withBase(`series/${slug}`)}>{entry.data.title}</a>
+          </li>
+        );
+      })}
+    </ul>
+  </main>
+</SiteLayout>

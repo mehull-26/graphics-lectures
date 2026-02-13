@@ -1,0 +1,69 @@
+---
+title: Radiometry Foundations
+lectureNumber: 1
+summary: Core radiometric quantities and why they matter for physically based rendering.
+publishedAt: 2026-02-13
+starterRepo: https://github.com/your-org/rendering-l01-starter
+finishedRepo: https://github.com/your-org/minimal-path-tracer
+---
+
+import radiometryDiagram from './assets/radiometry.png';
+
+This lecture introduces radiometric quantities used in physically based rendering.
+
+---
+
+## What this lecture covers
+
+- Why radiometry is the right language for light transport.
+- The relationship between flux, irradiance, and radiance.
+- How these quantities appear in rendering equations.
+
+<details>
+<summary>Derivation</summary>
+
+Starting from flux $\Phi$, irradiance over a differential area is:
+
+$E = d\Phi / dA$
+
+For directional dependence, radiance is:
+
+$L = d²\Phi / (dA\,d\omega\,\cos\theta)$
+</details>
+
+---
+
+## Basic math test
+
+Inline math:  $E = dΦ / dA$
+
+Block math:
+
+$$
+L = d²Φ / (dA · dω · cosθ)
+$$
+
+If equations render correctly, KaTeX/MathJax is configured.
+
+---
+
+## Code block test
+```cpp
+struct Ray {
+    vec3 origin;
+    vec3 direction;
+};
+
+vec3 trace(const Ray& ray) {
+    return vec3(0.0f);
+}
+```
+<img
+    src={radiometryDiagram.src}
+    alt="Radiometry diagram"
+    loading="lazy"
+    class="img-inline"
+    style={{ '--img-inline-width': '220px' }}
+/>
+
+what?? 
