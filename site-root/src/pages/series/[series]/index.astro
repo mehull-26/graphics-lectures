@@ -35,23 +35,30 @@ const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '
 ---
 
 <SiteLayout title={`${seriesEntry.data.title} | Graphics Lectures`}>
-  <main>
-    <h1>{seriesEntry.data.title}</h1>
-    <p>{seriesEntry.data.description}</p>
+  <main class="home-main">
+    <section class="home-intro">
+      <h1 class="home-title">{seriesEntry.data.title}</h1>
+      <p class="home-sublead">{seriesEntry.data.description}</p>
+    </section>
 
-    <h2>Lectures</h2>
-    <ul>
-      {lectures.map((lecture) => {
-        const lectureSlug = lecture.id.split('/')[1];
-        return (
-          <li>
-            <a href={withBase(`series/${seriesSlug}/${lectureSlug}`)}>{lecture.data.title}</a>
-            {lecture.data.summary ? <p>{lecture.data.summary}</p> : null}
-          </li>
-        );
-      })}
-    </ul>
+    <section>
+      <h2 class="home-section-title">Lectures</h2>
 
-    <p><a href={withBase('series')}>Back to series</a></p>
+      <div class="series-list">
+        {lectures.map((lecture) => {
+          const lectureSlug = lecture.id.split('/')[1];
+          return (
+            <a href={withBase(`series/${seriesSlug}/${lectureSlug}`)} class="series-card">
+              <div class="series-card-title">{lecture.data.lectureNumber}. {lecture.data.title}</div>
+              {lecture.data.summary ? (
+                <div class="series-card-summary">{lecture.data.summary}</div>
+              ) : null}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <p><a href={withBase('')}>Back to series</a></p>
   </main>
 </SiteLayout>

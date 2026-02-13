@@ -96,9 +96,18 @@ If editor diagnostics show false parser errors for LaTeX commands, prefer unicod
    npm run build
    ```
 
-## Add a new lecture (no route/config edits)
+## Content workflow (cards are auto-generated)
 
-For rendering lecture 02:
+You do **not** manually create cards in page files.
+
+- Home page series cards are generated from `src/content/series/*/series.md`
+- Series lecture links are generated from `src/content/series/*/lecture-*/lecture.mdx`
+
+If you create the files in the correct folder format, cards and routes appear automatically.
+
+## Quick add: new lecture in existing series
+
+Example: add `lecture-02` under `rendering`:
 
 ```txt
 src/content/series/rendering/lecture-02/
@@ -106,69 +115,91 @@ src/content/series/rendering/lecture-02/
   assets/
 ```
 
-Add frontmatter in `lecture.mdx`:
+Use this `lecture.mdx` frontmatter template:
 
 ```yaml
 ---
-title: Lecture 02 - Your Topic
+title: Radiance Transport Basics
 lectureNumber: 2
-summary: Short summary.
+summary: Building the rendering equation intuition from radiance flow.
+publishedAt: 2026-02-13
 starterRepo: https://github.com/your-org/rendering-l02-starter
 finishedRepo: https://github.com/your-org/rendering-l02-finished
 ---
 ```
 
-Routes are generated automatically from content collections:
+Resulting route:
 
-- `/series`
-- `/series/rendering`
 - `/series/rendering/lecture-02`
 
-## Add a new series
+## Quick add: new lecture series
 
-Create:
+Create this structure:
 
 ```txt
-src/content/series/<series-name>/
+src/content/series/<series-slug>/
   series.md
   lecture-01/
     lecture.mdx
     assets/
 ```
 
-Set metadata in `series.md` frontmatter:
+Use this `series.md` template:
 
 ```yaml
 ---
 title: Simulation
-description: Your series description.
+description: Numerical simulation notes from fundamentals to implementation.
 order: 2
 ---
 ```
 
-## GitHub Pages
+Use this initial `lecture-01/lecture.mdx` template:
 
-This project is configured for a repo named `graphics-lectures`.
+```yaml
+---
+title: Simulation Foundations
+lectureNumber: 1
+summary: Core simulation concepts and notation.
+publishedAt: 2026-02-13
+---
+```
 
-1. Update `site` in `astro.config.mjs`:
+Resulting routes:
 
-   ```js
-   site: 'https://<your-github-username>.github.io'
-   ```
+- `/series`
+- `/series/<series-slug>`
+- `/series/<series-slug>/lecture-01`
 
-2. Keep base path as:
+## Images in lectures (MDX)
 
-   ```js
-   base: '/graphics-lectures'
-   ```
+Preferred pattern:
 
-3. Build and deploy:
+```mdx
+import diagram from './assets/diagram.png';
 
-   ```bash
-   npm run deploy
-   ```
+<img src={diagram.src} alt="Diagram" loading="lazy" />
+```
 
-Alternative: use GitHub Actions to publish `dist/` to Pages.
+Optional inline scaling:
+
+```mdx
+<img src={diagram.src} alt="Diagram" class="img-inline" style={{ '--img-inline-width': '520px' }} />
+```
+
+## Deploy (GitHub Pages + custom domain)
+
+This repo uses GitHub Actions deployment via:
+
+- `.github/workflows/deploy-pages.yml`
+
+Current custom-domain setup:
+
+- `site` in `astro.config.mjs`: `https://mehull.dev`
+- `base` in `astro.config.mjs`: `'/'`
+- `public/CNAME`: `mehull.dev`
+
+After pushing to `main`, GitHub Actions builds and deploys automatically.
 
 ## Code repositories policy
 

@@ -24,7 +24,6 @@ const { lectureEntry } = Astro.props as {
 };
 
 const { Content } = await render(lectureEntry);
-const seriesSlug = Astro.params.series ?? '';
 const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
 const publishedDate = lectureEntry.data.publishedAt
   ? lectureEntry.data.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -56,6 +55,6 @@ const publishedDate = lectureEntry.data.publishedAt
     <article>
       <Content />
     </article>
-    <p><a href={withBase(`series/${seriesSlug}`)}>Back to series</a></p>
+    <p><a href={withBase('')}>Back to series</a></p>
   </main>
 </SiteLayout>
