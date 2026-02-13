@@ -32,8 +32,8 @@ function remarkCodeFenceMeta() {
     };
 }
 export default defineConfig({
-    site: 'https://mehull26.github.io',
-    base: '/graphics-lectures',
+    site: 'https://mehull.dev',
+    base: '/',
     output: 'static',
     integrations: [
         expressiveCode({
