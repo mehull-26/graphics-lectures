@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Rendering | Graphics Lectures</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
+      (() => {
+        let stored = null;
+        try {
+          const value = localStorage.getItem('theme');
+          if (value === 'dark' || value === 'light') {
+            stored = value;
+          }
+        } catch {
+        }
+
+        const initial = stored
+          ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', initial);
+      })();
+    </script><link rel="stylesheet" href="/graphics-lectures/_astro/index.COZKhnxo.css"></head> <body> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/graphics-lectures/">Graphics Lectures</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link active" href="/graphics-lectures/series">Series</a> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/graphics-lectures/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main> <h1>Rendering</h1> <p>Physics-based rendering lectures with derivations, implementation notes, and practical GPU context.</p> <h2>Lectures</h2> <ul> <li> <a href="/graphics-lectures/series/rendering/lecture-01">Radiometry Foundations</a> <p>Core radiometric quantities and why they matter for physically based rendering.</p> </li> </ul> <p><a href="/graphics-lectures/series">Back to series</a></p> </main>  </div> <script>
+      (() => {
+        const getSafeStoredTheme = () => {
+          try {
+            const value = localStorage.getItem('theme');
+            return value === 'dark' || value === 'light' ? value : null;
+          } catch {
+            return null;
+          }
+        };
+
+        const setSafeStoredTheme = (theme) => {
+          try {
+            localStorage.setItem('theme', theme);
+          } catch {
+          }
+        };
+
+        const getCurrentTheme = () => {
+          const attrTheme = document.documentElement.getAttribute('data-theme');
+          if (attrTheme === 'dark' || attrTheme === 'light') return attrTheme;
+
+          const stored = getSafeStoredTheme();
+          if (stored) return stored;
+
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        const applyTheme = (theme) => {
+          document.documentElement.setAttribute('data-theme', theme);
+          setSafeStoredTheme(theme);
+        };
+
+        const bindThemeToggle = () => {
+          const button = document.getElementById('theme-toggle');
+          if (!button || button.dataset.boundThemeToggle === 'true') return;
+
+          const syncToggleState = () => {
+            const current = getCurrentTheme();
+            const target = current === 'dark' ? 'light' : 'dark';
+            button.setAttribute('aria-label', `Switch to ${target} mode`);
+            button.setAttribute('title', `Switch to ${target} mode`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentTheme();
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            syncToggleState();
+          });
+
+          button.dataset.boundThemeToggle = 'true';
+          syncToggleState();
+        };
+
+        bindThemeToggle();
+        document.addEventListener('astro:page-load', bindThemeToggle);
+      })();
+    </script> </body> </html>
