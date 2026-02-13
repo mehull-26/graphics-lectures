@@ -359,7 +359,7 @@ pre {
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    margin: 0 0 0.85rem;
+    margin: 0 0 1.2rem;
 }
 
 .meta-grid {
@@ -399,10 +399,14 @@ pre {
     align-items: flex-start;
 }
 
+.meta-grid .meta-row-summary:first-child {
+    padding-top: 0.34rem;
+}
+
 .meta-row-summary dd {
     max-width: min(100%, 46rem);
     text-align: right;
-    line-height: 1.42;
+    line-height: 1.72;
 }
 
 .meta-title {
