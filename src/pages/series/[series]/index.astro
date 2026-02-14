@@ -1,0 +1,67 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import SiteLayout from '../../../components/SiteLayout.astro';
+
+type SeriesEntry = CollectionEntry<'series'>;
+type LectureEntry = CollectionEntry<'lectures'>;
+
+export async function getStaticPaths() {
+  const seriesEntries = await getCollection('series');
+  const lectureEntries = await getCollection('lectures');
+
+  return seriesEntries.map((seriesEntry) => {
+    const seriesSlug = seriesEntry.id.split('/')[0];
+    const lectures = lectureEntries
+      .filter((lectureEntry) => lectureEntry.id.split('/')[0] === seriesSlug)
+      .sort((a, b) => a.data.lectureNumber - b.data.lectureNumber);
+
+    return {
+      params: { series: seriesSlug },
+      props: {
+        seriesEntry,
+        lectures
+      }
+    };
+  });
+}
+
+const { seriesEntry, lectures } = Astro.props as {
+  seriesEntry: SeriesEntry;
+  lectures: LectureEntry[];
+};
+
+const seriesSlug = Astro.params.series ?? '';
+const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+---
+
+<SiteLayout title={`${seriesEntry.data.title} | Graphics Lectures`}>
+  <main class="home-main">
+    <section class="home-intro">
+      <h1 class="home-title">{seriesEntry.data.title}</h1>
+      <p class="home-sublead">{seriesEntry.data.description}</p>
+    </section>
+
+    <section>
+      <h2 class="home-section-title">Lectures</h2>
+
+      <div class="series-list">
+        {lectures.map((lecture) => {
+          const lectureSlug = lecture.id.split('/')[1];
+          return (
+            <a href={withBase(`series/${seriesSlug}/${lectureSlug}`)} class="series-card">
+              <div class="series-card-title">{lecture.data.lectureNumber}. {lecture.data.title}</div>
+              {lecture.data.summary ? (
+                <div class="series-card-summary">{lecture.data.summary}</div>
+              ) : null}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <p class="page-return-link">
+      <span class="return-link-icon" aria-hidden="true">↗</span>
+      <a class="return-link" href={withBase('')}>Return to home</a>
+    </p>
+  </main>
+</SiteLayout>
