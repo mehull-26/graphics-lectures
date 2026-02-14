@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Graphics Lectures</title><link rel="icon" type="image/x-icon" href="/icon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
+      (() => {
+        let stored = null;
+        try {
+          const value = localStorage.getItem('theme');
+          if (value === 'dark' || value === 'light') {
+            stored = value;
+          }
+        } catch {
+        }
+
+        const initial = stored
+          ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', initial);
+      })();
+    </script><link rel="stylesheet" href="/_astro/index.1T6wZ4ii.css"></head> <body> <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/"> Mehul Yadav</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link active" href="/">Series</a> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main class="home-main"> <section class="home-intro"> <h1 class="home-title">Graphics &amp; Simulation Notes</h1> <p class="home-lead">
+A structured set of lecture notes on rendering, physics, and simulation.
+        This site is a long-term technical archive rather than a blog.
+</p> <p class="home-sublead">
+Each lecture focuses on building intuition first, then connecting physics,
+        mathematics, and implementation. Over time this will expand into multiple
+        series covering rendering, numerical methods, and simulation systems.
+</p> </section> <section> <h2 class="home-section-title">Lecture Series</h2> <div class="series-list"> <a href="/series/rendering" class="series-card"> <div class="series-card-title">Rendering Lectures</div> <div class="series-card-summary"> Physics-based rendering lectures with derivations, implementation notes, and practical GPU context. </div> </a> </div> </section> </main>  </div> <script>
+      (() => {
+        const getSafeStoredTheme = () => {
+          try {
+            const value = localStorage.getItem('theme');
+            return value === 'dark' || value === 'light' ? value : null;
+          } catch {
+            return null;
+          }
+        };
+
+        const setSafeStoredTheme = (theme) => {
+          try {
+            localStorage.setItem('theme', theme);
+          } catch {
+          }
+        };
+
+        const getCurrentTheme = () => {
+          const attrTheme = document.documentElement.getAttribute('data-theme');
+          if (attrTheme === 'dark' || attrTheme === 'light') return attrTheme;
+
+          const stored = getSafeStoredTheme();
+          if (stored) return stored;
+
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        const applyTheme = (theme) => {
+          document.documentElement.setAttribute('data-theme', theme);
+          setSafeStoredTheme(theme);
+        };
+
+        const bindThemeToggle = () => {
+          const button = document.getElementById('theme-toggle');
+          if (!button || button.dataset.boundThemeToggle === 'true') return;
+
+          const syncToggleState = () => {
+            const current = getCurrentTheme();
+            const target = current === 'dark' ? 'light' : 'dark';
+            button.setAttribute('aria-label', `Switch to ${target} mode`);
+            button.setAttribute('title', `Switch to ${target} mode`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentTheme();
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            syncToggleState();
+          });
+
+          button.dataset.boundThemeToggle = 'true';
+          syncToggleState();
+        };
+
+        const bindCustomCursor = () => {
+          const blob = document.getElementById('cursor-blob');
+          if (!blob || blob.dataset.boundCustomCursor === 'true') return;
+
+          if (!window.matchMedia('(pointer: fine)').matches) {
+            document.documentElement.classList.remove('custom-cursor');
+            blob.remove();
+            return;
+          }
+
+          document.documentElement.classList.add('custom-cursor');
+
+          const interactiveSelector = 'a, button, [role="button"], summary, input, textarea, select, label';
+          let latestX = -100;
+          let latestY = -100;
+          let frameId = 0;
+
+          const render = () => {
+            blob.style.transform = `translate3d(${latestX}px, ${latestY}px, 0) translate(-50%, -50%)`;
+            frameId = 0;
+          };
+
+          const handleMove = (event) => {
+            latestX = event.clientX;
+            latestY = event.clientY;
+
+            if (!blob.classList.contains('is-visible')) {
+              blob.classList.add('is-visible');
+            }
+
+            if (event.target instanceof Element) {
+              const interactive = event.target.closest(interactiveSelector);
+              blob.classList.toggle('is-hover', Boolean(interactive));
+            } else {
+              blob.classList.remove('is-hover');
+            }
+
+            if (!frameId) {
+              frameId = window.requestAnimationFrame(render);
+            }
+          };
+
+          const handleLeave = () => {
+            blob.classList.remove('is-visible');
+            blob.classList.remove('is-hover');
+          };
+
+          const handleDown = () => blob.classList.add('is-pressed');
+          const handleUp = () => blob.classList.remove('is-pressed');
+
+          window.addEventListener('pointermove', handleMove, { passive: true });
+          window.addEventListener('mousemove', handleMove, { passive: true });
+          window.addEventListener('pointerdown', handleDown, { passive: true });
+          window.addEventListener('pointerup', handleUp, { passive: true });
+          document.addEventListener('mouseleave', handleLeave);
+
+          blob.dataset.boundCustomCursor = 'true';
+        };
+
+        bindThemeToggle();
+        bindCustomCursor();
+        document.addEventListener('astro:page-load', bindThemeToggle);
+        document.addEventListener('astro:page-load', bindCustomCursor);
+      })();
+    </script> </body> </html>
