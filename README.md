@@ -51,7 +51,7 @@ If editor diagnostics show false parser errors for LaTeX commands, prefer unicod
 ## Structure
 
 ```txt
-/site-root
+/
   astro.config.mjs
   package.json
 
