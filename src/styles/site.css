@@ -88,8 +88,8 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 1.05rem;
-        height: 1.05rem;
+        width: 0.8rem;
+        height: 0.8rem;
         border-radius: 999px;
         pointer-events: none;
         z-index: 9999;
@@ -105,8 +105,8 @@
     }
 
     .cursor-blob.is-hover {
-        width: 1.55rem;
-        height: 1.55rem;
+        width: 1rem;
+        height: 1rem;
     }
 
     .cursor-blob.is-pressed {
@@ -199,7 +199,7 @@ main {
 .toc-shell {
     position: fixed;
     top: 6.5rem;
-    width: 286px;
+    width: var(--toc-current-width, 286px);
     max-height: calc(100vh - 7.5rem);
     overflow-y: auto;
     overflow-x: hidden;
@@ -220,12 +220,16 @@ main {
 }
 
 .toc-title {
-    font-size: 0.76rem;
+    font-size: 0.72rem;
     font-weight: 650;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--muted);
     margin: 0 0 0.45rem;
+}
+
+.toc-shell.is-tight .toc-title {
+    font-size: 0.68rem;
 }
 
 .toc-nav,
@@ -253,7 +257,7 @@ main {
     max-width: 100%;
     color: var(--muted);
     text-decoration: none;
-    font-size: 0.83rem;
+    font-size: 0.72rem;
     line-height: 1.35;
     padding: 0.18rem 0.45rem;
     border-left: 2px solid transparent;
@@ -265,12 +269,38 @@ main {
     transition: color 140ms ease;
 }
 
+.toc-shell.is-tight .toc-link {
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.toc-shell.is-compact .toc-link {
+    font-size: 0.72rem;
+    line-height: 1.26;
+}
+
 .toc-depth-0 .toc-link {
     padding-left: 1.05rem;
 }
 
 .toc-depth-1 .toc-link {
     padding-left: 2rem;
+}
+
+.toc-shell.is-tight .toc-depth-0 .toc-link {
+    padding-left: 0.95rem;
+}
+
+.toc-shell.is-tight .toc-depth-1 .toc-link {
+    padding-left: 1.7rem;
+}
+
+.toc-shell.is-compact .toc-depth-0 .toc-link {
+    padding-left: 0.85rem;
+}
+
+.toc-shell.is-compact .toc-depth-1 .toc-link {
+    padding-left: 1.45rem;
 }
 
 .toc-item.is-active>.toc-link {
@@ -326,10 +356,18 @@ main {
     text-align: left;
     padding: 0.1rem 0.45rem;
     font: inherit;
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     line-height: 1.35;
     cursor: pointer;
     border-radius: 0.25rem;
+}
+
+.toc-shell.is-tight .toc-control {
+    font-size: 0.73rem;
+}
+
+.toc-shell.is-compact .toc-control {
+    font-size: 0.7rem;
 }
 
 .toc-control:hover,
@@ -338,7 +376,7 @@ main {
     background: color-mix(in srgb, var(--bg) 90%, var(--fg) 10%);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 979px) {
     .toc-shell {
         display: none !important;
     }

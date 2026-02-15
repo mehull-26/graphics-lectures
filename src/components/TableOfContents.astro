@@ -184,11 +184,24 @@ const { contentSelector = 'article' } = Astro.props;
 
         const mainRect = main.getBoundingClientRect();
         const leftSpace = mainRect.left;
-        const enoughRoom = window.innerWidth >= 1024 && leftSpace >= 180;
+        const baseWidth = 286;
+        const minWidth = 194;
+        const gutter = 16;
+        const availableWidth = leftSpace - gutter - 8;
+        const targetWidth = Math.min(baseWidth, availableWidth);
+        const enoughRoom = window.innerWidth >= 980 && targetWidth >= minWidth;
 
         toc.classList.toggle('is-hidden', !enoughRoom);
         if (enoughRoom) {
-          toc.style.left = `${Math.max(8, leftSpace - 302)}px`;
+          const desiredLeft = leftSpace - targetWidth - gutter;
+          toc.style.setProperty('--toc-current-width', `${targetWidth}px`);
+          toc.style.left = `${desiredLeft}px`;
+          toc.classList.toggle('is-tight', targetWidth < 244);
+          toc.classList.toggle('is-compact', targetWidth < 220);
+        } else {
+          toc.style.removeProperty('--toc-current-width');
+          toc.style.left = '';
+          toc.classList.remove('is-tight', 'is-compact');
         }
       };
 
