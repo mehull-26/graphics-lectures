@@ -4,30 +4,38 @@ import SiteLayout from '../../../components/SiteLayout.astro';
 
 type SeriesEntry = CollectionEntry<'series'>;
 type LectureEntry = CollectionEntry<'lectures'>;
+type MetaEntry = CollectionEntry<'meta'>;
 
 export async function getStaticPaths() {
   const seriesEntries = await getCollection('series');
   const lectureEntries = await getCollection('lectures');
+  const metaEntries = await getCollection('meta');
 
   return seriesEntries.map((seriesEntry) => {
     const seriesSlug = seriesEntry.id.split('/')[0];
     const lectures = lectureEntries
       .filter((lectureEntry) => lectureEntry.id.split('/')[0] === seriesSlug)
       .sort((a, b) => a.data.lectureNumber - b.data.lectureNumber);
+    
+    const metaPages = metaEntries
+      .filter((metaEntry) => metaEntry.id.split('/')[0] === seriesSlug)
+      .sort((a, b) => a.data.order - b.data.order);
 
     return {
       params: { series: seriesSlug },
       props: {
         seriesEntry,
-        lectures
+        lectures,
+        metaPages
       }
     };
   });
 }
 
-const { seriesEntry, lectures } = Astro.props as {
+const { seriesEntry, lectures, metaPages } = Astro.props as {
   seriesEntry: SeriesEntry;
   lectures: LectureEntry[];
+  metaPages: MetaEntry[];
 };
 
 const seriesSlug = Astro.params.series ?? '';
@@ -40,6 +48,30 @@ const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '
       <h1 class="home-title">{seriesEntry.data.title}</h1>
       <p class="home-sublead">{seriesEntry.data.description}</p>
     </section>
+
+    {metaPages.length > 0 && (
+      <section>
+        <h2 class="home-section-title">Course Information</h2>
+        
+        <div class="meta-list">
+          {metaPages.map((meta) => {
+            const parts = meta.id.split('/');
+            const folderName = parts[1].replace(/^\./, '');
+            const fileName = parts[2].replace(/\.mdx$/, '');
+            const metaSlug = `${folderName}/${fileName}`;
+            
+            return (
+              <a href={withBase(`series/${seriesSlug}/${metaSlug}`)} class="meta-item">
+                <div class="meta-item-title">{meta.data.title}</div>
+                {meta.data.summary && (
+                  <div class="meta-item-summary">{meta.data.summary}</div>
+                )}
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
 
     <section>
       <h2 class="home-section-title">Lectures</h2>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Radiometry Foundations | Graphics Lectures</title><link rel="icon" type="image/x-icon" href="/icon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
+<!DOCTYPE html><html lang="en" data-content-page="true"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Radiometry Foundations | Graphics Lectures</title><link rel="icon" type="image/x-icon" href="/icon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
       (() => {
         let stored = null;
         try {
@@ -12,10 +12,280 @@
         const initial = stored
           ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', initial);
+
+        // Initialize palette
+        let storedPalette = null;
+        try {
+          const value = localStorage.getItem('palette');
+          if (value === 'monotonic' || value === 'colorful') {
+            storedPalette = value;
+          }
+        } catch {
+        }
+        const initialPalette = storedPalette ?? 'colorful';
+        document.documentElement.setAttribute('data-palette', initialPalette);
       })();
-    </script><link rel="stylesheet" href="/_astro/index.R5zwZMAz.css"></head> <body> <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/"> Mehul Yadav</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link active" href="/">Series</a> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main> <p class="muted">Feb 13</p> <h1>Radiometry Foundations</h1> <div class="meta"> <p class="meta-label">Lecture metadata</p> <dl class="meta-grid"> <div class="meta-row meta-row-summary"> <dt>Summary</dt> <dd>Core radiometric quantities and why they matter for physically based rendering.</dd> </div> <div class="meta-row"> <dt>Series</dt> <dd>Rendering Lectures</dd> </div> <div class="meta-row"> <dt>Lecture</dt> <dd>1</dd> </div> <div class="meta-row"> <dt>Published</dt> <dd>Feb 13</dd> </div> </dl> <div class="meta-row meta-row-links"> <p class="meta-title">Readings</p> <ul class="meta-links"> <li><a href="https://pbr-book.org/4ed/Radiometry,_Spectra,_and_Color">PBRT Radiometry Chapter</a></li> </ul> </div> <div class="meta-row meta-row-links"> <p class="meta-title">Assignments</p> <ul class="meta-links"> <li><a href="https://example.com/assignments/radiometry-worksheet">Assignment 1 - Radiometry worksheet</a></li> </ul> </div> <div class="meta-row meta-row-links"> <p class="meta-title">Resources</p> <ul class="meta-links"> <li><a href="https://github.com/your-org/rendering-l01-starter">Starter repository</a></li><li><a href="https://github.com/your-org/minimal-path-tracer">Finished repository</a></li><li><a href="https://example.com/radiometry-reference">Reference notes</a></li> </ul> </div> </div> <article> <p>This lecture introduces radiometric quantities used in physically based rendering.</p>
-<hr/>
-<h2 id="what-this-lecture-covers">What this lecture covers</h2>
+    </script><link rel="stylesheet" href="/_astro/index.DXg93LQX.css"></head> <body> <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/"> Mehul Yadav</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link active" href="/series/rendering">Series</a> <button class="palette-toggle" id="palette-toggle" type="button" aria-label="Toggle palette"> <img class="palette-icon" src="/palette.ico" alt="" width="20" height="20" aria-hidden="true"> </button> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main> <p class="muted">Feb 13</p> <h1>Radiometry Foundations</h1> <div class="meta"> <p class="meta-label">Lecture metadata</p> <dl class="meta-grid"> <div class="meta-row meta-row-summary"> <dt>Summary</dt> <dd>Core radiometric quantities and why they matter for physically based rendering.</dd> </div> <div class="meta-row"> <dt>Series</dt> <dd>Rendering Lectures</dd> </div> <div class="meta-row"> <dt>Lecture</dt> <dd>1</dd> </div> <div class="meta-row"> <dt>Published</dt> <dd>Feb 13</dd> </div> </dl> <div class="meta-row meta-row-links"> <p class="meta-title">Readings</p> <ul class="meta-links"> <li><a href="https://pbr-book.org/4ed/Radiometry,_Spectra,_and_Color">PBRT Radiometry Chapter</a></li> </ul> </div> <div class="meta-row meta-row-links"> <p class="meta-title">Assignments</p> <ul class="meta-links"> <li><a href="https://example.com/assignments/radiometry-worksheet">Assignment 1 - Radiometry worksheet</a></li> </ul> </div> <div class="meta-row meta-row-links"> <p class="meta-title">Resources</p> <ul class="meta-links"> <li><a href="https://github.com/your-org/rendering-l01-starter">Starter repository</a></li><li><a href="https://github.com/your-org/minimal-path-tracer">Finished repository</a></li><li><a href="https://example.com/radiometry-reference">Reference notes</a></li> </ul> </div> </div> <aside class="toc-shell is-hidden" data-toc data-content-selector="article" aria-label="Table of contents"> <div class="toc-title">On this page</div> <nav class="toc-nav" data-toc-nav></nav> <div class="toc-controls" data-toc-controls> <button class="toc-control" type="button" data-toc-expand>Expand all</button> <button class="toc-control" type="button" data-toc-top>Back to top</button> <button class="toc-control" type="button" data-toc-bottom>Go to bottom</button> </div> </aside> <script>
+  (() => {
+    const slugify = (value) => value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+
+    const initOne = (toc) => {
+      if (!toc || toc.dataset.boundToc === 'true') return true;
+
+      const selector = toc.getAttribute('data-content-selector') || 'article';
+      const content = document.querySelector(selector);
+      const nav = toc.querySelector('[data-toc-nav]');
+
+      if (!content || !nav) {
+        return false;
+      }
+
+      const headingElementsAll = [...content.querySelectorAll('h1, h2, h3, h4')]
+        .filter((heading) => heading.textContent && heading.textContent.trim().length > 0);
+
+      if (headingElementsAll.length < 1) {
+        toc.classList.add('is-hidden');
+        toc.dataset.boundToc = 'true';
+        return true;
+      }
+
+      const levelsForOrder = headingElementsAll
+        .map((heading) => Number(heading.tagName[1]));
+      const uniqueSortedLevels = [...new Set(levelsForOrder)].sort((a, b) => a - b);
+      const allowedLevels = new Set(uniqueSortedLevels.slice(0, 2));
+
+      if (allowedLevels.size === 0) {
+        const fallbackLevels = [...new Set(headingElementsAll.map((heading) => Number(heading.tagName[1])))]
+          .sort((a, b) => a - b)
+          .slice(0, 2);
+        fallbackLevels.forEach((level) => allowedLevels.add(level));
+      }
+
+      const headingElements = headingElementsAll.filter((heading) =>
+        allowedLevels.has(Number(heading.tagName[1]))
+      );
+
+      if (headingElements.length < 1) {
+        toc.classList.add('is-hidden');
+        toc.dataset.boundToc = 'true';
+        return true;
+      }
+
+      const usedIds = new Set();
+      headingElements.forEach((heading) => {
+        const existingId = heading.getAttribute('id');
+        if (existingId) {
+          usedIds.add(existingId);
+          return;
+        }
+
+        const base = slugify(heading.textContent || 'section') || 'section';
+        let id = base;
+        let index = 2;
+        while (usedIds.has(id)) {
+          id = `${base}-${index}`;
+          index += 1;
+        }
+        usedIds.add(id);
+        heading.setAttribute('id', id);
+      });
+
+      const nodes = [];
+      const stack = [{ level: 0, children: nodes, parentId: null }];
+
+      headingElements.forEach((heading) => {
+        const level = Number(heading.tagName[1]);
+        const node = {
+          id: heading.id,
+          level,
+          text: (heading.textContent || '').trim(),
+          children: [],
+          element: heading,
+          parentId: null
+        };
+
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+
+        const parent = stack[stack.length - 1];
+        node.parentId = parent.parentId;
+        parent.children.push(node);
+        stack.push({ level, children: node.children, parentId: node.id });
+      });
+
+      const renderNodeList = (list) => {
+        const ul = document.createElement('ul');
+        ul.className = 'toc-list';
+
+        list.forEach((node) => {
+          const li = document.createElement('li');
+          li.className = `toc-item toc-level-${node.level}`;
+          li.dataset.tocId = node.id;
+          li.dataset.tocLevel = String(node.level);
+
+          const link = document.createElement('a');
+          link.href = `#${node.id}`;
+          link.textContent = node.text;
+          link.className = 'toc-link';
+          li.appendChild(link);
+
+          if (node.children.length > 0) {
+            li.classList.add('has-children');
+            li.appendChild(renderNodeList(node.children));
+          }
+
+          ul.appendChild(li);
+        });
+
+        return ul;
+      };
+
+      nav.innerHTML = '';
+      nav.appendChild(renderNodeList(nodes));
+
+      const items = [...toc.querySelectorAll('.toc-item')];
+      const byId = new Map(items.map((item) => [item.dataset.tocId, item]));
+      const controls = toc.querySelector('[data-toc-controls]');
+      const expandButton = toc.querySelector('[data-toc-expand]');
+      const topButton = toc.querySelector('[data-toc-top]');
+      const bottomButton = toc.querySelector('[data-toc-bottom]');
+      let expandAll = false;
+
+      const openPathFor = (activeId) => {
+        items.forEach((item) => item.classList.remove('is-active', 'in-path'));
+        if (activeId) {
+          const activeItem = byId.get(activeId);
+          if (activeItem) {
+            activeItem.classList.add('is-active');
+
+            let current = activeItem;
+            while (current) {
+              current.classList.add('in-path');
+              const parent = current.parentElement?.closest('.toc-item');
+              current = parent;
+            }
+          }
+        }
+
+        items.forEach((item) => {
+          if (!item.classList.contains('has-children')) return;
+          const keepOpenByPath = item.classList.contains('in-path');
+          const shouldCollapse = !expandAll && !keepOpenByPath;
+          item.classList.toggle('is-collapsed', shouldCollapse);
+        });
+      };
+
+      const updateVisibility = () => {
+        const main = document.querySelector('main');
+        if (!main) return;
+
+        const mainRect = main.getBoundingClientRect();
+        const leftSpace = mainRect.left;
+        const enoughRoom = window.innerWidth >= 1024 && leftSpace >= 180;
+
+        toc.classList.toggle('is-hidden', !enoughRoom);
+        if (enoughRoom) {
+          toc.style.left = `${Math.max(8, leftSpace - 266)}px`;
+        }
+      };
+
+      const getActiveHeadingId = () => {
+        const header = document.querySelector('.site-header');
+        const topOffset = (header ? header.getBoundingClientRect().height : 0) + 18;
+        const triggerLine = topOffset + Math.max(0, (window.innerHeight - topOffset) * 0.25);
+
+        let current = headingElements[0];
+        for (const heading of headingElements) {
+          if (heading.getBoundingClientRect().top <= triggerLine) {
+            current = heading;
+          } else {
+            break;
+          }
+        }
+
+        return current?.id ?? null;
+      };
+
+      let rafId = 0;
+      const onScroll = () => {
+        if (rafId) return;
+        rafId = window.requestAnimationFrame(() => {
+          const activeId = getActiveHeadingId();
+          openPathFor(activeId);
+          rafId = 0;
+        });
+      };
+
+      const onResize = () => {
+        updateVisibility();
+        onScroll();
+      };
+
+      if (controls && expandButton && topButton && bottomButton) {
+        expandButton.addEventListener('click', () => {
+          expandAll = !expandAll;
+          expandButton.textContent = expandAll ? 'Collapse all' : 'Expand all';
+          openPathFor(getActiveHeadingId());
+        });
+
+        topButton.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        bottomButton.addEventListener('click', () => {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+        });
+      }
+
+      updateVisibility();
+      onScroll();
+
+      window.addEventListener('resize', onResize, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      toc.dataset.boundToc = 'true';
+      return true;
+    };
+
+    const initAll = () => {
+      const tocs = [...document.querySelectorAll('[data-toc]')];
+      if (tocs.length === 0) return true;
+
+      let allReady = true;
+      tocs.forEach((toc) => {
+        const ready = initOne(toc);
+        allReady = allReady && ready;
+      });
+      return allReady;
+    };
+
+    const bootstrap = () => {
+      let attempts = 0;
+      const run = () => {
+        const ready = initAll();
+        if (!ready && attempts < 40) {
+          attempts += 1;
+          window.requestAnimationFrame(run);
+        }
+      };
+      run();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
+    } else {
+      bootstrap();
+    }
+
+    document.addEventListener('astro:page-load', bootstrap);
+  })();
+</script> <article> <h2 id="what-this-lecture-covers">What this lecture covers</h2>
 <ul>
 <li>Why radiometry is the right language for light transport.</li>
 <li>The relationship between flux, irradiance, and radiance.</li>
@@ -98,6 +368,55 @@ Return to Rendering Lectures </a> </p> </main>  </div> <script>
           syncToggleState();
         };
 
+        const bindPaletteToggle = () => {
+          const button = document.getElementById('palette-toggle');
+          if (!button || button.dataset.boundPaletteToggle === 'true') return;
+
+          const getSafeStoredPalette = () => {
+            try {
+              const value = localStorage.getItem('palette');
+              return value === 'monotonic' || value === 'colorful' ? value : null;
+            } catch {
+              return null;
+            }
+          };
+
+          const setSafeStoredPalette = (palette) => {
+            try {
+              localStorage.setItem('palette', palette);
+            } catch {
+            }
+          };
+
+          const getCurrentPalette = () => {
+            const attrPalette = document.documentElement.getAttribute('data-palette');
+            if (attrPalette === 'monotonic' || attrPalette === 'colorful') return attrPalette;
+            return getSafeStoredPalette() ?? 'colorful';
+          };
+
+          const applyPalette = (palette) => {
+            document.documentElement.setAttribute('data-palette', palette);
+            setSafeStoredPalette(palette);
+          };
+
+          const syncPaletteState = () => {
+            const current = getCurrentPalette();
+            const target = current === 'colorful' ? 'monotonic' : 'colorful';
+            button.setAttribute('aria-label', `Switch to ${target} palette`);
+            button.setAttribute('title', `Switch to ${target} palette`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentPalette();
+            const next = current === 'colorful' ? 'monotonic' : 'colorful';
+            applyPalette(next);
+            syncPaletteState();
+          });
+
+          button.dataset.boundPaletteToggle = 'true';
+          syncPaletteState();
+        };
+
         const bindCustomCursor = () => {
           const blob = document.getElementById('cursor-blob');
           if (!blob || blob.dataset.boundCustomCursor === 'true') return;
@@ -158,8 +477,10 @@ Return to Rendering Lectures </a> </p> </main>  </div> <script>
         };
 
         bindThemeToggle();
+        bindPaletteToggle();
         bindCustomCursor();
         document.addEventListener('astro:page-load', bindThemeToggle);
+        document.addEventListener('astro:page-load', bindPaletteToggle);
         document.addEventListener('astro:page-load', bindCustomCursor);
       })();
     </script> </body> </html>

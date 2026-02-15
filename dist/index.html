@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Graphics Lectures</title><link rel="icon" type="image/x-icon" href="/icon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
+<!DOCTYPE html><html lang="en" data-content-page="false"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Graphics Lectures</title><link rel="icon" type="image/x-icon" href="/icon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
       (() => {
         let stored = null;
         try {
@@ -12,8 +12,20 @@
         const initial = stored
           ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', initial);
+
+        // Initialize palette
+        let storedPalette = null;
+        try {
+          const value = localStorage.getItem('palette');
+          if (value === 'monotonic' || value === 'colorful') {
+            storedPalette = value;
+          }
+        } catch {
+        }
+        const initialPalette = storedPalette ?? 'colorful';
+        document.documentElement.setAttribute('data-palette', initialPalette);
       })();
-    </script><link rel="stylesheet" href="/_astro/index.R5zwZMAz.css"></head> <body> <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/"> Mehul Yadav</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link" href="/">Series</a> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main class="home-main"> <section class="home-intro"> <h1 class="home-title">Graphics &amp; Simulation Notes</h1> <p class="home-lead">
+    </script><link rel="stylesheet" href="/_astro/index.DXg93LQX.css"></head> <body> <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/"> Mehul Yadav</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link" href="/series">Series</a> <button class="palette-toggle" id="palette-toggle" type="button" aria-label="Toggle palette"> <img class="palette-icon" src="/palette.ico" alt="" width="20" height="20" aria-hidden="true"> </button> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main class="home-main"> <section class="home-intro"> <h1 class="home-title">Graphics &amp; Simulation Notes</h1> <p class="home-lead">
 A structured set of lecture notes on rendering, physics, and simulation.
         This site is a long-term technical archive rather than a blog.
 </p> <p class="home-sublead">
@@ -73,6 +85,55 @@ Each lecture focuses on building intuition first, then connecting physics,
 
           button.dataset.boundThemeToggle = 'true';
           syncToggleState();
+        };
+
+        const bindPaletteToggle = () => {
+          const button = document.getElementById('palette-toggle');
+          if (!button || button.dataset.boundPaletteToggle === 'true') return;
+
+          const getSafeStoredPalette = () => {
+            try {
+              const value = localStorage.getItem('palette');
+              return value === 'monotonic' || value === 'colorful' ? value : null;
+            } catch {
+              return null;
+            }
+          };
+
+          const setSafeStoredPalette = (palette) => {
+            try {
+              localStorage.setItem('palette', palette);
+            } catch {
+            }
+          };
+
+          const getCurrentPalette = () => {
+            const attrPalette = document.documentElement.getAttribute('data-palette');
+            if (attrPalette === 'monotonic' || attrPalette === 'colorful') return attrPalette;
+            return getSafeStoredPalette() ?? 'colorful';
+          };
+
+          const applyPalette = (palette) => {
+            document.documentElement.setAttribute('data-palette', palette);
+            setSafeStoredPalette(palette);
+          };
+
+          const syncPaletteState = () => {
+            const current = getCurrentPalette();
+            const target = current === 'colorful' ? 'monotonic' : 'colorful';
+            button.setAttribute('aria-label', `Switch to ${target} palette`);
+            button.setAttribute('title', `Switch to ${target} palette`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentPalette();
+            const next = current === 'colorful' ? 'monotonic' : 'colorful';
+            applyPalette(next);
+            syncPaletteState();
+          });
+
+          button.dataset.boundPaletteToggle = 'true';
+          syncPaletteState();
         };
 
         const bindCustomCursor = () => {
@@ -135,8 +196,10 @@ Each lecture focuses on building intuition first, then connecting physics,
         };
 
         bindThemeToggle();
+        bindPaletteToggle();
         bindCustomCursor();
         document.addEventListener('astro:page-load', bindThemeToggle);
+        document.addEventListener('astro:page-load', bindPaletteToggle);
         document.addEventListener('astro:page-load', bindCustomCursor);
       })();
     </script> </body> </html>

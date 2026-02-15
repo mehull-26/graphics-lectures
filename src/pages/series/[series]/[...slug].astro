@@ -1,0 +1,84 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import SiteLayout from '../../../components/SiteLayout.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
+
+type MetaEntry = CollectionEntry<'meta'>;
+type SeriesEntry = CollectionEntry<'series'>;
+
+export async function getStaticPaths() {
+  const seriesEntries = await getCollection('series');
+  const metaEntries = await getCollection('meta');
+  const seriesBySlug = new Map(seriesEntries.map((entry) => [entry.id.split('/')[0], entry]));
+
+  return metaEntries.map((metaEntry) => {
+    const parts = metaEntry.id.split('/');
+    const seriesSlug = parts[0];
+    const folderName = parts[1].replace(/^\./, ''); // Remove leading dot
+    const fileName = parts[2].replace(/\.mdx$/, ''); // Remove .mdx extension
+    const slug = `${folderName}/${fileName}`;
+
+    return {
+      params: { series: seriesSlug, slug },
+      props: {
+        metaEntry,
+        seriesEntry: seriesBySlug.get(seriesSlug) ?? null,
+        seriesSlug
+      }
+    };
+  });
+}
+
+const { metaEntry, seriesEntry, seriesSlug } = Astro.props as {
+  metaEntry: MetaEntry;
+  seriesEntry: SeriesEntry | null;
+  seriesSlug: string;
+};
+
+const { Content } = await render(metaEntry);
+const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+const sectionName = metaEntry.id.split('/')[1]?.replace(/^\./, '') ?? 'overview';
+---
+
+<SiteLayout title={`${metaEntry.data.title} | Graphics Lectures`} isContentPage={true}>
+  <main>
+    <h1>{metaEntry.data.title}</h1>
+
+    <div class="meta">
+      <p class="meta-label">Page metadata</p>
+      <dl class="meta-grid">
+        {metaEntry.data.summary ? (
+          <div class="meta-row meta-row-summary">
+            <dt>Summary</dt>
+            <dd>{metaEntry.data.summary}</dd>
+          </div>
+        ) : null}
+        <div class="meta-row">
+          <dt>Series</dt>
+          <dd>{seriesEntry?.data.title ?? seriesSlug}</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Section</dt>
+          <dd>{sectionName}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <TableOfContents contentSelector=".meta-content" />
+    
+    <div class="meta-content">
+      <Content />
+    </div>
+
+    <p class="page-return-link">
+      <span class="return-link-icon" aria-hidden="true">↗</span>
+      <a class="return-link" href={withBase(`series/${seriesSlug}`)}>Return to {seriesEntry?.data.title ?? 'series'}</a>
+    </p>
+  </main>
+</SiteLayout>
+
+<style>
+  .meta-content {
+    margin-top: 2rem;
+  }
+</style>

@@ -3,9 +3,10 @@ import '../styles/site.css';
 
 interface Props {
   title: string;
+  isContentPage?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, isContentPage = false } = Astro.props;
 const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 const rawPath = Astro.url.pathname;
@@ -13,10 +14,15 @@ const normalizedPath = rawPath.startsWith(basePath)
   ? rawPath.slice(basePath.length) || '/'
   : rawPath;
 const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith('/series/');
+
+// Extract series slug from path if we're in a series context
+const seriesMatch = normalizedPath.match(/^\/series\/([^\/]+)/);
+const currentSeriesSlug = seriesMatch ? seriesMatch[1] : null;
+const seriesLink = currentSeriesSlug ? `series/${currentSeriesSlug}` : 'series';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-content-page={isContentPage ? 'true' : 'false'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -37,6 +43,18 @@ const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith
         const initial = stored
           ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', initial);
+
+        // Initialize palette
+        let storedPalette = null;
+        try {
+          const value = localStorage.getItem('palette');
+          if (value === 'monotonic' || value === 'colorful') {
+            storedPalette = value;
+          }
+        } catch {
+        }
+        const initialPalette = storedPalette ?? 'colorful';
+        document.documentElement.setAttribute('data-palette', initialPalette);
       })();
     </script>
   </head>
@@ -46,7 +64,10 @@ const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith
       <header class="site-header">
         <a class="site-brand" href={withBase('')}> Mehul Yadav</a>
         <nav class="site-nav" aria-label="Primary">
-          <a class:list={{ 'site-nav-link': true, active: isSeriesActive }} href={withBase('')}>Series</a>
+          <a class:list={{ 'site-nav-link': true, active: isSeriesActive }} href={withBase(seriesLink)}>Series</a>
+          <button class="palette-toggle" id="palette-toggle" type="button" aria-label="Toggle palette">
+            <img class="palette-icon" src={withBase('palette.ico')} alt="" width="20" height="20" aria-hidden="true" />
+          </button>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">
             <img class="mode-icon" src={withBase('dark_mode.ico')} alt="" width="20" height="20" aria-hidden="true" />
           </button>
@@ -110,6 +131,55 @@ const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith
           syncToggleState();
         };
 
+        const bindPaletteToggle = () => {
+          const button = document.getElementById('palette-toggle');
+          if (!button || button.dataset.boundPaletteToggle === 'true') return;
+
+          const getSafeStoredPalette = () => {
+            try {
+              const value = localStorage.getItem('palette');
+              return value === 'monotonic' || value === 'colorful' ? value : null;
+            } catch {
+              return null;
+            }
+          };
+
+          const setSafeStoredPalette = (palette) => {
+            try {
+              localStorage.setItem('palette', palette);
+            } catch {
+            }
+          };
+
+          const getCurrentPalette = () => {
+            const attrPalette = document.documentElement.getAttribute('data-palette');
+            if (attrPalette === 'monotonic' || attrPalette === 'colorful') return attrPalette;
+            return getSafeStoredPalette() ?? 'colorful';
+          };
+
+          const applyPalette = (palette) => {
+            document.documentElement.setAttribute('data-palette', palette);
+            setSafeStoredPalette(palette);
+          };
+
+          const syncPaletteState = () => {
+            const current = getCurrentPalette();
+            const target = current === 'colorful' ? 'monotonic' : 'colorful';
+            button.setAttribute('aria-label', `Switch to ${target} palette`);
+            button.setAttribute('title', `Switch to ${target} palette`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentPalette();
+            const next = current === 'colorful' ? 'monotonic' : 'colorful';
+            applyPalette(next);
+            syncPaletteState();
+          });
+
+          button.dataset.boundPaletteToggle = 'true';
+          syncPaletteState();
+        };
+
         const bindCustomCursor = () => {
           const blob = document.getElementById('cursor-blob');
           if (!blob || blob.dataset.boundCustomCursor === 'true') return;
@@ -170,8 +240,10 @@ const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith
         };
 
         bindThemeToggle();
+        bindPaletteToggle();
         bindCustomCursor();
         document.addEventListener('astro:page-load', bindThemeToggle);
+        document.addEventListener('astro:page-load', bindPaletteToggle);
         document.addEventListener('astro:page-load', bindCustomCursor);
       })();
     </script>

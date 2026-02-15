@@ -1,0 +1,1947 @@
+<!DOCTYPE html><html lang="en" data-content-page="true"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Course Syllabus | Graphics Lectures</title><link rel="icon" type="image/x-icon" href="/icon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script>
+      (() => {
+        let stored = null;
+        try {
+          const value = localStorage.getItem('theme');
+          if (value === 'dark' || value === 'light') {
+            stored = value;
+          }
+        } catch {
+        }
+
+        const initial = stored
+          ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', initial);
+
+        // Initialize palette
+        let storedPalette = null;
+        try {
+          const value = localStorage.getItem('palette');
+          if (value === 'monotonic' || value === 'colorful') {
+            storedPalette = value;
+          }
+        } catch {
+        }
+        const initialPalette = storedPalette ?? 'colorful';
+        document.documentElement.setAttribute('data-palette', initialPalette);
+      })();
+    </script><link rel="stylesheet" href="/_astro/index.DXg93LQX.css">
+<style>.meta-content[data-astro-cid-cdtpdnzy]{margin-top:2rem}
+</style></head> <body> <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div> <div class="site-shell"> <header class="site-header"> <a class="site-brand" href="/"> Mehul Yadav</a> <nav class="site-nav" aria-label="Primary"> <a class="site-nav-link active" href="/series/rendering">Series</a> <button class="palette-toggle" id="palette-toggle" type="button" aria-label="Toggle palette"> <img class="palette-icon" src="/palette.ico" alt="" width="20" height="20" aria-hidden="true"> </button> <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme"> <img class="mode-icon" src="/dark_mode.ico" alt="" width="20" height="20" aria-hidden="true"> </button> </nav> </header>  <main data-astro-cid-cdtpdnzy> <h1 data-astro-cid-cdtpdnzy>Course Syllabus</h1> <div class="meta" data-astro-cid-cdtpdnzy> <p class="meta-label" data-astro-cid-cdtpdnzy>Page metadata</p> <dl class="meta-grid" data-astro-cid-cdtpdnzy> <div class="meta-row meta-row-summary" data-astro-cid-cdtpdnzy> <dt data-astro-cid-cdtpdnzy>Summary</dt> <dd data-astro-cid-cdtpdnzy>An introduction to course syllabus and motivation.</dd> </div> <div class="meta-row" data-astro-cid-cdtpdnzy> <dt data-astro-cid-cdtpdnzy>Series</dt> <dd data-astro-cid-cdtpdnzy>Rendering Lectures</dd> </div> <div class="meta-row" data-astro-cid-cdtpdnzy> <dt data-astro-cid-cdtpdnzy>Section</dt> <dd data-astro-cid-cdtpdnzy>syllabus</dd> </div> </dl> </div> <aside class="toc-shell is-hidden" data-toc data-content-selector=".meta-content" aria-label="Table of contents"> <div class="toc-title">On this page</div> <nav class="toc-nav" data-toc-nav></nav> <div class="toc-controls" data-toc-controls> <button class="toc-control" type="button" data-toc-expand>Expand all</button> <button class="toc-control" type="button" data-toc-top>Back to top</button> <button class="toc-control" type="button" data-toc-bottom>Go to bottom</button> </div> </aside> <script>
+  (() => {
+    const slugify = (value) => value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+
+    const initOne = (toc) => {
+      if (!toc || toc.dataset.boundToc === 'true') return true;
+
+      const selector = toc.getAttribute('data-content-selector') || 'article';
+      const content = document.querySelector(selector);
+      const nav = toc.querySelector('[data-toc-nav]');
+
+      if (!content || !nav) {
+        return false;
+      }
+
+      const headingElementsAll = [...content.querySelectorAll('h1, h2, h3, h4')]
+        .filter((heading) => heading.textContent && heading.textContent.trim().length > 0);
+
+      if (headingElementsAll.length < 1) {
+        toc.classList.add('is-hidden');
+        toc.dataset.boundToc = 'true';
+        return true;
+      }
+
+      const levelsForOrder = headingElementsAll
+        .map((heading) => Number(heading.tagName[1]));
+      const uniqueSortedLevels = [...new Set(levelsForOrder)].sort((a, b) => a - b);
+      const allowedLevels = new Set(uniqueSortedLevels.slice(0, 2));
+
+      if (allowedLevels.size === 0) {
+        const fallbackLevels = [...new Set(headingElementsAll.map((heading) => Number(heading.tagName[1])))]
+          .sort((a, b) => a - b)
+          .slice(0, 2);
+        fallbackLevels.forEach((level) => allowedLevels.add(level));
+      }
+
+      const headingElements = headingElementsAll.filter((heading) =>
+        allowedLevels.has(Number(heading.tagName[1]))
+      );
+
+      if (headingElements.length < 1) {
+        toc.classList.add('is-hidden');
+        toc.dataset.boundToc = 'true';
+        return true;
+      }
+
+      const usedIds = new Set();
+      headingElements.forEach((heading) => {
+        const existingId = heading.getAttribute('id');
+        if (existingId) {
+          usedIds.add(existingId);
+          return;
+        }
+
+        const base = slugify(heading.textContent || 'section') || 'section';
+        let id = base;
+        let index = 2;
+        while (usedIds.has(id)) {
+          id = `${base}-${index}`;
+          index += 1;
+        }
+        usedIds.add(id);
+        heading.setAttribute('id', id);
+      });
+
+      const nodes = [];
+      const stack = [{ level: 0, children: nodes, parentId: null }];
+
+      headingElements.forEach((heading) => {
+        const level = Number(heading.tagName[1]);
+        const node = {
+          id: heading.id,
+          level,
+          text: (heading.textContent || '').trim(),
+          children: [],
+          element: heading,
+          parentId: null
+        };
+
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+
+        const parent = stack[stack.length - 1];
+        node.parentId = parent.parentId;
+        parent.children.push(node);
+        stack.push({ level, children: node.children, parentId: node.id });
+      });
+
+      const renderNodeList = (list) => {
+        const ul = document.createElement('ul');
+        ul.className = 'toc-list';
+
+        list.forEach((node) => {
+          const li = document.createElement('li');
+          li.className = `toc-item toc-level-${node.level}`;
+          li.dataset.tocId = node.id;
+          li.dataset.tocLevel = String(node.level);
+
+          const link = document.createElement('a');
+          link.href = `#${node.id}`;
+          link.textContent = node.text;
+          link.className = 'toc-link';
+          li.appendChild(link);
+
+          if (node.children.length > 0) {
+            li.classList.add('has-children');
+            li.appendChild(renderNodeList(node.children));
+          }
+
+          ul.appendChild(li);
+        });
+
+        return ul;
+      };
+
+      nav.innerHTML = '';
+      nav.appendChild(renderNodeList(nodes));
+
+      const items = [...toc.querySelectorAll('.toc-item')];
+      const byId = new Map(items.map((item) => [item.dataset.tocId, item]));
+      const controls = toc.querySelector('[data-toc-controls]');
+      const expandButton = toc.querySelector('[data-toc-expand]');
+      const topButton = toc.querySelector('[data-toc-top]');
+      const bottomButton = toc.querySelector('[data-toc-bottom]');
+      let expandAll = false;
+
+      const openPathFor = (activeId) => {
+        items.forEach((item) => item.classList.remove('is-active', 'in-path'));
+        if (activeId) {
+          const activeItem = byId.get(activeId);
+          if (activeItem) {
+            activeItem.classList.add('is-active');
+
+            let current = activeItem;
+            while (current) {
+              current.classList.add('in-path');
+              const parent = current.parentElement?.closest('.toc-item');
+              current = parent;
+            }
+          }
+        }
+
+        items.forEach((item) => {
+          if (!item.classList.contains('has-children')) return;
+          const keepOpenByPath = item.classList.contains('in-path');
+          const shouldCollapse = !expandAll && !keepOpenByPath;
+          item.classList.toggle('is-collapsed', shouldCollapse);
+        });
+      };
+
+      const updateVisibility = () => {
+        const main = document.querySelector('main');
+        if (!main) return;
+
+        const mainRect = main.getBoundingClientRect();
+        const leftSpace = mainRect.left;
+        const enoughRoom = window.innerWidth >= 1024 && leftSpace >= 180;
+
+        toc.classList.toggle('is-hidden', !enoughRoom);
+        if (enoughRoom) {
+          toc.style.left = `${Math.max(8, leftSpace - 266)}px`;
+        }
+      };
+
+      const getActiveHeadingId = () => {
+        const header = document.querySelector('.site-header');
+        const topOffset = (header ? header.getBoundingClientRect().height : 0) + 18;
+        const triggerLine = topOffset + Math.max(0, (window.innerHeight - topOffset) * 0.25);
+
+        let current = headingElements[0];
+        for (const heading of headingElements) {
+          if (heading.getBoundingClientRect().top <= triggerLine) {
+            current = heading;
+          } else {
+            break;
+          }
+        }
+
+        return current?.id ?? null;
+      };
+
+      let rafId = 0;
+      const onScroll = () => {
+        if (rafId) return;
+        rafId = window.requestAnimationFrame(() => {
+          const activeId = getActiveHeadingId();
+          openPathFor(activeId);
+          rafId = 0;
+        });
+      };
+
+      const onResize = () => {
+        updateVisibility();
+        onScroll();
+      };
+
+      if (controls && expandButton && topButton && bottomButton) {
+        expandButton.addEventListener('click', () => {
+          expandAll = !expandAll;
+          expandButton.textContent = expandAll ? 'Collapse all' : 'Expand all';
+          openPathFor(getActiveHeadingId());
+        });
+
+        topButton.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        bottomButton.addEventListener('click', () => {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+        });
+      }
+
+      updateVisibility();
+      onScroll();
+
+      window.addEventListener('resize', onResize, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      toc.dataset.boundToc = 'true';
+      return true;
+    };
+
+    const initAll = () => {
+      const tocs = [...document.querySelectorAll('[data-toc]')];
+      if (tocs.length === 0) return true;
+
+      let allReady = true;
+      tocs.forEach((toc) => {
+        const ready = initOne(toc);
+        allReady = allReady && ready;
+      });
+      return allReady;
+    };
+
+    const bootstrap = () => {
+      let attempts = 0;
+      const run = () => {
+        const ready = initAll();
+        if (!ready && attempts < 40) {
+          attempts += 1;
+          window.requestAnimationFrame(run);
+        }
+      };
+      run();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
+    } else {
+      bootstrap();
+    }
+
+    document.addEventListener('astro:page-load', bootstrap);
+  })();
+</script> <div class="meta-content" data-astro-cid-cdtpdnzy> <h1 id="the-mathematics-of-rendering">The Mathematics of Rendering</h1>
+<h2 id="a-non-linear-course-in-computational-image-synthesis">A Non-Linear Course in Computational Image Synthesis</h2>
+<p><strong>Philosophy</strong>: This course treats rendering as a mathematical and physical discipline. The spine develops fundamental tools that enable ALL rendering paradigms. Branches are specialized applications of these foundations.</p>
+<p><strong>Target Audience</strong>: Students with strong mathematical background (linear algebra, calculus, probability) seeking deep understanding of rendering from first principles.</p>
+<p><strong>Prerequisites</strong>:</p>
+<ul>
+<li>Linear algebra (vector spaces, transformations, eigenvalues)</li>
+<li>Multivariable calculus (partial derivatives, gradients, integration)</li>
+<li>Probability &amp; statistics (distributions, expected value, variance)</li>
+<li>Basic programming (for implementations)</li>
+</ul>
+<h1 id="spine-mathematical-foundations-of-rendering">SPINE: Mathematical Foundations of Rendering</h1>
+<p>The spine is <strong>not</strong> a survey. Every topic goes deep. If you can’t derive it from first principles or prove convergence properties, we’re not going deep enough.</p>
+<h2 id="phase-0-orientation--landscape">Phase 0: Orientation &amp; Landscape</h2>
+<p><strong>Goal</strong>: Frame rendering as a computational field, not just light simulation.</p>
+<h3 id="01-what-is-rendering">0.1 What is Rendering?</h3>
+<ul>
+<li>Rendering = computational image synthesis</li>
+<li>The forward problem: world model → image</li>
+<li>The inverse problem: image → world model (brief mention)</li>
+<li>Different paradigms: rasterization, ray tracing, radiosity, neural rendering</li>
+</ul>
+<h3 id="02-the-rendering-landscape">0.2 The Rendering Landscape</h3>
+<ul>
+<li>2D rendering (vector graphics, compositing, UI rendering)</li>
+<li>3D rendering (geometry → 2D projection)</li>
+<li>Photorealistic vs stylized</li>
+<li>Real-time vs offline (constraint-based taxonomy)</li>
+<li>Scientific visualization, medical imaging, etc.</li>
+</ul>
+<h3 id="03-course-structure">0.3 Course Structure</h3>
+<ul>
+<li>Spine = mathematical tools applicable everywhere</li>
+<li>Branches = application domains (PBRT, real-time, spectral, etc.)</li>
+<li>Non-linear navigation: prerequisites as needed</li>
+<li>The deep dive promise: we’ll go further than PBRT on foundations</li>
+</ul>
+<h3 id="deliverables">Deliverables</h3>
+<ul>
+<li>None (orientation only)</li>
+<li>Reading: Survey paper on rendering paradigms</li>
+</ul>
+<hr/>
+<h2 id="phase-1-images-as-signals">Phase 1: Images as Signals</h2>
+<p><strong>Goal</strong>: Understand images as discretized continuous functions. Master sampling theory from first principles.</p>
+<h3 id="11-continuous-image-functions">1.1 Continuous Image Functions</h3>
+<ul>
+<li>Image as function I: ℝ² → ℝⁿ (spatial domain)</li>
+<li>Color spaces (ℝ³ for RGB, ℝ for grayscale)</li>
+<li>Temporal dimension: I: ℝ² × ℝ → ℝⁿ (video)</li>
+<li>Support, boundedness, integrability</li>
+</ul>
+<h3 id="12-discrete-representation">1.2 Discrete Representation</h3>
+<ul>
+<li>Pixels as samples of continuous signal</li>
+<li>Rectangular lattice sampling: I[m,n] = I(mΔx, nΔy)</li>
+<li>Resolution, aspect ratio, pixel density</li>
+<li>Frame buffers and memory layout</li>
+</ul>
+<h3 id="13-fourier-analysis-foundations">1.3 Fourier Analysis Foundations</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Fourier transform derivation from Taylor series</li>
+<li>Frequency domain representation</li>
+<li>Parseval’s theorem (energy conservation)</li>
+<li>Convolution theorem proof</li>
+<li>Frequency interpretation: spatial frequency, orientation</li>
+</ul>
+<h3 id="14-the-sampling-theorem">1.4 The Sampling Theorem</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Nyquist frequency derivation</li>
+<li>Shannon-Whittaker theorem statement and proof</li>
+<li>Aliasing: frequency folding mechanism</li>
+<li>Band-limited signals: sinc reconstruction</li>
+<li>Practical implications for rendering</li>
+</ul>
+<h3 id="15-reconstruction-theory">1.5 Reconstruction Theory</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Reconstruction as convolution</li>
+<li>Filter properties: separability, support, smoothness</li>
+<li>Box, tent, Gaussian, Mitchell-Netravali, Lanczos</li>
+<li>Ideal low-pass filter (sinc) and its impracticality</li>
+<li>Gibbs phenomenon</li>
+<li>Error analysis: L² norms, PSNR, perceptual metrics</li>
+</ul>
+<h3 id="16-resampling--filtering">1.6 Resampling &amp; Filtering</h3>
+<ul>
+<li>Downsampling: prefiltering requirement</li>
+<li>Upsampling: zero-insertion and interpolation</li>
+<li>Mipmapping mathematical foundation</li>
+<li>Anisotropic filtering: elliptical filtering footprints</li>
+</ul>
+<h3 id="17-color-theory-fundamentals">1.7 Color Theory Fundamentals</h3>
+<ul>
+<li>Human visual system overview (cones, sensitivity curves)</li>
+<li>Trichromatic theory</li>
+<li>Color matching functions</li>
+<li>XYZ color space derivation</li>
+<li>RGB as device-dependent basis</li>
+<li>Gamma encoding: physical vs perceptual uniformity</li>
+</ul>
+<h3 id="mathematical-tools-introduced">Mathematical Tools Introduced</h3>
+<ul>
+<li>Fourier analysis</li>
+<li>Convolution and correlation</li>
+<li>Function spaces (L², band-limited)</li>
+<li>Optimization (filter design)</li>
+</ul>
+<h3 id="deliverables-1">Deliverables</h3>
+<ul>
+<li><strong>Project 1</strong>: Implement reconstruction filters, measure L² error vs frequency content</li>
+<li><strong>Project 2</strong>: Build mipmap system with custom filtering, analyze aliasing reduction</li>
+<li><strong>Derivation Exercise</strong>: Prove Nyquist theorem from scratch</li>
+<li><strong>Problem Set</strong>: Fourier transforms, convolution, frequency analysis (10-15 problems)</li>
+</ul>
+<hr/>
+<h2 id="phase-2-geometry--intersection-mathematics">Phase 2: Geometry &amp; Intersection Mathematics</h2>
+<p><strong>Goal</strong>: Master computational geometry from first principles. Understand floating-point arithmetic implications.</p>
+<h3 id="21-parametric-representations">2.1 Parametric Representations</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Parametric lines: P(t) = O + tD</li>
+<li>Parameter space vs world space</li>
+<li>Parametric curves: Bézier, B-splines (brief)</li>
+<li>Parametric surfaces: tensor product formulation</li>
+<li>Differential geometry primer: tangent space, normals, curvature</li>
+</ul>
+<h3 id="22-implicit-surfaces">2.2 Implicit Surfaces</h3>
+<ul>
+<li>F(x,y,z) = 0 representation</li>
+<li>Algebraic surfaces: quadrics, superquadrics</li>
+<li>Level sets and isocontours</li>
+<li>Gradient as normal: ∇F = normal direction</li>
+<li>Duality with parametric forms</li>
+</ul>
+<h3 id="23-ray-surface-intersection-theory">2.3 Ray-Surface Intersection Theory</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Intersection as root-finding problem</li>
+<li>Ray-sphere: quadratic equation derivation</li>
+<li>Ray-plane: linear equation solution</li>
+<li>Ray-triangle: Möller-Trumbore algorithm derivation
+<ul>
+<li>Barycentric coordinates derivation</li>
+<li>Cramer’s rule application</li>
+<li>Degenerate cases analysis</li>
+</ul>
+</li>
+<li>Ray-AABB: slab method proof
+<ul>
+<li>Interval arithmetic</li>
+<li>Kay-Kajiya optimization</li>
+</ul>
+</li>
+</ul>
+<h3 id="24-numerical-precision--robustness">2.4 Numerical Precision &amp; Robustness</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>IEEE 754 floating-point standard</li>
+<li>Machine epsilon: definition and implications</li>
+<li>Relative vs absolute error</li>
+<li>Catastrophic cancellation examples</li>
+<li>Self-intersection problem in ray tracing</li>
+<li>Epsilon-ball heuristics: limitations and alternatives</li>
+<li>Floating-point error propagation analysis</li>
+<li>Interval arithmetic for guaranteed bounds</li>
+</ul>
+<h3 id="25-coordinate-systems--transformations">2.5 Coordinate Systems &amp; Transformations</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Affine transformations: linear + translation</li>
+<li>Matrix representations: 4×4 homogeneous coordinates</li>
+<li>Transformation composition and order</li>
+<li>Inverse transformations</li>
+<li>Normal transformation: (M⁻¹)ᵀ derivation</li>
+<li>Orthogonal bases and changes of basis</li>
+<li>Gram-Schmidt orthonormalization</li>
+</ul>
+<h3 id="26-spatial-data-structures">2.6 Spatial Data Structures</h3>
+<p><strong>Deep Dive</strong>: (This is where you go beyond PBRT’s treatment)</p>
+<h4 id="gridvoxel-structures">Grid/Voxel Structures</h4>
+<ul>
+<li>Uniform grids: space partitioning</li>
+<li>Hash-based grid storage</li>
+<li>Memory vs traversal tradeoff</li>
+<li>3D-DDA traversal algorithm</li>
+<li>Sparse voxel octrees (SVO)</li>
+</ul>
+<h4 id="bounding-volume-hierarchies-bvh">Bounding Volume Hierarchies (BVH)</h4>
+<ul>
+<li>Tree construction algorithms</li>
+<li>SAH (Surface Area Heuristic) derivation
+<ul>
+<li>Expected cost model</li>
+<li>Probability of ray-box intersection</li>
+<li>Optimization formulation</li>
+</ul>
+</li>
+<li>Splitting strategies: object splits, spatial splits</li>
+<li>Top-down vs bottom-up construction</li>
+<li>BVH quality metrics: SAH cost, tree depth</li>
+</ul>
+<h4 id="kd-trees">KD-Trees</h4>
+<ul>
+<li>Space partitioning vs object partitioning</li>
+<li>Construction: median split, SAH</li>
+<li>Traversal: front-to-back ordering</li>
+<li>Comparison with BVH: tradeoffs</li>
+</ul>
+<h4 id="performance-analysis">Performance Analysis</h4>
+<ul>
+<li>Expected intersection cost models</li>
+<li>Cache behavior analysis</li>
+<li>SIMD-friendly layouts</li>
+<li>Memory-bandwidth considerations</li>
+</ul>
+<h3 id="27-computational-geometry-toolkit">2.7 Computational Geometry Toolkit</h3>
+<ul>
+<li>Convexity: definitions, tests, implications</li>
+<li>Point-in-polygon test: winding number algorithm</li>
+<li>Clipping: Cohen-Sutherland, Sutherland-Hodgman</li>
+<li>Boolean operations on meshes (brief)</li>
+<li>Closest point queries</li>
+</ul>
+<h3 id="mathematical-tools-introduced-1">Mathematical Tools Introduced</h3>
+<ul>
+<li>Differential geometry (tangent spaces, curvature)</li>
+<li>Root-finding algorithms</li>
+<li>Numerical analysis (error analysis, stability)</li>
+<li>Tree data structures and complexity analysis</li>
+<li>Probability (for SAH cost models)</li>
+</ul>
+<h3 id="deliverables-2">Deliverables</h3>
+<ul>
+<li><strong>Project 3</strong>: Implement multiple ray-primitive intersectors with robustness tests</li>
+<li><strong>Project 4</strong>: Build BVH from scratch, implement SAH, benchmark vs naive</li>
+<li><strong>Derivation Exercise</strong>: Derive Möller-Trumbore from first principles</li>
+<li><strong>Analysis Exercise</strong>: Floating-point error propagation in ray-triangle intersection</li>
+<li><strong>Problem Set</strong>: Geometry, transformations, numerical precision (15-20 problems)</li>
+</ul>
+<hr/>
+<h2 id="phase-3-camera-models--projection">Phase 3: Camera Models &amp; Projection</h2>
+<p><strong>Goal</strong>: Understand imaging geometry from physical and mathematical perspectives.</p>
+<h3 id="31-pinhole-camera-model">3.1 Pinhole Camera Model</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Perspective projection derivation</li>
+<li>Similar triangles geometric proof</li>
+<li>Projection matrix formulation</li>
+<li>Field of view: horizontal, vertical, diagonal relationships</li>
+<li>Focal length and sensor size relationship</li>
+</ul>
+<h3 id="32-coordinate-transformations">3.2 Coordinate Transformations</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>World space → Camera space (view transform)</li>
+<li>Camera space → Clip space (projection)</li>
+<li>Clip space → NDC (normalized device coordinates)</li>
+<li>NDC → Screen space (viewport transform)</li>
+<li>Homogeneous divide: perspective correction</li>
+<li>Depth range mapping: [near, far] → [0, 1]</li>
+</ul>
+<h3 id="33-projection-varieties">3.3 Projection Varieties</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Orthographic projection: parallel rays</li>
+<li>Perspective projection: converging rays</li>
+<li>Weak perspective: hybrid approximation</li>
+<li>Fisheye/spherical projections</li>
+<li>Stereographic projection</li>
+</ul>
+<h3 id="34-lens-systems">3.4 Lens Systems</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Thin lens equation: 1/f = 1/dₒ + 1/dᵢ derivation</li>
+<li>Circle of confusion (CoC) analysis</li>
+<li>Depth of field: near/far limits derivation</li>
+<li>Bokeh: aperture shape influence</li>
+<li>F-number: f/N relationship to exposure and DoF</li>
+<li>Focus, aperture, focal length tradeoffs</li>
+</ul>
+<h3 id="35-sampling-in-space-and-time">3.5 Sampling in Space and Time</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Spatial sampling: lens aperture sampling (jittered, stratified)</li>
+<li>Temporal sampling: motion blur fundamentals</li>
+<li>Shutter timing: instantaneous vs finite exposure</li>
+<li>Motion vectors and reconstruction</li>
+<li>Defocus blur vs motion blur: physical distinction</li>
+</ul>
+<h3 id="36-lens-aberrations-overview">3.6 Lens Aberrations (Overview)</h3>
+<ul>
+<li>Chromatic aberration: dispersion effects</li>
+<li>Spherical aberration</li>
+<li>Coma, astigmatism, distortion</li>
+<li>Vignetting</li>
+<li>(Full treatment in optics branch)</li>
+</ul>
+<h3 id="mathematical-tools-introduced-2">Mathematical Tools Introduced</h3>
+<ul>
+<li>Projective geometry</li>
+<li>Homogeneous coordinates</li>
+<li>Matrix decomposition (perspective projection)</li>
+<li>Geometric optics</li>
+</ul>
+<h3 id="deliverables-3">Deliverables</h3>
+<ul>
+<li><strong>Project 5</strong>: Implement camera with DoF (thin lens sampling)</li>
+<li><strong>Project 6</strong>: Add motion blur with temporal sampling</li>
+<li><strong>Derivation Exercise</strong>: Derive thin lens equation from Snell’s law</li>
+<li><strong>Problem Set</strong>: Projection mathematics, lens equations (10 problems)</li>
+</ul>
+<hr/>
+<h2 id="phase-4-local-illumination-models">Phase 4: Local Illumination Models</h2>
+<p><strong>Goal</strong>: Build shading models from empirical observation and physical intuition. Understand energy conservation.</p>
+<h3 id="41-the-shading-problem">4.1 The Shading Problem</h3>
+<ul>
+<li>Local vs global illumination</li>
+<li>Direct lighting: emitted + single bounce</li>
+<li>Shading = f(view, light, normal, surface properties)</li>
+<li>Hemisphere of directions</li>
+</ul>
+<h3 id="42-lambertian-diffuse-model">4.2 Lambertian Diffuse Model</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Physical basis: rough surfaces, subsurface scattering</li>
+<li>BRDF formulation: f_r = ρ/π derivation</li>
+<li>Cosine falloff: Lambert’s cosine law (n · l)</li>
+<li>Energy conservation: albedo ρ ∈ [0,1]</li>
+<li>White furnace test: ∫_Ω f_r (n · ω_i) dω_i ≤ 1</li>
+</ul>
+<h3 id="43-phong-reflection-model">4.3 Phong Reflection Model</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Empirical model: not physically based</li>
+<li>Specular term: (r · v)ⁿ where r = 2(n · l)n - l</li>
+<li>Shininess exponent n: lobe tightness</li>
+<li>Energy normalization issues (non-physical)</li>
+<li>Blinn-Phong variant: (n · h)ⁿ where h = (l + v)/|l + v|</li>
+</ul>
+<h3 id="44-energy-conservation-in-shading">4.4 Energy Conservation in Shading</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>White furnace test formalization</li>
+<li>BRDF normalization constraints</li>
+<li>Helmholtz reciprocity: f(ωᵢ, ωₒ) = f(ωₒ, ωᵢ)</li>
+<li>Non-physical models: Phong violations</li>
+<li>Normalized Phong-Blinn attempts</li>
+</ul>
+<h3 id="45-shadow-rays--visibility">4.5 Shadow Rays &amp; Visibility</h3>
+<ul>
+<li>Hard shadows: binary visibility test</li>
+<li>Shadow ray: secondary ray to light source</li>
+<li>Self-intersection problem revisited</li>
+<li>Multiple lights: accumulation</li>
+</ul>
+<h3 id="46-fresnel-effect-introductory">4.6 Fresnel Effect (Introductory)</h3>
+<ul>
+<li>View-dependent reflectance</li>
+<li>Grazing angle enhancement</li>
+<li>Schlick approximation: F ≈ F₀ + (1 - F₀)(1 - cos θ)⁵</li>
+<li>(Full derivation in optics branch)</li>
+</ul>
+<h3 id="mathematical-tools-introduced-3">Mathematical Tools Introduced</h3>
+<ul>
+<li>Hemisphere integration</li>
+<li>Solid angle</li>
+<li>BRDF formalism (introductory)</li>
+<li>Energy conservation constraints</li>
+</ul>
+<h3 id="deliverables-4">Deliverables</h3>
+<ul>
+<li><strong>Project 7</strong>: Implement Lambertian, Phong, Blinn-Phong shaders</li>
+<li><strong>Analysis Exercise</strong>: Measure energy conservation violations in Phong</li>
+<li><strong>White Furnace Test</strong>: Implement and verify various BRDFs</li>
+<li><strong>Problem Set</strong>: BRDF properties, energy conservation (10 problems)</li>
+</ul>
+<hr/>
+<h2 id="phase-5-monte-carlo-methods--sampling-theory">Phase 5: Monte Carlo Methods &amp; Sampling Theory</h2>
+<p><strong>Goal</strong>: Master Monte Carlo integration from probability theory. This is the mathematical heart of modern rendering.</p>
+<h3 id="51-probability-foundations">5.1 Probability Foundations</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Random variables: discrete, continuous, mixed</li>
+<li>Probability density functions (PDFs)</li>
+<li>Cumulative distribution functions (CDFs)</li>
+<li>Expected value: E[X] = ∫ x p(x) dx</li>
+<li>Variance: Var[X] = E[X²] - E[X]²</li>
+<li>Covariance and correlation</li>
+<li>Joint, marginal, conditional distributions</li>
+<li>Bayes’ theorem</li>
+</ul>
+<h3 id="52-monte-carlo-integration-theory">5.2 Monte Carlo Integration Theory</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>The basic estimator: ⟨F⟩ = (1/N) Σ f(Xᵢ)/p(Xᵢ)</li>
+<li>Unbiased estimators: E[⟨F⟩] = ∫ f(x) dx</li>
+<li>Proof of unbiasedness</li>
+<li>Variance of MC estimator: Var[⟨F⟩] = Var[f/p] / N</li>
+<li>Law of large numbers: convergence in probability</li>
+<li>Central limit theorem: distribution of ⟨F⟩</li>
+<li>Convergence rate: O(1/√N)</li>
+<li>Why MC doesn’t suffer from curse of dimensionality</li>
+</ul>
+<h3 id="53-variance-reduction-techniques">5.3 Variance Reduction Techniques</h3>
+<p><strong>Deep Dive</strong>:</p>
+<h4 id="importance-sampling">Importance Sampling</h4>
+<ul>
+<li>Matching p(x) to f(x): variance reduction proof</li>
+<li>Optimal PDF: p*(x) = |f(x)| / ∫|f(x)|dx</li>
+<li>Why optimal PDF has zero variance (theoretical)</li>
+<li>Practical importance sampling strategies</li>
+<li>Warping uniform samples: inverse CDF method</li>
+<li>2D sampling: joint vs marginal approach</li>
+</ul>
+<h4 id="stratified-sampling">Stratified Sampling</h4>
+<ul>
+<li>Variance decomposition: within-strata vs between-strata</li>
+<li>Proof of variance reduction</li>
+<li>Jittered sampling as stratified variant</li>
+<li>Latin hypercube sampling</li>
+<li>Optimal stratum allocation</li>
+</ul>
+<h4 id="multiple-importance-sampling-mis">Multiple Importance Sampling (MIS)</h4>
+<ul>
+<li>Problem: combining multiple sampling strategies</li>
+<li>Balance heuristic: wᵢ = pᵢ/(p₁ + p₂ + … + pₙ)</li>
+<li>Power heuristic: wᵢ = pᵢᵝ/(Σpⱼᵝ)</li>
+<li>Veach’s theorem: one-sample MIS is unbiased</li>
+<li>Proof of variance bounds</li>
+<li>MIS in practice: BRDF sampling + light sampling</li>
+</ul>
+<h4 id="control-variates">Control Variates</h4>
+<ul>
+<li>Using known integrals to reduce variance</li>
+<li>Correlated estimators</li>
+<li>Optimal control variate coefficient</li>
+</ul>
+<h3 id="54-change-of-variables">5.4 Change of Variables</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Transformation theorem for PDFs</li>
+<li>Jacobian determinant: |∂(u,v)/∂(x,y)|</li>
+<li>1D example: uniform → exponential via CDF</li>
+<li>2D example: uniform square → unit disk</li>
+<li>Spherical coordinates: solid angle measure</li>
+<li>Hemisphere sampling patterns:
+<ul>
+<li>Uniform hemisphere: p(ω) = 1/(2π)</li>
+<li>Cosine-weighted: p(ω) = cos θ / π</li>
+<li>Phong lobe: derivation from (n·h)ⁿ</li>
+</ul>
+</li>
+</ul>
+<h3 id="55-low-discrepancy-sequences">5.5 Low-Discrepancy Sequences</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Discrepancy definition: L∞ and L² variants</li>
+<li>Quasi-Monte Carlo: using deterministic sequences</li>
+<li>Halton sequence: coprime bases</li>
+<li>Hammersley sequence: finite set variant</li>
+<li>Sobol sequence: Gray code construction</li>
+<li>van der Corput sequence</li>
+<li>Error bounds: O((log N)ᵈ/N) vs O(1/√N)</li>
+<li>Koksma-Hlawka inequality</li>
+</ul>
+<h3 id="56-reconstruction--denoising">5.6 Reconstruction &amp; Denoising</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>MC samples as sparse measurements</li>
+<li>Reconstruction filters revisited (from Phase 1)</li>
+<li>Bilateral filtering: range and domain weights</li>
+<li>Cross-bilateral / joint bilateral</li>
+<li>A-Trous wavelet transform</li>
+<li>SVGF (Spatiotemporal Variance-Guided Filtering) overview</li>
+<li>Machine learning denoisers (conceptual, deep dive in neural branch)</li>
+</ul>
+<h3 id="57-convergence-analysis">5.7 Convergence Analysis</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Mean squared error (MSE) = bias² + variance</li>
+<li>Bias-variance tradeoff</li>
+<li>Convergence metrics: RMSE, relative error</li>
+<li>Sample complexity analysis</li>
+<li>Stopping criteria: variance estimation, perceptual thresholds</li>
+<li>Signal-to-noise ratio (SNR) measurement</li>
+</ul>
+<h3 id="mathematical-tools-introduced-4">Mathematical Tools Introduced</h3>
+<ul>
+<li>Probability theory (comprehensive)</li>
+<li>Statistical inference</li>
+<li>Measure theory (basic)</li>
+<li>Jacobian transformations</li>
+<li>Number theory (for low-discrepancy sequences)</li>
+</ul>
+<h3 id="deliverables-5">Deliverables</h3>
+<ul>
+<li><strong>Project 8</strong>: Implement multiple sampling strategies, measure variance</li>
+<li><strong>Project 9</strong>: Build MIS framework, compare balance vs power heuristics</li>
+<li><strong>Project 10</strong>: Implement QMC sequences (Halton, Sobol), compare convergence</li>
+<li><strong>Derivation Exercise</strong>: Prove variance reduction for stratified sampling</li>
+<li><strong>Derivation Exercise</strong>: Prove unbiasedness of MIS balance heuristic</li>
+<li><strong>Problem Set</strong>: Probability, MC integration, variance analysis (20 problems)</li>
+</ul>
+<hr/>
+<h2 id="phase-6-rendering-paradigms">Phase 6: Rendering Paradigms</h2>
+<p><strong>Goal</strong>: Position major rendering approaches as different strategies for the same problem. This is NOT a deep dive into any one paradigm—those are branches.</p>
+<h3 id="61-the-fundamental-problem">6.1 The Fundamental Problem</h3>
+<ul>
+<li>Computing I(x,y): image intensity at pixel</li>
+<li>Visibility: what is visible?</li>
+<li>Shading: how much light reaches visible surface?</li>
+<li>Different paradigms = different visibility + shading strategies</li>
+</ul>
+<h3 id="62-rasterization-paradigm">6.2 Rasterization Paradigm</h3>
+<p><strong>Overview</strong> (not deep, just positioning):</p>
+<ul>
+<li>Forward projection: geometry → screen</li>
+<li>Triangle rasterization: scan conversion</li>
+<li>Fragment shading: per-pixel computation</li>
+<li>Z-buffer: depth testing for visibility</li>
+<li>Screen-space techniques: SSAO, SSR</li>
+<li>Real-time constraints: fixed budget</li>
+<li>Limitations: difficult indirect illumination</li>
+</ul>
+<h3 id="63-ray-tracing-paradigm">6.3 Ray Tracing Paradigm</h3>
+<p><strong>Overview</strong>:</p>
+<ul>
+<li>Backward tracing: pixel → geometry</li>
+<li>Primary rays: camera → first hit</li>
+<li>Shadow rays: hit → light sources</li>
+<li>Recursive rays: reflection, refraction</li>
+<li>Visibility: ray intersection tests</li>
+<li>Limitations: exponential ray trees</li>
+</ul>
+<h3 id="64-path-tracing-paradigm-introductory">6.4 Path Tracing Paradigm (Introductory)</h3>
+<p><strong>Overview</strong> (deep dive in PBRT branch):</p>
+<ul>
+<li>Monte Carlo approach to rendering</li>
+<li>Paths: camera → surface → … → light</li>
+<li>Throughput accumulation along path</li>
+<li>Russian roulette termination</li>
+<li>Direct lighting + indirect lighting</li>
+<li>Unbiased convergence</li>
+<li>Limitations: noise, convergence time</li>
+</ul>
+<h3 id="65-bidirectional-methods-mention">6.5 Bidirectional Methods (Mention)</h3>
+<ul>
+<li>Light paths + eye paths</li>
+<li>Path connection strategies</li>
+<li>(Full treatment in advanced transport branch)</li>
+</ul>
+<h3 id="66-radiosity-mention">6.6 Radiosity (Mention)</h3>
+<ul>
+<li>Finite element approach</li>
+<li>Diffuse interreflection</li>
+<li>Form factors</li>
+<li>(Legacy method, not covered deeply)</li>
+</ul>
+<h3 id="67-hybrid-approaches">6.7 Hybrid Approaches</h3>
+<ul>
+<li>Rasterization + ray tracing (modern real-time)</li>
+<li>Photon mapping overview</li>
+<li>Irradiance caching overview</li>
+</ul>
+<h3 id="comparison-framework">Comparison Framework</h3>
+<ul>
+<li>Visibility strategy: forward vs backward</li>
+<li>Sampling strategy: deterministic vs stochastic</li>
+<li>Convergence: fixed cost vs progressive</li>
+<li>Implementation: GPU-friendly vs CPU-friendly</li>
+</ul>
+<h3 id="deliverables-6">Deliverables</h3>
+<ul>
+<li><strong>Essay</strong>: Compare 3 paradigms on theoretical grounds (visibility, sampling, complexity)</li>
+<li><strong>Analysis Exercise</strong>: Estimate asymptotic complexity for each paradigm</li>
+<li>No implementation (implementations come in branches)</li>
+</ul>
+<hr/>
+<h2 id="phase-7-performance-architecture--engineering">Phase 7: Performance, Architecture &amp; Engineering</h2>
+<p><strong>Goal</strong>: Understand how theoretical algorithms map to hardware. Performance engineering from first principles.</p>
+<h3 id="71-algorithm-complexity-analysis">7.1 Algorithm Complexity Analysis</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Big-O notation review</li>
+<li>Worst-case, average-case, amortized analysis</li>
+<li>Space complexity vs time complexity</li>
+<li>BVH traversal: expected O(log N)</li>
+<li>Ray-triangle intersection: O(1)</li>
+<li>Scene complexity scaling</li>
+</ul>
+<h3 id="72-hardware-architecture-fundamentals">7.2 Hardware Architecture Fundamentals</h3>
+<h4 id="cpu-architecture">CPU Architecture</h4>
+<ul>
+<li>Pipelining: instruction-level parallelism</li>
+<li>Superscalar execution</li>
+<li>Out-of-order execution</li>
+<li>Branch prediction: impact on ray tracing</li>
+<li>Cache hierarchy: L1, L2, L3</li>
+<li>Cache lines, spatial locality</li>
+<li>Prefetching: hardware and software</li>
+</ul>
+<h4 id="memory-hierarchy">Memory Hierarchy</h4>
+<ul>
+<li>Von Neumann bottleneck</li>
+<li>Bandwidth vs latency</li>
+<li>DRAM characteristics</li>
+<li>Cache-oblivious algorithms</li>
+<li>Memory access patterns in rendering</li>
+</ul>
+<h4 id="simd-single-instruction-multiple-data">SIMD (Single Instruction Multiple Data)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Vector registers: SSE, AVX, AVX-512</li>
+<li>Data parallelism exploitation</li>
+<li>AoS (Array of Structures) vs SoA (Structure of Arrays)</li>
+<li>SIMD-friendly BVH layouts</li>
+<li>Packet ray tracing</li>
+<li>Incoherent rays: divergence issues</li>
+<li>Masking and blending operations</li>
+</ul>
+<h3 id="73-gpu-architecture">7.3 GPU Architecture</h3>
+<h4 id="simt-single-instruction-multiple-threads">SIMT (Single Instruction Multiple Threads)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Warp/wavefront execution model</li>
+<li>Thread divergence: branch penalties</li>
+<li>Occupancy: threads per SM/CU</li>
+<li>Register pressure</li>
+<li>Shared memory: explicit cache</li>
+<li>Memory coalescing: strided vs sequential access</li>
+</ul>
+<h4 id="rendering-specific-hardware">Rendering-Specific Hardware</h4>
+<ul>
+<li>Texture units: filtering, mip selection</li>
+<li>Rasterization units: fixed-function pipeline</li>
+<li>RT cores (RTX, RDNA): ray-box, ray-triangle acceleration</li>
+<li>Tensor cores: denoising, neural rendering</li>
+</ul>
+<h4 id="gpu-memory-model">GPU Memory Model</h4>
+<ul>
+<li>Global memory: high latency</li>
+<li>Shared memory: low latency, explicit management</li>
+<li>Constant memory: read-only, cached</li>
+<li>Texture memory: spatial locality optimization</li>
+<li>Memory bandwidth: bottleneck analysis</li>
+</ul>
+<h3 id="74-bvh-traversal-optimization">7.4 BVH Traversal Optimization</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Stack-based traversal: memory implications</li>
+<li>Stackless traversal: ropes, threads</li>
+<li>Nearest-hit vs any-hit traversal</li>
+<li>Traversal order: front-to-back for early exit</li>
+<li>Occlusion culling during traversal</li>
+<li>Coherent ray batching: packet traversal</li>
+<li>SIMD BVH traversal: frustum AABBs</li>
+</ul>
+<h3 id="75-profiling--measurement">7.5 Profiling &amp; Measurement</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Amdahl’s law: parallelization limits</li>
+<li>Roofline model: compute vs memory bound</li>
+<li>Profiling tools: sampling vs instrumentation</li>
+<li>Hotspot identification</li>
+<li>Bottleneck analysis: CPU, memory, GPU compute</li>
+<li>Timing methodology: variance, warm-up, outliers</li>
+<li>Metrics: rays/second, samples/second, convergence rate</li>
+</ul>
+<h3 id="76-optimization-strategies">7.6 Optimization Strategies</h3>
+<ul>
+<li>Algorithmic optimization: better asymptotic complexity</li>
+<li>Data structure optimization: cache-friendly layouts</li>
+<li>Microarchitecture optimization: SIMD, prefetch hints</li>
+<li>Load balancing: work stealing, dynamic scheduling</li>
+<li>Ray coherence exploitation</li>
+<li>Texture compression: DXT, ASTC</li>
+<li>LOD (Level of Detail) systems: discrete, continuous</li>
+</ul>
+<h3 id="77-variance--quality-metrics">7.7 Variance &amp; Quality Metrics</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Image quality metrics: MSE, PSNR, SSIM, FLIP</li>
+<li>Variance estimation: per-pixel, neighborhood</li>
+<li>SNR computation</li>
+<li>Adaptive sampling: concentrating samples on high-variance regions</li>
+<li>Error propagation through pipeline</li>
+</ul>
+<h3 id="mathematical-tools-introduced-5">Mathematical Tools Introduced</h3>
+<ul>
+<li>Algorithm analysis (asymptotic notation)</li>
+<li>Queueing theory (for scheduling)</li>
+<li>Information theory (for compression)</li>
+<li>Optimization theory (for performance tuning)</li>
+</ul>
+<h3 id="deliverables-7">Deliverables</h3>
+<ul>
+<li><strong>Project 11</strong>: Profile a renderer, identify bottlenecks, optimize</li>
+<li><strong>Project 12</strong>: Implement SIMD ray-triangle intersection, measure speedup</li>
+<li><strong>Analysis Exercise</strong>: Roofline model analysis of a rendering kernel</li>
+<li><strong>Essay</strong>: Compare CPU ray tracing vs GPU ray tracing architectures</li>
+<li><strong>Problem Set</strong>: Complexity analysis, optimization strategies (10 problems)</li>
+</ul>
+<hr/>
+<h1 id="branches-specialized-applications">BRANCHES: Specialized Applications</h1>
+<p>Branches apply spine foundations to specific rendering domains. Each branch can be taken independently after completing the relevant spine phases.</p>
+<hr/>
+<h2 id="branch-a-physically-based-rendering-pbr">Branch A: Physically Based Rendering (PBR)</h2>
+<p><strong>Prerequisites</strong>: Phase 1-7 (full spine)</p>
+<p><strong>Goal</strong>: Build a production-quality path tracer from first principles. Go deeper than PBRT on light transport theory.</p>
+<h3 id="a1-light-transport-theory">A.1 Light Transport Theory</h3>
+<h4 id="radiometry-rigorous-treatment">Radiometry (Rigorous Treatment)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Energy, flux (power): Φ [Watts]</li>
+<li>Irradiance: E = dΦ/dA [W/m²]</li>
+<li>Radiance: L = d²Φ/(dA dω cos θ) [W/(m² sr)]</li>
+<li>Radiance as fundamental quantity</li>
+<li>Invariance of radiance along rays (vacuum)</li>
+<li>Dimensional analysis: keeping units consistent</li>
+<li>Relationship to photometry: luminance, illuminance</li>
+</ul>
+<h4 id="the-rendering-equation">The Rendering Equation</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Kajiya 1986: L_o(x, ω_o) = L_e(x, ω_o) + ∫_Ω f_r(x, ω_i, ω_o) L_i(x, ω_i) cos θ_i dω_i</li>
+<li>Derivation from energy balance</li>
+<li>Domain of integration: hemisphere Ω</li>
+<li>Recursive structure: L_i = L_o elsewhere</li>
+<li>Fredholm integral equation of second kind</li>
+<li>Neumann series solution: L = L_e + TL_e + T²L_e + …
+<ul>
+<li>T = transport operator</li>
+</ul>
+</li>
+<li>Path integral formulation</li>
+</ul>
+<h4 id="brdf-theory">BRDF Theory</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>BRDF: f_r(x, ω_i, ω_o) = dL_o/dE_i</li>
+<li>Physical constraints:
+<ul>
+<li>Non-negativity: f_r ≥ 0</li>
+<li>Energy conservation: ∫_Ω f_r cos θ dω ≤ 1</li>
+<li>Helmholtz reciprocity: f_r(ω_i, ω_o) = f_r(ω_o, ω_i)</li>
+</ul>
+</li>
+<li>Generalization to BSDF (bidirectional scattering distribution function)</li>
+<li>BTDF (transmission), BSSRDF (subsurface)</li>
+</ul>
+<h3 id="a2-path-tracing-algorithm">A.2 Path Tracing Algorithm</h3>
+<h4 id="monte-carlo-light-transport">Monte Carlo Light Transport</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Path space formulation</li>
+<li>Measurement contribution function</li>
+<li>Path throughput: β = ∏ f_r cos θ / p</li>
+<li>Russian roulette: unbiased termination
+<ul>
+<li>Termination probability q</li>
+<li>Weight adjustment: β / (1-q)</li>
+</ul>
+</li>
+<li>Splitting: creating additional paths</li>
+</ul>
+<h4 id="next-event-estimation-nee">Next Event Estimation (NEE)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Direct lighting: explicit light sampling</li>
+<li>Importance sampling lights: area, power</li>
+<li>Shadow rays: visibility testing</li>
+<li>Combining NEE with BRDF sampling via MIS</li>
+</ul>
+<h4 id="path-sampling-strategies">Path Sampling Strategies</h4>
+<ul>
+<li>BRDF importance sampling</li>
+<li>Light importance sampling</li>
+<li>Combined: multiple importance sampling</li>
+<li>Bidirectional path tracing (overview, deep dive in Advanced Transport branch)</li>
+</ul>
+<h3 id="a3-materials--microfacet-theory">A.3 Materials &amp; Microfacet Theory</h3>
+<h4 id="microfacet-model">Microfacet Model</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Geometric optics approximation</li>
+<li>Microsurface normal distribution: D(h)</li>
+<li>Masking-shadowing function: G(ω_i, ω_o, h)</li>
+<li>Fresnel term: F(ω_i, h)</li>
+<li>BRDF: f_r = (D G F) / (4 cos θ_i cos θ_o)</li>
+<li>Derivation from first principles</li>
+</ul>
+<h4 id="normal-distribution-functions">Normal Distribution Functions</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Beckmann distribution: e^(-tan²θ/α²) / (πα²cos⁴θ)</li>
+<li>GGX (Trowbridge-Reitz): α² / (π((cos²θ)(α²-1)+1)²)</li>
+<li>Anisotropic variants</li>
+<li>Normalization: ∫_Ω D(h) cos θ dω = 1</li>
+<li>Importance sampling: CDF inversion, visible normal sampling</li>
+</ul>
+<h4 id="masking-shadowing-functions">Masking-Shadowing Functions</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Smith model: G(ω_i, ω_o) = G₁(ω_i) G₁(ω_o)</li>
+<li>Height-correlated Smith: more accurate</li>
+<li>G₁ derivation for GGX</li>
+<li>Relationship to roughness parameter α</li>
+</ul>
+<h4 id="fresnel-equations-full-derivation">Fresnel Equations (Full Derivation)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Electromagnetic wave reflection at interface</li>
+<li>Perpendicular and parallel polarization components</li>
+<li>Complex refractive indices: absorption</li>
+<li>Conductor Fresnel: full complex formulation</li>
+<li>Schlick approximation: accuracy analysis</li>
+</ul>
+<h3 id="a4-advanced-materials">A.4 Advanced Materials</h3>
+<h4 id="layered-materials">Layered Materials</h4>
+<ul>
+<li>Thin film interference</li>
+<li>Coating over substrate</li>
+<li>Multiple layer stacking</li>
+</ul>
+<h4 id="translucent-materials">Translucent Materials</h4>
+<ul>
+<li>BSSRDF: spatial variation of light transport</li>
+<li>Diffusion approximation</li>
+<li>Photon mapping for subsurface scattering</li>
+</ul>
+<h4 id="specialized-materials">Specialized Materials</h4>
+<ul>
+<li>Cloth: anisotropic, multiple scattering</li>
+<li>Hair and fur: Marschner model, dual-cylinder model</li>
+<li>Skin: multi-layered BSSRDF</li>
+</ul>
+<h3 id="a5-textures--shading">A.5 Textures &amp; Shading</h3>
+<ul>
+<li>UV parameterization</li>
+<li>Texture filtering: trilinear, anisotropic</li>
+<li>Normal mapping: tangent space</li>
+<li>Displacement mapping</li>
+<li>Procedural textures: noise functions (Perlin, Worley)</li>
+</ul>
+<h3 id="a6-advanced-sampling">A.6 Advanced Sampling</h3>
+<h4 id="bidirectional-path-tracing-bdpt">Bidirectional Path Tracing (BDPT)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Light paths and eye paths</li>
+<li>Path connection: t-s vertices</li>
+<li>Multiple importance sampling across all strategies</li>
+<li>Efficiency in complex lighting scenarios</li>
+</ul>
+<h4 id="metropolis-light-transport-mlt">Metropolis Light Transport (MLT)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Markov Chain Monte Carlo (MCMC) fundamentals</li>
+<li>Metropolis-Hastings algorithm</li>
+<li>Mutation strategies: bidirectional, lens perturbation</li>
+<li>Primary sample space MLT</li>
+<li>Stratification concerns</li>
+</ul>
+<h4 id="photon-mapping">Photon Mapping</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Two-pass algorithm: photon tracing + rendering</li>
+<li>Photon storage: kd-tree, hash grid</li>
+<li>Density estimation: kernel bandwidth selection</li>
+<li>Progressive photon mapping: SPPM</li>
+<li>Stochastic progressive photon mapping</li>
+</ul>
+<h4 id="vertex-connection-and-merging-vcm">Vertex Connection and Merging (VCM)</h4>
+<ul>
+<li>Unifying BDPT and photon mapping</li>
+<li>Connection vs merging decisions</li>
+<li>MIS weights across techniques</li>
+</ul>
+<h3 id="a7-participating-media">A.7 Participating Media</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Volume rendering equation</li>
+<li>Extinction: absorption + scattering</li>
+<li>Beer’s law: transmittance e^(-∫σ_t ds)</li>
+<li>Phase functions: isotropic, Henyey-Greenstein</li>
+<li>Single scattering: ray marching</li>
+<li>Multiple scattering: path tracing in volumes</li>
+<li>Null scattering: delta tracking, ratio tracking</li>
+<li>Heterogeneous media: varying density</li>
+</ul>
+<h3 id="a8-implementation--validation">A.8 Implementation &amp; Validation</h3>
+<h4 id="scene-description">Scene Description</h4>
+<ul>
+<li>Material definitions</li>
+<li>Light sources: area lights, infinite lights, environment maps</li>
+<li>Camera specifications</li>
+</ul>
+<h4 id="validation--testing">Validation &amp; Testing</h4>
+<ul>
+<li>White furnace test</li>
+<li>Energy conservation checks</li>
+<li>Known analytic solutions: sphere in Cornell box</li>
+<li>Comparison with reference renders</li>
+</ul>
+<h4 id="optimization-for-path-tracing">Optimization for Path Tracing</h4>
+<ul>
+<li>Coherent ray tracing strategies</li>
+<li>Wavefront path tracing on GPU</li>
+<li>Denoising integration</li>
+</ul>
+<h3 id="deliverables-8">Deliverables</h3>
+<ul>
+<li><strong>Project 13</strong>: Build basic path tracer (Lambertian + NEE + MIS)</li>
+<li><strong>Project 14</strong>: Implement microfacet BRDF (GGX + Smith G)</li>
+<li><strong>Project 15</strong>: Add Russian roulette, measure bias elimination</li>
+<li><strong>Project 16</strong>: Implement BDPT or photon mapping</li>
+<li><strong>Project 17</strong>: Add participating media (homogeneous first, then heterogeneous)</li>
+<li><strong>Research Paper</strong>: Analyze convergence properties of different path sampling strategies</li>
+<li><strong>Problem Set</strong>: Radiometry, rendering equation, BRDF sampling (25 problems)</li>
+</ul>
+<hr/>
+<h2 id="branch-b-spectral--advanced-light-transport">Branch B: Spectral &amp; Advanced Light Transport</h2>
+<p><strong>Prerequisites</strong>: Phase 1-7 (full spine) + Branch A recommended</p>
+<p><strong>Goal</strong>: Go beyond RGB rendering. Simulate wavelength-dependent phenomena.</p>
+<h3 id="b1-spectral-rendering-foundations">B.1 Spectral Rendering Foundations</h3>
+<h4 id="color-science">Color Science</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>CIE XYZ color matching functions: 1931 standard</li>
+<li>Spectral power distributions (SPDs)</li>
+<li>Integration: XYZ = ∫ SPD(λ) CMF(λ) dλ</li>
+<li>Chromatic adaptation: von Kries, Bradford</li>
+<li>Color appearance models: CIECAM02</li>
+</ul>
+<h4 id="spectral-representation">Spectral Representation</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Continuous spectra: impractical</li>
+<li>Discretization strategies:
+<ul>
+<li>Uniformly spaced samples</li>
+<li>Gaussian mixture models</li>
+<li>Polynomial basis (Chebyshev)</li>
+<li>PCA (principal component analysis) basis</li>
+</ul>
+</li>
+<li>Hero wavelength sampling</li>
+<li>Spectral MIS: combining wavelength strategies</li>
+</ul>
+<h4 id="rendering-equation-spectral">Rendering Equation (Spectral)</h4>
+<ul>
+<li>Wavelength dependence: L(x, ω, λ)</li>
+<li>Chromatic BRDFs: f_r(x, ω_i, ω_o, λ)</li>
+<li>Path throughput with wavelength</li>
+</ul>
+<h3 id="b2-wavelength-dependent-phenomena">B.2 Wavelength-Dependent Phenomena</h3>
+<h4 id="dispersion">Dispersion</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Refractive index: n(λ)</li>
+<li>Cauchy equation, Sellmeier equation</li>
+<li>Rainbow formation: geometry of refraction</li>
+<li>Prisms, lenses with chromatic aberration</li>
+</ul>
+<h4 id="fluorescence--phosphorescence">Fluorescence &amp; Phosphorescence</h4>
+<ul>
+<li>Energy absorption and re-emission</li>
+<li>Stokes shift: λ_emission &gt; λ_absorption</li>
+<li>Re-radiation matrix: wavelength transformation</li>
+<li>Path tracing with fluorescence</li>
+</ul>
+<h4 id="interference--diffraction">Interference &amp; Diffraction</h4>
+<ul>
+<li>Thin film interference: oil slicks, soap bubbles</li>
+<li>Iridescence: wavelength-dependent reflection</li>
+<li>Diffraction gratings</li>
+<li>(Wave optics needed, covered in optics branch B.5)</li>
+</ul>
+<h3 id="b3-advanced-transport-algorithms">B.3 Advanced Transport Algorithms</h3>
+<h4 id="bi-directional-path-tracing-extended">Bi-Directional Path Tracing (Extended)</h4>
+<ul>
+<li>Spectral considerations</li>
+<li>Wavelength-dependent path throughput</li>
+</ul>
+<h4 id="metropolis-light-transport-extended">Metropolis Light Transport (Extended)</h4>
+<ul>
+<li>Spectral mutation strategies</li>
+<li>Replica exchange across wavelengths</li>
+</ul>
+<h4 id="gradient-domain-rendering">Gradient-Domain Rendering</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Finite difference estimates: ∇L</li>
+<li>Reconstruction from gradients: Poisson equation</li>
+<li>Shift mapping: correlating paths</li>
+<li>Manifold exploration: specular chains</li>
+</ul>
+<h3 id="b4-polarization-overview">B.4 Polarization (Overview)</h3>
+<ul>
+<li>Stokes vectors: I, Q, U, V</li>
+<li>Mueller matrices</li>
+<li>Polarized BRDFs</li>
+<li>(Full treatment in optics branch)</li>
+</ul>
+<h3 id="b5-optics-deep-dive-can-be-separate-branch">B.5 Optics Deep Dive (Can be separate branch)</h3>
+<h4 id="wave-optics">Wave Optics</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Electromagnetic waves: E and H fields</li>
+<li>Wave equation derivation from Maxwell’s equations</li>
+<li>Plane waves: e^(i(k·r - ωt))</li>
+<li>Huygens-Fresnel principle</li>
+<li>Coherence: temporal and spatial</li>
+</ul>
+<h4 id="physical-optics">Physical Optics</h4>
+<ul>
+<li>Interference: constructive and destructive</li>
+<li>Double-slit experiment: intensity distribution</li>
+<li>Diffraction: Fraunhofer and Fresnel</li>
+<li>Fourier optics: lens as Fourier transformer</li>
+</ul>
+<h4 id="geometrical-optics-from-wave-limit">Geometrical Optics (From Wave Limit)</h4>
+<ul>
+<li>Eikonal equation: high-frequency limit</li>
+<li>Fermat’s principle derivation</li>
+<li>Snell’s law from Fermat or from wave matching</li>
+</ul>
+<h3 id="deliverables-9">Deliverables</h3>
+<ul>
+<li><strong>Project 18</strong>: Implement spectral renderer (hero wavelength + spectral MIS)</li>
+<li><strong>Project 19</strong>: Add dispersion, render rainbows or prisms</li>
+<li><strong>Project 20</strong>: Implement gradient-domain path tracing</li>
+<li><strong>Research Paper</strong>: Analyze spectral sampling strategies, measure color accuracy</li>
+<li><strong>Problem Set</strong>: Spectral rendering, wave optics (15 problems)</li>
+</ul>
+<hr/>
+<h2 id="branch-c-real-time-rendering--constraint-based-optimization">Branch C: Real-Time Rendering &amp; Constraint-Based Optimization</h2>
+<p><strong>Prerequisites</strong>: Phase 1-7 (full spine), especially Phase 7 (performance)</p>
+<p><strong>Goal</strong>: Master real-time rendering under strict time budgets. Understand approximations and tradeoffs.</p>
+<h3 id="c1-real-time-rendering-constraints">C.1 Real-Time Rendering Constraints</h3>
+<ul>
+<li>Frame budget: 16.67ms (60 FPS), 11.11ms (90 FPS), 8.33ms (120 FPS)</li>
+<li>GPU parallelism: exploiting SIMT</li>
+<li>Memory bandwidth limits</li>
+<li>Power constraints (mobile)</li>
+</ul>
+<h3 id="c2-rasterization-pipeline-deep-dive">C.2 Rasterization Pipeline (Deep Dive)</h3>
+<h4 id="vertex-processing">Vertex Processing</h4>
+<ul>
+<li>Vertex shader: transformations, skinning</li>
+<li>Tessellation: subdivision on GPU</li>
+<li>Geometry shaders: primitive generation</li>
+</ul>
+<h4 id="rasterization">Rasterization</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Triangle setup: edge equations</li>
+<li>Scanline rasterization</li>
+<li>Tile-based rasterization (mobile GPUs)</li>
+<li>Conservative rasterization</li>
+<li>Z-buffer: depth testing</li>
+<li>Early-Z optimization: depth pre-pass</li>
+</ul>
+<h4 id="fragment-processing">Fragment Processing</h4>
+<ul>
+<li>Fragment shader: per-pixel shading</li>
+<li>Texture sampling: hardware filtering</li>
+<li>Alpha blending: order-dependent transparency</li>
+<li>Deferred shading: G-buffer approach</li>
+</ul>
+<h3 id="c3-real-time-shading-models">C.3 Real-Time Shading Models</h3>
+<h4 id="pbr-in-real-time">PBR in Real-Time</h4>
+<ul>
+<li>Microfacet models: GGX adapted for real-time</li>
+<li>Image-based lighting: environment maps</li>
+<li>Prefiltered IBL: split-sum approximation</li>
+<li>Spherical harmonics: diffuse irradiance</li>
+</ul>
+<h4 id="approximations">Approximations</h4>
+<ul>
+<li>Pre-computed lighting: light maps, probe grids</li>
+<li>Screen-space ambient occlusion (SSAO)</li>
+<li>Screen-space reflections (SSR): limitations</li>
+<li>Contact shadows</li>
+</ul>
+<h3 id="c4-real-time-global-illumination">C.4 Real-Time Global Illumination</h3>
+<h4 id="voxel-based-gi">Voxel-Based GI</h4>
+<ul>
+<li>Sparse voxel octree (SVO)</li>
+<li>Voxel cone tracing</li>
+<li>Directional occlusion</li>
+</ul>
+<h4 id="probe-based-gi">Probe-Based GI</h4>
+<ul>
+<li>Irradiance probes: spatial grid</li>
+<li>Radiance probes: directional information</li>
+<li>Dynamic diffuse global illumination (DDGI)</li>
+</ul>
+<h4 id="hybrid-ray-tracing">Hybrid Ray Tracing</h4>
+<ul>
+<li>RT cores: hardware-accelerated BVH traversal</li>
+<li>Low ray budgets: 1-4 rays per pixel</li>
+<li>Denoising: aggressive, real-time denoisers</li>
+<li>Temporal accumulation: reprojection, disocclusion</li>
+</ul>
+<h3 id="c5-temporal-techniques">C.5 Temporal Techniques</h3>
+<h4 id="temporal-anti-aliasing-taa">Temporal Anti-Aliasing (TAA)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Reprojection: motion vectors</li>
+<li>History blending: α-blend new and old samples</li>
+<li>Jittering: subpixel sample positions per frame</li>
+<li>Ghosting artifacts: disocclusion detection</li>
+<li>Variance clipping: neighborhood clamping</li>
+</ul>
+<h4 id="temporal-super-resolution">Temporal Super-Resolution</h4>
+<ul>
+<li>Checkerboard rendering</li>
+<li>DLSS, FSR, XeSS: neural upscaling</li>
+<li>Reconstruction from sparse samples</li>
+</ul>
+<h3 id="c6-level-of-detail-lod">C.6 Level of Detail (LOD)</h3>
+<h4 id="discrete-lod">Discrete LOD</h4>
+<ul>
+<li>Multiple mesh resolutions</li>
+<li>Switching distances: popping artifacts</li>
+<li>Hysteresis: avoid thrashing</li>
+</ul>
+<h4 id="continuous-lod">Continuous LOD</h4>
+<ul>
+<li>Progressive meshes: edge collapse, vertex splits</li>
+<li>Geomorphing: smooth transitions</li>
+</ul>
+<h4 id="texture-lod">Texture LOD</h4>
+<ul>
+<li>Mipmapping (revisited from spine)</li>
+<li>Texture streaming: virtual texturing</li>
+</ul>
+<h3 id="c7-culling--optimization">C.7 Culling &amp; Optimization</h3>
+<h4 id="frustum-culling">Frustum Culling</h4>
+<ul>
+<li>View frustum: 6 planes</li>
+<li>Bounding volume tests: sphere, AABB, OBB</li>
+</ul>
+<h4 id="occlusion-culling">Occlusion Culling</h4>
+<ul>
+<li>Hardware occlusion queries</li>
+<li>Software rasterization for occluders</li>
+<li>Hierarchical Z-buffer (Hi-Z)</li>
+</ul>
+<h4 id="draw-call-optimization">Draw Call Optimization</h4>
+<ul>
+<li>Batching: reducing CPU overhead</li>
+<li>Instancing: rendering multiple copies</li>
+<li>Indirect drawing: GPU-driven rendering</li>
+</ul>
+<h3 id="c8-mobile--vr-considerations">C.8 Mobile &amp; VR Considerations</h3>
+<ul>
+<li>Tile-based deferred rendering (TBDR)</li>
+<li>Bandwidth reduction: ASTC compression</li>
+<li>Foveated rendering: variable rate shading</li>
+<li>Multi-view rendering: stereo optimizations</li>
+</ul>
+<h3 id="deliverables-10">Deliverables</h3>
+<ul>
+<li><strong>Project 21</strong>: Implement deferred shading pipeline</li>
+<li><strong>Project 22</strong>: Add TAA with jittering</li>
+<li><strong>Project 23</strong>: Implement hybrid ray-traced shadows + denoising</li>
+<li><strong>Project 24</strong>: Build probe-based GI system</li>
+<li><strong>Performance Analysis</strong>: Profile real-time rendering, optimize to 60 FPS</li>
+<li><strong>Problem Set</strong>: Real-time approximations, TAA, culling (15 problems)</li>
+</ul>
+<hr/>
+<h2 id="branch-d-neural--differentiable-rendering">Branch D: Neural &amp; Differentiable Rendering</h2>
+<p><strong>Prerequisites</strong>: Phase 1-7 (spine), Machine learning basics</p>
+<p><strong>Goal</strong>: Understand intersection of rendering and deep learning.</p>
+<h3 id="d1-differentiable-rendering-foundations">D.1 Differentiable Rendering Foundations</h3>
+<h4 id="gradients-through-rendering">Gradients Through Rendering</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Why differentiate a renderer?
+<ul>
+<li>Inverse rendering: estimate scene from images</li>
+<li>Neural scene representations</li>
+<li>Training graphics pipelines</li>
+</ul>
+</li>
+<li>Forward pass: rendering as function I = R(θ)</li>
+<li>Backward pass: ∂I/∂θ</li>
+<li>Challenges: discontinuities at triangle edges, visibility changes</li>
+</ul>
+<h4 id="differentiable-primitives">Differentiable Primitives</h4>
+<ul>
+<li>Soft rasterization: smooth visibility</li>
+<li>Differentiable ray tracing: edge sampling</li>
+<li>Volumetric rendering: density fields are smooth</li>
+</ul>
+<h3 id="d2-neural-scene-representations">D.2 Neural Scene Representations</h3>
+<h4 id="neural-radiance-fields-nerf">Neural Radiance Fields (NeRF)</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Scene as MLP: (x, y, z, θ, φ) → (r, g, b, σ)</li>
+<li>Volume rendering integral: C = ∫ T(t) σ(t) c(t) dt</li>
+<li>Transmittance: T(t) = exp(-∫σ(s)ds)</li>
+<li>Training: photometric reconstruction loss</li>
+<li>Positional encoding: high-frequency details</li>
+<li>Hierarchical sampling: coarse + fine networks</li>
+</ul>
+<h4 id="extensions--improvements">Extensions &amp; Improvements</h4>
+<ul>
+<li>Instant-NGP: hash grid encoding, massive speedup</li>
+<li>Mip-NeRF: anti-aliasing via cone tracing</li>
+<li>NeRF in the Wild: appearance embeddings</li>
+<li>Dynamic NeRFs: time-varying scenes</li>
+</ul>
+<h3 id="d3-neural-rendering-techniques">D.3 Neural Rendering Techniques</h3>
+<h4 id="image-based-rendering">Image-Based Rendering</h4>
+<ul>
+<li>Light field rendering: plenoptic function</li>
+<li>Neural light fields: learned representations</li>
+</ul>
+<h4 id="neural-denoising">Neural Denoising</h4>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Supervised learning: clean + noisy pairs</li>
+<li>Self-supervised: kernel prediction</li>
+<li>Architectures: U-Net, transformers</li>
+<li>Feature buffers: normals, albedo, depth</li>
+<li>Temporal stability</li>
+</ul>
+<h4 id="neural-reconstruction">Neural Reconstruction</h4>
+<ul>
+<li>Learned upsampling: super-resolution</li>
+<li>Detail synthesis from coarse renders</li>
+<li>Generative models: GANs for rendering</li>
+</ul>
+<h3 id="d4-inverse-rendering">D.4 Inverse Rendering</h3>
+<h4 id="material-estimation">Material Estimation</h4>
+<ul>
+<li>BRDF from images: optimization</li>
+<li>SVBRDFs: spatial variation</li>
+<li>Differentiable material models</li>
+</ul>
+<h4 id="shape-reconstruction">Shape Reconstruction</h4>
+<ul>
+<li>Multi-view stereo with neural priors</li>
+<li>SDF learning: neural implicit surfaces</li>
+</ul>
+<h4 id="lighting-estimation">Lighting Estimation</h4>
+<ul>
+<li>Environment map from single image</li>
+<li>Inverse lighting with neural rendering</li>
+</ul>
+<h3 id="d5-graphics-neural-networks">D.5 Graphics Neural Networks</h3>
+<ul>
+<li>Graph neural networks on meshes</li>
+<li>Point cloud processing: PointNet</li>
+<li>3D CNNs for volumetric data</li>
+</ul>
+<h3 id="deliverables-11">Deliverables</h3>
+<ul>
+<li><strong>Project 25</strong>: Implement basic NeRF, train on synthetic scene</li>
+<li><strong>Project 26</strong>: Build neural denoiser for path tracing</li>
+<li><strong>Project 27</strong>: Differentiable renderer for inverse problem</li>
+<li><strong>Research Paper</strong>: Survey neural rendering, compare reconstruction quality</li>
+<li><strong>Problem Set</strong>: Automatic differentiation, neural networks (10 problems)</li>
+</ul>
+<hr/>
+<h2 id="branch-e-2d-rendering--vector-graphics">Branch E: 2D Rendering &amp; Vector Graphics</h2>
+<p><strong>Prerequisites</strong>: Phase 1-2 (signals, geometry), Phase 5 (sampling)</p>
+<p><strong>Goal</strong>: Understand 2D rendering: UI, fonts, compositing.</p>
+<h3 id="e1-vector-graphics-foundations">E.1 Vector Graphics Foundations</h3>
+<h4 id="primitives">Primitives</h4>
+<ul>
+<li>Lines: Bresenham algorithm</li>
+<li>Circles: midpoint circle algorithm</li>
+<li>Bézier curves: de Casteljau algorithm, subdivision</li>
+<li>B-splines: knot vectors, basis functions</li>
+</ul>
+<h4 id="rasterization-1">Rasterization</h4>
+<ul>
+<li>Scanline conversion</li>
+<li>Anti-aliasing: coverage masks, analytical area</li>
+<li>Signed distance fields (SDFs) for sharp corners</li>
+</ul>
+<h3 id="e2-fonts--text-rendering">E.2 Fonts &amp; Text Rendering</h3>
+<h4 id="font-technologies">Font Technologies</h4>
+<ul>
+<li>TrueType: quadratic Bézier curves</li>
+<li>OpenType: cubic Bézier + advanced typography</li>
+<li>Hinting: grid-fitting for small sizes</li>
+</ul>
+<h4 id="sdf-font-rendering">SDF Font Rendering</h4>
+<ul>
+<li>Distance field generation</li>
+<li>Efficient GPU rendering</li>
+<li>Multi-channel SDF (MSDF): sharp corners</li>
+</ul>
+<h3 id="e3-compositing-theory">E.3 Compositing Theory</h3>
+<p><strong>Deep Dive</strong>:</p>
+<ul>
+<li>Alpha compositing: Porter-Duff operators</li>
+<li>Over operator: C = αA + (1-α)B</li>
+<li>Premultiplied alpha: efficiency</li>
+<li>Layer blending: multiply, screen, overlay</li>
+</ul>
+<h3 id="e4-gpu-based-2d-rendering">E.4 GPU-Based 2D Rendering</h3>
+<ul>
+<li>Instanced rendering for many glyphs</li>
+<li>Texture atlases: packing fonts/icons</li>
+<li>Signed distance fields on GPU</li>
+</ul>
+<h3 id="e5-path-rendering">E.5 Path Rendering</h3>
+<ul>
+<li>GPU path rendering: NV_path_rendering</li>
+<li>Stencil-then-cover approach</li>
+<li>Curve tessellation: adaptive subdivision</li>
+</ul>
+<h3 id="deliverables-12">Deliverables</h3>
+<ul>
+<li><strong>Project 28</strong>: Implement Bézier curve rasterization</li>
+<li><strong>Project 29</strong>: Build SDF font renderer</li>
+<li><strong>Project 30</strong>: Compositing engine with Porter-Duff operators</li>
+</ul>
+<hr/>
+<h1 id="foundational-support-modules">FOUNDATIONAL SUPPORT MODULES</h1>
+<p>These are short reference modules to be consulted as needed.</p>
+<hr/>
+<h2 id="module-x1-linear-algebra-refresher">Module X1: Linear Algebra Refresher</h2>
+<ul>
+<li>Vector spaces, bases, dimension</li>
+<li>Linear transformations, matrices</li>
+<li>Eigenvalues, eigenvectors, diagonalization</li>
+<li>Singular value decomposition (SVD)</li>
+<li>Least squares: pseudoinverse</li>
+</ul>
+<h2 id="module-x2-multivariable-calculus-refresher">Module X2: Multivariable Calculus Refresher</h2>
+<ul>
+<li>Partial derivatives, gradient</li>
+<li>Chain rule in multiple dimensions</li>
+<li>Jacobian matrix</li>
+<li>Divergence, curl (brief)</li>
+<li>Multiple integrals: 2D, 3D</li>
+<li>Change of variables: Jacobian determinant</li>
+</ul>
+<h2 id="module-x3-probability--statistics-primer">Module X3: Probability &amp; Statistics Primer</h2>
+<ul>
+<li>Discrete and continuous distributions</li>
+<li>Expected value, variance</li>
+<li>Covariance, correlation</li>
+<li>Conditional probability, Bayes rule</li>
+<li>Central limit theorem</li>
+<li>Confidence intervals</li>
+</ul>
+<h2 id="module-x4-complex-analysis-brief">Module X4: Complex Analysis (Brief)</h2>
+<ul>
+<li>Complex numbers: i² = -1</li>
+<li>Euler’s formula: e^(iθ) = cos θ + i sin θ</li>
+<li>Complex exponentials in Fourier analysis</li>
+<li>Residue theorem (mention)</li>
+</ul>
+<h2 id="module-x5-numerical-methods">Module X5: Numerical Methods</h2>
+<ul>
+<li>Root finding: Newton-Raphson, bisection</li>
+<li>Numerical integration: trapezoidal, Simpson’s</li>
+<li>Ordinary differential equations: Euler, Runge-Kutta</li>
+<li>Finite differences vs finite elements</li>
+</ul>
+<hr/>
+<h1 id="reading-list--references">READING LIST &amp; REFERENCES</h1>
+<h2 id="essential-textbooks">Essential Textbooks</h2>
+<ol>
+<li><strong>Physically Based Rendering</strong> (Pharr, Jakob, Humphreys) - 4th edition
+<ul>
+<li>Primary reference for Branch A</li>
+</ul>
+</li>
+<li><strong>Real-Time Rendering</strong> (Akenine-Möller et al.) - 4th edition
+<ul>
+<li>Primary reference for Branch C</li>
+</ul>
+</li>
+<li><strong>Advanced Global Illumination</strong> (Dutré, Bala, Bekaert)
+<ul>
+<li>Deeper theory than PBRT</li>
+</ul>
+</li>
+<li><strong>Ray Tracing Gems I &amp; II</strong> (Haines, Akenine-Möller et al.)
+<ul>
+<li>Modern techniques, GPU ray tracing</li>
+</ul>
+</li>
+<li><strong>Digital Image Processing</strong> (Gonzalez, Woods)
+<ul>
+<li>For Phase 1 (signals, sampling)</li>
+</ul>
+</li>
+</ol>
+<h2 id="seminal-papers">Seminal Papers</h2>
+<ul>
+<li><strong>Kajiya 1986</strong>: The Rendering Equation</li>
+<li><strong>Cook et al. 1984</strong>: Distributed Ray Tracing</li>
+<li><strong>Schlick 1994</strong>: Fresnel Approximation</li>
+<li><strong>Walter et al. 2007</strong>: Microfacet Models (GGX)</li>
+<li><strong>Heitz 2014</strong>: Understanding the Masking-Shadowing Function</li>
+<li><strong>Veach 1997</strong>: Metropolis Light Transport (PhD thesis)</li>
+<li><strong>Jensen 1996</strong>: Global Illumination using Photon Maps</li>
+<li><strong>Mildenhall et al. 2020</strong>: NeRF</li>
+</ul>
+<h2 id="advanced-topics">Advanced Topics</h2>
+<ul>
+<li><strong>Numerical Recipes</strong> (Press et al.) - numerical methods</li>
+<li><strong>Principles of Digital Image Synthesis</strong> (Glassner) - comprehensive, out of print but valuable</li>
+<li><strong>Monte Carlo Methods in Financial Engineering</strong> (Glasserman) - advanced MC beyond rendering</li>
+</ul>
+<hr/>
+<h1 id="course-philosophy--pedagogy">COURSE PHILOSOPHY &amp; PEDAGOGY</h1>
+<h2 id="non-linearity">Non-Linearity</h2>
+<ul>
+<li>Students can branch at any point after completing prerequisites</li>
+<li>Multiple branches can be pursued in parallel</li>
+<li>Project-driven: implementations cement understanding</li>
+<li>Theory-first: understand why, then how</li>
+</ul>
+<h2 id="depth-commitment">Depth Commitment</h2>
+<ul>
+<li>Every topic in the spine goes deep enough to derive from first principles</li>
+<li>Proofs and derivations are not optional</li>
+<li>If you can’t derive it, you don’t understand it</li>
+</ul>
+<h2 id="comparison-with-pbrt">Comparison with PBRT</h2>
+<ul>
+<li>PBRT is an excellent practical guide</li>
+<li>This course goes deeper on:
+<ul>
+<li>Mathematical foundations (Fourier analysis, probability theory)</li>
+<li>Architectural considerations (SIMD, cache, GPU)</li>
+<li>Alternative paradigms (real-time, 2D, neural)</li>
+</ul>
+</li>
+<li>This course is less practical but more theoretical</li>
+<li>Goal: understand rendering as a mathematical discipline, not just a recipe book</li>
+</ul>
+<h2 id="assessment-philosophy">Assessment Philosophy</h2>
+<ul>
+<li>Projects: substantial implementations (2-4 weeks each)</li>
+<li>Derivations: written proofs and mathematical derivations</li>
+<li>Essays: analytical comparisons and critical thinking</li>
+<li>Problem sets: mathematical exercises</li>
+</ul>
+<h2 id="estimated-timeline">Estimated Timeline</h2>
+<ul>
+<li><strong>Spine (Phase 0-7)</strong>: 12-16 weeks (one semester)
+<ul>
+<li>Phase 0: 1 week</li>
+<li>Phase 1: 2 weeks</li>
+<li>Phase 2: 2-3 weeks</li>
+<li>Phase 3: 1 week</li>
+<li>Phase 4: 1-2 weeks</li>
+<li>Phase 5: 3-4 weeks (most mathematically dense)</li>
+<li>Phase 6: 1 week</li>
+<li>Phase 7: 2 weeks</li>
+</ul>
+</li>
+<li><strong>Each Branch</strong>: 6-10 weeks
+<ul>
+<li>Branch A (PBR): 10 weeks</li>
+<li>Branch B (Spectral): 8 weeks</li>
+<li>Branch C (Real-time): 8 weeks</li>
+<li>Branch D (Neural): 6 weeks</li>
+<li>Branch E (2D): 4 weeks</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h1 id="final-notes">FINAL NOTES</h1>
+<p>This structure allows you to:</p>
+<ol>
+<li><strong>Go deep on mathematics</strong> in the spine (satisfies your physics/math appetite)</li>
+<li><strong>Cover rendering broadly</strong> via branches (satisfies the “field” coverage)</li>
+<li><strong>Avoid being “yet another PBRT”</strong> (spine is broader, branches are deeper in specific areas)</li>
+<li><strong>Stay excited</strong> (every spine topic has depth; no “survey homework”)</li>
+</ol>
+<p>The spine is genuinely universal—these mathematical tools (sampling, geometry, MC integration) appear everywhere: path tracing, real-time, 2D, neural, even non-rendering fields.</p>
+<p>You’re not just teaching rendering. You’re teaching the <strong>mathematics and physics that make computational image synthesis possible</strong>.</p>
+<p>That’s a unique and valuable contribution.</p> </div> <p class="page-return-link" data-astro-cid-cdtpdnzy> <span class="return-link-icon" aria-hidden="true" data-astro-cid-cdtpdnzy>↗</span> <a class="return-link" href="/series/rendering" data-astro-cid-cdtpdnzy>Return to Rendering Lectures</a> </p> </main>  </div> <script>
+      (() => {
+        const getSafeStoredTheme = () => {
+          try {
+            const value = localStorage.getItem('theme');
+            return value === 'dark' || value === 'light' ? value : null;
+          } catch {
+            return null;
+          }
+        };
+
+        const setSafeStoredTheme = (theme) => {
+          try {
+            localStorage.setItem('theme', theme);
+          } catch {
+          }
+        };
+
+        const getCurrentTheme = () => {
+          const attrTheme = document.documentElement.getAttribute('data-theme');
+          if (attrTheme === 'dark' || attrTheme === 'light') return attrTheme;
+
+          const stored = getSafeStoredTheme();
+          if (stored) return stored;
+
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        const applyTheme = (theme) => {
+          document.documentElement.setAttribute('data-theme', theme);
+          setSafeStoredTheme(theme);
+        };
+
+        const bindThemeToggle = () => {
+          const button = document.getElementById('theme-toggle');
+          if (!button || button.dataset.boundThemeToggle === 'true') return;
+
+          const syncToggleState = () => {
+            const current = getCurrentTheme();
+            const target = current === 'dark' ? 'light' : 'dark';
+            button.setAttribute('aria-label', `Switch to ${target} mode`);
+            button.setAttribute('title', `Switch to ${target} mode`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentTheme();
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            syncToggleState();
+          });
+
+          button.dataset.boundThemeToggle = 'true';
+          syncToggleState();
+        };
+
+        const bindPaletteToggle = () => {
+          const button = document.getElementById('palette-toggle');
+          if (!button || button.dataset.boundPaletteToggle === 'true') return;
+
+          const getSafeStoredPalette = () => {
+            try {
+              const value = localStorage.getItem('palette');
+              return value === 'monotonic' || value === 'colorful' ? value : null;
+            } catch {
+              return null;
+            }
+          };
+
+          const setSafeStoredPalette = (palette) => {
+            try {
+              localStorage.setItem('palette', palette);
+            } catch {
+            }
+          };
+
+          const getCurrentPalette = () => {
+            const attrPalette = document.documentElement.getAttribute('data-palette');
+            if (attrPalette === 'monotonic' || attrPalette === 'colorful') return attrPalette;
+            return getSafeStoredPalette() ?? 'colorful';
+          };
+
+          const applyPalette = (palette) => {
+            document.documentElement.setAttribute('data-palette', palette);
+            setSafeStoredPalette(palette);
+          };
+
+          const syncPaletteState = () => {
+            const current = getCurrentPalette();
+            const target = current === 'colorful' ? 'monotonic' : 'colorful';
+            button.setAttribute('aria-label', `Switch to ${target} palette`);
+            button.setAttribute('title', `Switch to ${target} palette`);
+          };
+
+          button.addEventListener('click', () => {
+            const current = getCurrentPalette();
+            const next = current === 'colorful' ? 'monotonic' : 'colorful';
+            applyPalette(next);
+            syncPaletteState();
+          });
+
+          button.dataset.boundPaletteToggle = 'true';
+          syncPaletteState();
+        };
+
+        const bindCustomCursor = () => {
+          const blob = document.getElementById('cursor-blob');
+          if (!blob || blob.dataset.boundCustomCursor === 'true') return;
+
+          if (!window.matchMedia('(pointer: fine)').matches) {
+            document.documentElement.classList.remove('custom-cursor');
+            blob.remove();
+            return;
+          }
+
+          document.documentElement.classList.add('custom-cursor');
+
+          const interactiveSelector = 'a, button, [role="button"], summary, input, textarea, select, label';
+          let latestX = -100;
+          let latestY = -100;
+          let frameId = 0;
+
+          const render = () => {
+            blob.style.transform = `translate3d(${latestX}px, ${latestY}px, 0) translate(-50%, -50%)`;
+            frameId = 0;
+          };
+
+          const handleMove = (event) => {
+            latestX = event.clientX;
+            latestY = event.clientY;
+
+            if (!blob.classList.contains('is-visible')) {
+              blob.classList.add('is-visible');
+            }
+
+            if (event.target instanceof Element) {
+              const interactive = event.target.closest(interactiveSelector);
+              blob.classList.toggle('is-hover', Boolean(interactive));
+            } else {
+              blob.classList.remove('is-hover');
+            }
+
+            if (!frameId) {
+              frameId = window.requestAnimationFrame(render);
+            }
+          };
+
+          const handleLeave = () => {
+            blob.classList.remove('is-visible');
+            blob.classList.remove('is-hover');
+          };
+
+          const handleDown = () => blob.classList.add('is-pressed');
+          const handleUp = () => blob.classList.remove('is-pressed');
+
+          window.addEventListener('pointermove', handleMove, { passive: true });
+          window.addEventListener('mousemove', handleMove, { passive: true });
+          window.addEventListener('pointerdown', handleDown, { passive: true });
+          window.addEventListener('pointerup', handleUp, { passive: true });
+          document.addEventListener('mouseleave', handleLeave);
+
+          blob.dataset.boundCustomCursor = 'true';
+        };
+
+        bindThemeToggle();
+        bindPaletteToggle();
+        bindCustomCursor();
+        document.addEventListener('astro:page-load', bindThemeToggle);
+        document.addEventListener('astro:page-load', bindPaletteToggle);
+        document.addEventListener('astro:page-load', bindCustomCursor);
+      })();
+    </script> </body> </html> 

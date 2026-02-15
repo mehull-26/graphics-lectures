@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../../components/SiteLayout.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
 
 type LectureEntry = CollectionEntry<'lectures'>;
 type SeriesEntry = CollectionEntry<'series'>;
@@ -43,7 +44,7 @@ const declaredResources = lectureEntry.data.resources ?? [];
 const resources = declaredResources;
 ---
 
-<SiteLayout title={`${lectureEntry.data.title} | Graphics Lectures`}>
+<SiteLayout title={`${lectureEntry.data.title} | Graphics Lectures`} isContentPage={true}>
   <main>
     {publishedDate ? <p class="muted">{publishedDate}</p> : null}
     <h1>{lectureEntry.data.title}</h1>
@@ -102,6 +103,8 @@ const resources = declaredResources;
         </div>
       ) : null}
     </div>
+
+    <TableOfContents contentSelector="article" />
 
     <article>
       <Content />

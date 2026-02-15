@@ -1,0 +1,1369 @@
+---
+title: Course Syllabus
+summary: An introduction to course syllabus and motivation.
+order: 0
+---
+
+
+# The Mathematics of Rendering
+## A Non-Linear Course in Computational Image Synthesis
+
+**Philosophy**: This course treats rendering as a mathematical and physical discipline. The spine develops fundamental tools that enable ALL rendering paradigms. Branches are specialized applications of these foundations.
+
+**Target Audience**: Students with strong mathematical background (linear algebra, calculus, probability) seeking deep understanding of rendering from first principles.
+
+**Prerequisites**:
+- Linear algebra (vector spaces, transformations, eigenvalues)
+- Multivariable calculus (partial derivatives, gradients, integration)
+- Probability & statistics (distributions, expected value, variance)
+- Basic programming (for implementations)
+
+  
+# SPINE: Mathematical Foundations of Rendering
+
+The spine is **not** a survey. Every topic goes deep. If you can't derive it from first principles or prove convergence properties, we're not going deep enough.
+
+
+## Phase 0: Orientation & Landscape
+
+**Goal**: Frame rendering as a computational field, not just light simulation.
+
+### 0.1 What is Rendering?
+- Rendering = computational image synthesis
+- The forward problem: world model → image
+- The inverse problem: image → world model (brief mention)
+- Different paradigms: rasterization, ray tracing, radiosity, neural rendering
+
+### 0.2 The Rendering Landscape
+- 2D rendering (vector graphics, compositing, UI rendering)
+- 3D rendering (geometry → 2D projection)
+- Photorealistic vs stylized
+- Real-time vs offline (constraint-based taxonomy)
+- Scientific visualization, medical imaging, etc.
+
+### 0.3 Course Structure
+- Spine = mathematical tools applicable everywhere
+- Branches = application domains (PBRT, real-time, spectral, etc.)
+- Non-linear navigation: prerequisites as needed
+- The deep dive promise: we'll go further than PBRT on foundations
+
+### Deliverables
+- None (orientation only)
+- Reading: Survey paper on rendering paradigms
+
+---
+
+## Phase 1: Images as Signals
+
+**Goal**: Understand images as discretized continuous functions. Master sampling theory from first principles.
+
+### 1.1 Continuous Image Functions
+- Image as function I: ℝ² → ℝⁿ (spatial domain)
+- Color spaces (ℝ³ for RGB, ℝ for grayscale)
+- Temporal dimension: I: ℝ² × ℝ → ℝⁿ (video)
+- Support, boundedness, integrability
+
+### 1.2 Discrete Representation
+- Pixels as samples of continuous signal
+- Rectangular lattice sampling: I[m,n] = I(mΔx, nΔy)
+- Resolution, aspect ratio, pixel density
+- Frame buffers and memory layout
+
+### 1.3 Fourier Analysis Foundations
+**Deep Dive**:
+- Fourier transform derivation from Taylor series
+- Frequency domain representation
+- Parseval's theorem (energy conservation)
+- Convolution theorem proof
+- Frequency interpretation: spatial frequency, orientation
+
+### 1.4 The Sampling Theorem
+**Deep Dive**:
+- Nyquist frequency derivation
+- Shannon-Whittaker theorem statement and proof
+- Aliasing: frequency folding mechanism
+- Band-limited signals: sinc reconstruction
+- Practical implications for rendering
+
+### 1.5 Reconstruction Theory
+**Deep Dive**:
+- Reconstruction as convolution
+- Filter properties: separability, support, smoothness
+- Box, tent, Gaussian, Mitchell-Netravali, Lanczos
+- Ideal low-pass filter (sinc) and its impracticality
+- Gibbs phenomenon
+- Error analysis: L² norms, PSNR, perceptual metrics
+
+### 1.6 Resampling & Filtering
+- Downsampling: prefiltering requirement
+- Upsampling: zero-insertion and interpolation
+- Mipmapping mathematical foundation
+- Anisotropic filtering: elliptical filtering footprints
+
+### 1.7 Color Theory Fundamentals
+- Human visual system overview (cones, sensitivity curves)
+- Trichromatic theory
+- Color matching functions
+- XYZ color space derivation
+- RGB as device-dependent basis
+- Gamma encoding: physical vs perceptual uniformity
+
+### Mathematical Tools Introduced
+- Fourier analysis
+- Convolution and correlation
+- Function spaces (L², band-limited)
+- Optimization (filter design)
+
+### Deliverables
+- **Project 1**: Implement reconstruction filters, measure L² error vs frequency content
+- **Project 2**: Build mipmap system with custom filtering, analyze aliasing reduction
+- **Derivation Exercise**: Prove Nyquist theorem from scratch
+- **Problem Set**: Fourier transforms, convolution, frequency analysis (10-15 problems)
+
+---
+
+## Phase 2: Geometry & Intersection Mathematics
+
+**Goal**: Master computational geometry from first principles. Understand floating-point arithmetic implications.
+
+### 2.1 Parametric Representations
+**Deep Dive**:
+- Parametric lines: P(t) = O + tD
+- Parameter space vs world space
+- Parametric curves: Bézier, B-splines (brief)
+- Parametric surfaces: tensor product formulation
+- Differential geometry primer: tangent space, normals, curvature
+
+### 2.2 Implicit Surfaces
+- F(x,y,z) = 0 representation
+- Algebraic surfaces: quadrics, superquadrics
+- Level sets and isocontours
+- Gradient as normal: ∇F = normal direction
+- Duality with parametric forms
+
+### 2.3 Ray-Surface Intersection Theory
+**Deep Dive**:
+- Intersection as root-finding problem
+- Ray-sphere: quadratic equation derivation
+- Ray-plane: linear equation solution
+- Ray-triangle: Möller-Trumbore algorithm derivation
+  - Barycentric coordinates derivation
+  - Cramer's rule application
+  - Degenerate cases analysis
+- Ray-AABB: slab method proof
+  - Interval arithmetic
+  - Kay-Kajiya optimization
+
+### 2.4 Numerical Precision & Robustness
+**Deep Dive**:
+- IEEE 754 floating-point standard
+- Machine epsilon: definition and implications
+- Relative vs absolute error
+- Catastrophic cancellation examples
+- Self-intersection problem in ray tracing
+- Epsilon-ball heuristics: limitations and alternatives
+- Floating-point error propagation analysis
+- Interval arithmetic for guaranteed bounds
+
+### 2.5 Coordinate Systems & Transformations
+**Deep Dive**:
+- Affine transformations: linear + translation
+- Matrix representations: 4×4 homogeneous coordinates
+- Transformation composition and order
+- Inverse transformations
+- Normal transformation: (M⁻¹)ᵀ derivation
+- Orthogonal bases and changes of basis
+- Gram-Schmidt orthonormalization
+
+### 2.6 Spatial Data Structures
+**Deep Dive**: (This is where you go beyond PBRT's treatment)
+
+#### Grid/Voxel Structures
+- Uniform grids: space partitioning
+- Hash-based grid storage
+- Memory vs traversal tradeoff
+- 3D-DDA traversal algorithm
+- Sparse voxel octrees (SVO)
+
+#### Bounding Volume Hierarchies (BVH)
+- Tree construction algorithms
+- SAH (Surface Area Heuristic) derivation
+  - Expected cost model
+  - Probability of ray-box intersection
+  - Optimization formulation
+- Splitting strategies: object splits, spatial splits
+- Top-down vs bottom-up construction
+- BVH quality metrics: SAH cost, tree depth
+
+#### KD-Trees
+- Space partitioning vs object partitioning
+- Construction: median split, SAH
+- Traversal: front-to-back ordering
+- Comparison with BVH: tradeoffs
+
+#### Performance Analysis
+- Expected intersection cost models
+- Cache behavior analysis
+- SIMD-friendly layouts
+- Memory-bandwidth considerations
+
+### 2.7 Computational Geometry Toolkit
+- Convexity: definitions, tests, implications
+- Point-in-polygon test: winding number algorithm
+- Clipping: Cohen-Sutherland, Sutherland-Hodgman
+- Boolean operations on meshes (brief)
+- Closest point queries
+
+### Mathematical Tools Introduced
+- Differential geometry (tangent spaces, curvature)
+- Root-finding algorithms
+- Numerical analysis (error analysis, stability)
+- Tree data structures and complexity analysis
+- Probability (for SAH cost models)
+
+### Deliverables
+- **Project 3**: Implement multiple ray-primitive intersectors with robustness tests
+- **Project 4**: Build BVH from scratch, implement SAH, benchmark vs naive
+- **Derivation Exercise**: Derive Möller-Trumbore from first principles
+- **Analysis Exercise**: Floating-point error propagation in ray-triangle intersection
+- **Problem Set**: Geometry, transformations, numerical precision (15-20 problems)
+
+---
+
+## Phase 3: Camera Models & Projection
+
+**Goal**: Understand imaging geometry from physical and mathematical perspectives.
+
+### 3.1 Pinhole Camera Model
+**Deep Dive**:
+- Perspective projection derivation
+- Similar triangles geometric proof
+- Projection matrix formulation
+- Field of view: horizontal, vertical, diagonal relationships
+- Focal length and sensor size relationship
+
+### 3.2 Coordinate Transformations
+**Deep Dive**:
+- World space → Camera space (view transform)
+- Camera space → Clip space (projection)
+- Clip space → NDC (normalized device coordinates)
+- NDC → Screen space (viewport transform)
+- Homogeneous divide: perspective correction
+- Depth range mapping: [near, far] → [0, 1]
+
+### 3.3 Projection Varieties
+**Deep Dive**:
+- Orthographic projection: parallel rays
+- Perspective projection: converging rays
+- Weak perspective: hybrid approximation
+- Fisheye/spherical projections
+- Stereographic projection
+
+### 3.4 Lens Systems
+**Deep Dive**:
+- Thin lens equation: 1/f = 1/dₒ + 1/dᵢ derivation
+- Circle of confusion (CoC) analysis
+- Depth of field: near/far limits derivation
+- Bokeh: aperture shape influence
+- F-number: f/N relationship to exposure and DoF
+- Focus, aperture, focal length tradeoffs
+
+### 3.5 Sampling in Space and Time
+**Deep Dive**:
+- Spatial sampling: lens aperture sampling (jittered, stratified)
+- Temporal sampling: motion blur fundamentals
+- Shutter timing: instantaneous vs finite exposure
+- Motion vectors and reconstruction
+- Defocus blur vs motion blur: physical distinction
+
+### 3.6 Lens Aberrations (Overview)
+- Chromatic aberration: dispersion effects
+- Spherical aberration
+- Coma, astigmatism, distortion
+- Vignetting
+- (Full treatment in optics branch)
+
+### Mathematical Tools Introduced
+- Projective geometry
+- Homogeneous coordinates
+- Matrix decomposition (perspective projection)
+- Geometric optics
+
+### Deliverables
+- **Project 5**: Implement camera with DoF (thin lens sampling)
+- **Project 6**: Add motion blur with temporal sampling
+- **Derivation Exercise**: Derive thin lens equation from Snell's law
+- **Problem Set**: Projection mathematics, lens equations (10 problems)
+
+---
+
+## Phase 4: Local Illumination Models
+
+**Goal**: Build shading models from empirical observation and physical intuition. Understand energy conservation.
+
+### 4.1 The Shading Problem
+- Local vs global illumination
+- Direct lighting: emitted + single bounce
+- Shading = f(view, light, normal, surface properties)
+- Hemisphere of directions
+
+### 4.2 Lambertian Diffuse Model
+**Deep Dive**:
+- Physical basis: rough surfaces, subsurface scattering
+- BRDF formulation: f_r = ρ/π derivation
+- Cosine falloff: Lambert's cosine law (n · l)
+- Energy conservation: albedo ρ ∈ [0,1]
+- White furnace test: ∫_Ω f_r (n · ω_i) dω_i ≤ 1
+
+### 4.3 Phong Reflection Model
+**Deep Dive**:
+- Empirical model: not physically based
+- Specular term: (r · v)ⁿ where r = 2(n · l)n - l
+- Shininess exponent n: lobe tightness
+- Energy normalization issues (non-physical)
+- Blinn-Phong variant: (n · h)ⁿ where h = (l + v)/|l + v|
+
+### 4.4 Energy Conservation in Shading
+**Deep Dive**:
+- White furnace test formalization
+- BRDF normalization constraints
+- Helmholtz reciprocity: f(ωᵢ, ωₒ) = f(ωₒ, ωᵢ)
+- Non-physical models: Phong violations
+- Normalized Phong-Blinn attempts
+
+### 4.5 Shadow Rays & Visibility
+- Hard shadows: binary visibility test
+- Shadow ray: secondary ray to light source
+- Self-intersection problem revisited
+- Multiple lights: accumulation
+
+### 4.6 Fresnel Effect (Introductory)
+- View-dependent reflectance
+- Grazing angle enhancement
+- Schlick approximation: F ≈ F₀ + (1 - F₀)(1 - cos θ)⁵
+- (Full derivation in optics branch)
+
+### Mathematical Tools Introduced
+- Hemisphere integration
+- Solid angle
+- BRDF formalism (introductory)
+- Energy conservation constraints
+
+### Deliverables
+- **Project 7**: Implement Lambertian, Phong, Blinn-Phong shaders
+- **Analysis Exercise**: Measure energy conservation violations in Phong
+- **White Furnace Test**: Implement and verify various BRDFs
+- **Problem Set**: BRDF properties, energy conservation (10 problems)
+
+---
+
+## Phase 5: Monte Carlo Methods & Sampling Theory
+
+**Goal**: Master Monte Carlo integration from probability theory. This is the mathematical heart of modern rendering.
+
+### 5.1 Probability Foundations
+**Deep Dive**:
+- Random variables: discrete, continuous, mixed
+- Probability density functions (PDFs)
+- Cumulative distribution functions (CDFs)
+- Expected value: E[X] = ∫ x p(x) dx
+- Variance: Var[X] = E[X²] - E[X]²
+- Covariance and correlation
+- Joint, marginal, conditional distributions
+- Bayes' theorem
+
+### 5.2 Monte Carlo Integration Theory
+**Deep Dive**:
+- The basic estimator: ⟨F⟩ = (1/N) Σ f(Xᵢ)/p(Xᵢ)
+- Unbiased estimators: E[⟨F⟩] = ∫ f(x) dx
+- Proof of unbiasedness
+- Variance of MC estimator: Var[⟨F⟩] = Var[f/p] / N
+- Law of large numbers: convergence in probability
+- Central limit theorem: distribution of ⟨F⟩
+- Convergence rate: O(1/√N)
+- Why MC doesn't suffer from curse of dimensionality
+
+### 5.3 Variance Reduction Techniques
+**Deep Dive**:
+
+#### Importance Sampling
+- Matching p(x) to f(x): variance reduction proof
+- Optimal PDF: p*(x) = |f(x)| / ∫|f(x)|dx
+- Why optimal PDF has zero variance (theoretical)
+- Practical importance sampling strategies
+- Warping uniform samples: inverse CDF method
+- 2D sampling: joint vs marginal approach
+
+#### Stratified Sampling
+- Variance decomposition: within-strata vs between-strata
+- Proof of variance reduction
+- Jittered sampling as stratified variant
+- Latin hypercube sampling
+- Optimal stratum allocation
+
+#### Multiple Importance Sampling (MIS)
+- Problem: combining multiple sampling strategies
+- Balance heuristic: wᵢ = pᵢ/(p₁ + p₂ + ... + pₙ)
+- Power heuristic: wᵢ = pᵢᵝ/(Σpⱼᵝ)
+- Veach's theorem: one-sample MIS is unbiased
+- Proof of variance bounds
+- MIS in practice: BRDF sampling + light sampling
+
+#### Control Variates
+- Using known integrals to reduce variance
+- Correlated estimators
+- Optimal control variate coefficient
+
+### 5.4 Change of Variables
+**Deep Dive**:
+- Transformation theorem for PDFs
+- Jacobian determinant: |∂(u,v)/∂(x,y)|
+- 1D example: uniform → exponential via CDF
+- 2D example: uniform square → unit disk
+- Spherical coordinates: solid angle measure
+- Hemisphere sampling patterns:
+  - Uniform hemisphere: p(ω) = 1/(2π)
+  - Cosine-weighted: p(ω) = cos θ / π
+  - Phong lobe: derivation from (n·h)ⁿ
+
+### 5.5 Low-Discrepancy Sequences
+**Deep Dive**:
+- Discrepancy definition: L∞ and L² variants
+- Quasi-Monte Carlo: using deterministic sequences
+- Halton sequence: coprime bases
+- Hammersley sequence: finite set variant
+- Sobol sequence: Gray code construction
+- van der Corput sequence
+- Error bounds: O((log N)ᵈ/N) vs O(1/√N)
+- Koksma-Hlawka inequality
+
+### 5.6 Reconstruction & Denoising
+**Deep Dive**:
+- MC samples as sparse measurements
+- Reconstruction filters revisited (from Phase 1)
+- Bilateral filtering: range and domain weights
+- Cross-bilateral / joint bilateral
+- A-Trous wavelet transform
+- SVGF (Spatiotemporal Variance-Guided Filtering) overview
+- Machine learning denoisers (conceptual, deep dive in neural branch)
+
+### 5.7 Convergence Analysis
+**Deep Dive**:
+- Mean squared error (MSE) = bias² + variance
+- Bias-variance tradeoff
+- Convergence metrics: RMSE, relative error
+- Sample complexity analysis
+- Stopping criteria: variance estimation, perceptual thresholds
+- Signal-to-noise ratio (SNR) measurement
+
+### Mathematical Tools Introduced
+- Probability theory (comprehensive)
+- Statistical inference
+- Measure theory (basic)
+- Jacobian transformations
+- Number theory (for low-discrepancy sequences)
+
+### Deliverables
+- **Project 8**: Implement multiple sampling strategies, measure variance
+- **Project 9**: Build MIS framework, compare balance vs power heuristics
+- **Project 10**: Implement QMC sequences (Halton, Sobol), compare convergence
+- **Derivation Exercise**: Prove variance reduction for stratified sampling
+- **Derivation Exercise**: Prove unbiasedness of MIS balance heuristic
+- **Problem Set**: Probability, MC integration, variance analysis (20 problems)
+
+---
+
+## Phase 6: Rendering Paradigms
+
+**Goal**: Position major rendering approaches as different strategies for the same problem. This is NOT a deep dive into any one paradigm—those are branches.
+
+### 6.1 The Fundamental Problem
+- Computing I(x,y): image intensity at pixel
+- Visibility: what is visible?
+- Shading: how much light reaches visible surface?
+- Different paradigms = different visibility + shading strategies
+
+### 6.2 Rasterization Paradigm
+**Overview** (not deep, just positioning):
+- Forward projection: geometry → screen
+- Triangle rasterization: scan conversion
+- Fragment shading: per-pixel computation
+- Z-buffer: depth testing for visibility
+- Screen-space techniques: SSAO, SSR
+- Real-time constraints: fixed budget
+- Limitations: difficult indirect illumination
+
+### 6.3 Ray Tracing Paradigm
+**Overview**:
+- Backward tracing: pixel → geometry
+- Primary rays: camera → first hit
+- Shadow rays: hit → light sources
+- Recursive rays: reflection, refraction
+- Visibility: ray intersection tests
+- Limitations: exponential ray trees
+
+### 6.4 Path Tracing Paradigm (Introductory)
+**Overview** (deep dive in PBRT branch):
+- Monte Carlo approach to rendering
+- Paths: camera → surface → ... → light
+- Throughput accumulation along path
+- Russian roulette termination
+- Direct lighting + indirect lighting
+- Unbiased convergence
+- Limitations: noise, convergence time
+
+### 6.5 Bidirectional Methods (Mention)
+- Light paths + eye paths
+- Path connection strategies
+- (Full treatment in advanced transport branch)
+
+### 6.6 Radiosity (Mention)
+- Finite element approach
+- Diffuse interreflection
+- Form factors
+- (Legacy method, not covered deeply)
+
+### 6.7 Hybrid Approaches
+- Rasterization + ray tracing (modern real-time)
+- Photon mapping overview
+- Irradiance caching overview
+
+### Comparison Framework
+- Visibility strategy: forward vs backward
+- Sampling strategy: deterministic vs stochastic
+- Convergence: fixed cost vs progressive
+- Implementation: GPU-friendly vs CPU-friendly
+
+### Deliverables
+- **Essay**: Compare 3 paradigms on theoretical grounds (visibility, sampling, complexity)
+- **Analysis Exercise**: Estimate asymptotic complexity for each paradigm
+- No implementation (implementations come in branches)
+
+---
+
+## Phase 7: Performance, Architecture & Engineering
+
+**Goal**: Understand how theoretical algorithms map to hardware. Performance engineering from first principles.
+
+### 7.1 Algorithm Complexity Analysis
+**Deep Dive**:
+- Big-O notation review
+- Worst-case, average-case, amortized analysis
+- Space complexity vs time complexity
+- BVH traversal: expected O(log N)
+- Ray-triangle intersection: O(1)
+- Scene complexity scaling
+
+### 7.2 Hardware Architecture Fundamentals
+
+#### CPU Architecture
+- Pipelining: instruction-level parallelism
+- Superscalar execution
+- Out-of-order execution
+- Branch prediction: impact on ray tracing
+- Cache hierarchy: L1, L2, L3
+- Cache lines, spatial locality
+- Prefetching: hardware and software
+
+#### Memory Hierarchy
+- Von Neumann bottleneck
+- Bandwidth vs latency
+- DRAM characteristics
+- Cache-oblivious algorithms
+- Memory access patterns in rendering
+
+#### SIMD (Single Instruction Multiple Data)
+**Deep Dive**:
+- Vector registers: SSE, AVX, AVX-512
+- Data parallelism exploitation
+- AoS (Array of Structures) vs SoA (Structure of Arrays)
+- SIMD-friendly BVH layouts
+- Packet ray tracing
+- Incoherent rays: divergence issues
+- Masking and blending operations
+
+### 7.3 GPU Architecture
+
+#### SIMT (Single Instruction Multiple Threads)
+**Deep Dive**:
+- Warp/wavefront execution model
+- Thread divergence: branch penalties
+- Occupancy: threads per SM/CU
+- Register pressure
+- Shared memory: explicit cache
+- Memory coalescing: strided vs sequential access
+
+#### Rendering-Specific Hardware
+- Texture units: filtering, mip selection
+- Rasterization units: fixed-function pipeline
+- RT cores (RTX, RDNA): ray-box, ray-triangle acceleration
+- Tensor cores: denoising, neural rendering
+
+#### GPU Memory Model
+- Global memory: high latency
+- Shared memory: low latency, explicit management
+- Constant memory: read-only, cached
+- Texture memory: spatial locality optimization
+- Memory bandwidth: bottleneck analysis
+
+### 7.4 BVH Traversal Optimization
+**Deep Dive**:
+- Stack-based traversal: memory implications
+- Stackless traversal: ropes, threads
+- Nearest-hit vs any-hit traversal
+- Traversal order: front-to-back for early exit
+- Occlusion culling during traversal
+- Coherent ray batching: packet traversal
+- SIMD BVH traversal: frustum AABBs
+
+### 7.5 Profiling & Measurement
+**Deep Dive**:
+- Amdahl's law: parallelization limits
+- Roofline model: compute vs memory bound
+- Profiling tools: sampling vs instrumentation
+- Hotspot identification
+- Bottleneck analysis: CPU, memory, GPU compute
+- Timing methodology: variance, warm-up, outliers
+- Metrics: rays/second, samples/second, convergence rate
+
+### 7.6 Optimization Strategies
+- Algorithmic optimization: better asymptotic complexity
+- Data structure optimization: cache-friendly layouts
+- Microarchitecture optimization: SIMD, prefetch hints
+- Load balancing: work stealing, dynamic scheduling
+- Ray coherence exploitation
+- Texture compression: DXT, ASTC
+- LOD (Level of Detail) systems: discrete, continuous
+
+### 7.7 Variance & Quality Metrics
+**Deep Dive**:
+- Image quality metrics: MSE, PSNR, SSIM, FLIP
+- Variance estimation: per-pixel, neighborhood
+- SNR computation
+- Adaptive sampling: concentrating samples on high-variance regions
+- Error propagation through pipeline
+
+### Mathematical Tools Introduced
+- Algorithm analysis (asymptotic notation)
+- Queueing theory (for scheduling)
+- Information theory (for compression)
+- Optimization theory (for performance tuning)
+
+### Deliverables
+- **Project 11**: Profile a renderer, identify bottlenecks, optimize
+- **Project 12**: Implement SIMD ray-triangle intersection, measure speedup
+- **Analysis Exercise**: Roofline model analysis of a rendering kernel
+- **Essay**: Compare CPU ray tracing vs GPU ray tracing architectures
+- **Problem Set**: Complexity analysis, optimization strategies (10 problems)
+
+---
+
+# BRANCHES: Specialized Applications
+
+Branches apply spine foundations to specific rendering domains. Each branch can be taken independently after completing the relevant spine phases.
+
+---
+
+## Branch A: Physically Based Rendering (PBR)
+
+**Prerequisites**: Phase 1-7 (full spine)
+
+**Goal**: Build a production-quality path tracer from first principles. Go deeper than PBRT on light transport theory.
+
+### A.1 Light Transport Theory
+
+#### Radiometry (Rigorous Treatment)
+**Deep Dive**:
+- Energy, flux (power): Φ [Watts]
+- Irradiance: E = dΦ/dA [W/m²]
+- Radiance: L = d²Φ/(dA dω cos θ) [W/(m² sr)]
+- Radiance as fundamental quantity
+- Invariance of radiance along rays (vacuum)
+- Dimensional analysis: keeping units consistent
+- Relationship to photometry: luminance, illuminance
+
+#### The Rendering Equation
+**Deep Dive**:
+- Kajiya 1986: L_o(x, ω_o) = L_e(x, ω_o) + ∫_Ω f_r(x, ω_i, ω_o) L_i(x, ω_i) cos θ_i dω_i
+- Derivation from energy balance
+- Domain of integration: hemisphere Ω
+- Recursive structure: L_i = L_o elsewhere
+- Fredholm integral equation of second kind
+- Neumann series solution: L = L_e + TL_e + T²L_e + ...
+  - T = transport operator
+- Path integral formulation
+
+#### BRDF Theory
+**Deep Dive**:
+- BRDF: f_r(x, ω_i, ω_o) = dL_o/dE_i
+- Physical constraints:
+  - Non-negativity: f_r ≥ 0
+  - Energy conservation: ∫_Ω f_r cos θ dω ≤ 1
+  - Helmholtz reciprocity: f_r(ω_i, ω_o) = f_r(ω_o, ω_i)
+- Generalization to BSDF (bidirectional scattering distribution function)
+- BTDF (transmission), BSSRDF (subsurface)
+
+### A.2 Path Tracing Algorithm
+
+#### Monte Carlo Light Transport
+**Deep Dive**:
+- Path space formulation
+- Measurement contribution function
+- Path throughput: β = ∏ f_r cos θ / p
+- Russian roulette: unbiased termination
+  - Termination probability q
+  - Weight adjustment: β / (1-q)
+- Splitting: creating additional paths
+
+#### Next Event Estimation (NEE)
+**Deep Dive**:
+- Direct lighting: explicit light sampling
+- Importance sampling lights: area, power
+- Shadow rays: visibility testing
+- Combining NEE with BRDF sampling via MIS
+
+#### Path Sampling Strategies
+- BRDF importance sampling
+- Light importance sampling
+- Combined: multiple importance sampling
+- Bidirectional path tracing (overview, deep dive in Advanced Transport branch)
+
+### A.3 Materials & Microfacet Theory
+
+#### Microfacet Model
+**Deep Dive**:
+- Geometric optics approximation
+- Microsurface normal distribution: D(h)
+- Masking-shadowing function: G(ω_i, ω_o, h)
+- Fresnel term: F(ω_i, h)
+- BRDF: f_r = (D G F) / (4 cos θ_i cos θ_o)
+- Derivation from first principles
+
+#### Normal Distribution Functions
+**Deep Dive**:
+- Beckmann distribution: e^(-tan²θ/α²) / (πα²cos⁴θ)
+- GGX (Trowbridge-Reitz): α² / (π((cos²θ)(α²-1)+1)²)
+- Anisotropic variants
+- Normalization: ∫_Ω D(h) cos θ dω = 1
+- Importance sampling: CDF inversion, visible normal sampling
+
+#### Masking-Shadowing Functions
+**Deep Dive**:
+- Smith model: G(ω_i, ω_o) = G₁(ω_i) G₁(ω_o)
+- Height-correlated Smith: more accurate
+- G₁ derivation for GGX
+- Relationship to roughness parameter α
+
+#### Fresnel Equations (Full Derivation)
+**Deep Dive**:
+- Electromagnetic wave reflection at interface
+- Perpendicular and parallel polarization components
+- Complex refractive indices: absorption
+- Conductor Fresnel: full complex formulation
+- Schlick approximation: accuracy analysis
+
+### A.4 Advanced Materials
+
+#### Layered Materials
+- Thin film interference
+- Coating over substrate
+- Multiple layer stacking
+
+#### Translucent Materials
+- BSSRDF: spatial variation of light transport
+- Diffusion approximation
+- Photon mapping for subsurface scattering
+
+#### Specialized Materials
+- Cloth: anisotropic, multiple scattering
+- Hair and fur: Marschner model, dual-cylinder model
+- Skin: multi-layered BSSRDF
+
+### A.5 Textures & Shading
+- UV parameterization
+- Texture filtering: trilinear, anisotropic
+- Normal mapping: tangent space
+- Displacement mapping
+- Procedural textures: noise functions (Perlin, Worley)
+
+### A.6 Advanced Sampling
+
+#### Bidirectional Path Tracing (BDPT)
+**Deep Dive**:
+- Light paths and eye paths
+- Path connection: t-s vertices
+- Multiple importance sampling across all strategies
+- Efficiency in complex lighting scenarios
+
+#### Metropolis Light Transport (MLT)
+**Deep Dive**:
+- Markov Chain Monte Carlo (MCMC) fundamentals
+- Metropolis-Hastings algorithm
+- Mutation strategies: bidirectional, lens perturbation
+- Primary sample space MLT
+- Stratification concerns
+
+#### Photon Mapping
+**Deep Dive**:
+- Two-pass algorithm: photon tracing + rendering
+- Photon storage: kd-tree, hash grid
+- Density estimation: kernel bandwidth selection
+- Progressive photon mapping: SPPM
+- Stochastic progressive photon mapping
+
+#### Vertex Connection and Merging (VCM)
+- Unifying BDPT and photon mapping
+- Connection vs merging decisions
+- MIS weights across techniques
+
+### A.7 Participating Media
+**Deep Dive**:
+- Volume rendering equation
+- Extinction: absorption + scattering
+- Beer's law: transmittance e^(-∫σ_t ds)
+- Phase functions: isotropic, Henyey-Greenstein
+- Single scattering: ray marching
+- Multiple scattering: path tracing in volumes
+- Null scattering: delta tracking, ratio tracking
+- Heterogeneous media: varying density
+
+### A.8 Implementation & Validation
+
+#### Scene Description
+- Material definitions
+- Light sources: area lights, infinite lights, environment maps
+- Camera specifications
+
+#### Validation & Testing
+- White furnace test
+- Energy conservation checks
+- Known analytic solutions: sphere in Cornell box
+- Comparison with reference renders
+
+#### Optimization for Path Tracing
+- Coherent ray tracing strategies
+- Wavefront path tracing on GPU
+- Denoising integration
+
+### Deliverables
+- **Project 13**: Build basic path tracer (Lambertian + NEE + MIS)
+- **Project 14**: Implement microfacet BRDF (GGX + Smith G)
+- **Project 15**: Add Russian roulette, measure bias elimination
+- **Project 16**: Implement BDPT or photon mapping
+- **Project 17**: Add participating media (homogeneous first, then heterogeneous)
+- **Research Paper**: Analyze convergence properties of different path sampling strategies
+- **Problem Set**: Radiometry, rendering equation, BRDF sampling (25 problems)
+
+---
+
+## Branch B: Spectral & Advanced Light Transport
+
+**Prerequisites**: Phase 1-7 (full spine) + Branch A recommended
+
+**Goal**: Go beyond RGB rendering. Simulate wavelength-dependent phenomena.
+
+### B.1 Spectral Rendering Foundations
+
+#### Color Science
+**Deep Dive**:
+- CIE XYZ color matching functions: 1931 standard
+- Spectral power distributions (SPDs)
+- Integration: XYZ = ∫ SPD(λ) CMF(λ) dλ
+- Chromatic adaptation: von Kries, Bradford
+- Color appearance models: CIECAM02
+
+#### Spectral Representation
+**Deep Dive**:
+- Continuous spectra: impractical
+- Discretization strategies:
+  - Uniformly spaced samples
+  - Gaussian mixture models
+  - Polynomial basis (Chebyshev)
+  - PCA (principal component analysis) basis
+- Hero wavelength sampling
+- Spectral MIS: combining wavelength strategies
+
+#### Rendering Equation (Spectral)
+- Wavelength dependence: L(x, ω, λ)
+- Chromatic BRDFs: f_r(x, ω_i, ω_o, λ)
+- Path throughput with wavelength
+
+### B.2 Wavelength-Dependent Phenomena
+
+#### Dispersion
+**Deep Dive**:
+- Refractive index: n(λ)
+- Cauchy equation, Sellmeier equation
+- Rainbow formation: geometry of refraction
+- Prisms, lenses with chromatic aberration
+
+#### Fluorescence & Phosphorescence
+- Energy absorption and re-emission
+- Stokes shift: λ_emission > λ_absorption
+- Re-radiation matrix: wavelength transformation
+- Path tracing with fluorescence
+
+#### Interference & Diffraction
+- Thin film interference: oil slicks, soap bubbles
+- Iridescence: wavelength-dependent reflection
+- Diffraction gratings
+- (Wave optics needed, covered in optics branch B.5)
+
+### B.3 Advanced Transport Algorithms
+
+#### Bi-Directional Path Tracing (Extended)
+- Spectral considerations
+- Wavelength-dependent path throughput
+
+#### Metropolis Light Transport (Extended)
+- Spectral mutation strategies
+- Replica exchange across wavelengths
+
+#### Gradient-Domain Rendering
+**Deep Dive**:
+- Finite difference estimates: ∇L
+- Reconstruction from gradients: Poisson equation
+- Shift mapping: correlating paths
+- Manifold exploration: specular chains
+
+### B.4 Polarization (Overview)
+- Stokes vectors: I, Q, U, V
+- Mueller matrices
+- Polarized BRDFs
+- (Full treatment in optics branch)
+
+### B.5 Optics Deep Dive (Can be separate branch)
+
+#### Wave Optics
+**Deep Dive**:
+- Electromagnetic waves: E and H fields
+- Wave equation derivation from Maxwell's equations
+- Plane waves: e^(i(k·r - ωt))
+- Huygens-Fresnel principle
+- Coherence: temporal and spatial
+
+#### Physical Optics
+- Interference: constructive and destructive
+- Double-slit experiment: intensity distribution
+- Diffraction: Fraunhofer and Fresnel
+- Fourier optics: lens as Fourier transformer
+
+#### Geometrical Optics (From Wave Limit)
+- Eikonal equation: high-frequency limit
+- Fermat's principle derivation
+- Snell's law from Fermat or from wave matching
+
+### Deliverables
+- **Project 18**: Implement spectral renderer (hero wavelength + spectral MIS)
+- **Project 19**: Add dispersion, render rainbows or prisms
+- **Project 20**: Implement gradient-domain path tracing
+- **Research Paper**: Analyze spectral sampling strategies, measure color accuracy
+- **Problem Set**: Spectral rendering, wave optics (15 problems)
+
+---
+
+## Branch C: Real-Time Rendering & Constraint-Based Optimization
+
+**Prerequisites**: Phase 1-7 (full spine), especially Phase 7 (performance)
+
+**Goal**: Master real-time rendering under strict time budgets. Understand approximations and tradeoffs.
+
+### C.1 Real-Time Rendering Constraints
+- Frame budget: 16.67ms (60 FPS), 11.11ms (90 FPS), 8.33ms (120 FPS)
+- GPU parallelism: exploiting SIMT
+- Memory bandwidth limits
+- Power constraints (mobile)
+
+### C.2 Rasterization Pipeline (Deep Dive)
+
+#### Vertex Processing
+- Vertex shader: transformations, skinning
+- Tessellation: subdivision on GPU
+- Geometry shaders: primitive generation
+
+#### Rasterization
+**Deep Dive**:
+- Triangle setup: edge equations
+- Scanline rasterization
+- Tile-based rasterization (mobile GPUs)
+- Conservative rasterization
+- Z-buffer: depth testing
+- Early-Z optimization: depth pre-pass
+
+#### Fragment Processing
+- Fragment shader: per-pixel shading
+- Texture sampling: hardware filtering
+- Alpha blending: order-dependent transparency
+- Deferred shading: G-buffer approach
+
+### C.3 Real-Time Shading Models
+
+#### PBR in Real-Time
+- Microfacet models: GGX adapted for real-time
+- Image-based lighting: environment maps
+- Prefiltered IBL: split-sum approximation
+- Spherical harmonics: diffuse irradiance
+
+#### Approximations
+- Pre-computed lighting: light maps, probe grids
+- Screen-space ambient occlusion (SSAO)
+- Screen-space reflections (SSR): limitations
+- Contact shadows
+
+### C.4 Real-Time Global Illumination
+
+#### Voxel-Based GI
+- Sparse voxel octree (SVO)
+- Voxel cone tracing
+- Directional occlusion
+
+#### Probe-Based GI
+- Irradiance probes: spatial grid
+- Radiance probes: directional information
+- Dynamic diffuse global illumination (DDGI)
+
+#### Hybrid Ray Tracing
+- RT cores: hardware-accelerated BVH traversal
+- Low ray budgets: 1-4 rays per pixel
+- Denoising: aggressive, real-time denoisers
+- Temporal accumulation: reprojection, disocclusion
+
+### C.5 Temporal Techniques
+
+#### Temporal Anti-Aliasing (TAA)
+**Deep Dive**:
+- Reprojection: motion vectors
+- History blending: α-blend new and old samples
+- Jittering: subpixel sample positions per frame
+- Ghosting artifacts: disocclusion detection
+- Variance clipping: neighborhood clamping
+
+#### Temporal Super-Resolution
+- Checkerboard rendering
+- DLSS, FSR, XeSS: neural upscaling
+- Reconstruction from sparse samples
+
+### C.6 Level of Detail (LOD)
+
+#### Discrete LOD
+- Multiple mesh resolutions
+- Switching distances: popping artifacts
+- Hysteresis: avoid thrashing
+
+#### Continuous LOD
+- Progressive meshes: edge collapse, vertex splits
+- Geomorphing: smooth transitions
+
+#### Texture LOD
+- Mipmapping (revisited from spine)
+- Texture streaming: virtual texturing
+
+### C.7 Culling & Optimization
+
+#### Frustum Culling
+- View frustum: 6 planes
+- Bounding volume tests: sphere, AABB, OBB
+
+#### Occlusion Culling
+- Hardware occlusion queries
+- Software rasterization for occluders
+- Hierarchical Z-buffer (Hi-Z)
+
+#### Draw Call Optimization
+- Batching: reducing CPU overhead
+- Instancing: rendering multiple copies
+- Indirect drawing: GPU-driven rendering
+
+### C.8 Mobile & VR Considerations
+- Tile-based deferred rendering (TBDR)
+- Bandwidth reduction: ASTC compression
+- Foveated rendering: variable rate shading
+- Multi-view rendering: stereo optimizations
+
+### Deliverables
+- **Project 21**: Implement deferred shading pipeline
+- **Project 22**: Add TAA with jittering
+- **Project 23**: Implement hybrid ray-traced shadows + denoising
+- **Project 24**: Build probe-based GI system
+- **Performance Analysis**: Profile real-time rendering, optimize to 60 FPS
+- **Problem Set**: Real-time approximations, TAA, culling (15 problems)
+
+---
+
+## Branch D: Neural & Differentiable Rendering
+
+**Prerequisites**: Phase 1-7 (spine), Machine learning basics
+
+**Goal**: Understand intersection of rendering and deep learning.
+
+### D.1 Differentiable Rendering Foundations
+
+#### Gradients Through Rendering
+**Deep Dive**:
+- Why differentiate a renderer?
+  - Inverse rendering: estimate scene from images
+  - Neural scene representations
+  - Training graphics pipelines
+- Forward pass: rendering as function I = R(θ)
+- Backward pass: ∂I/∂θ
+- Challenges: discontinuities at triangle edges, visibility changes
+
+#### Differentiable Primitives
+- Soft rasterization: smooth visibility
+- Differentiable ray tracing: edge sampling
+- Volumetric rendering: density fields are smooth
+
+### D.2 Neural Scene Representations
+
+#### Neural Radiance Fields (NeRF)
+**Deep Dive**:
+- Scene as MLP: (x, y, z, θ, φ) → (r, g, b, σ)
+- Volume rendering integral: C = ∫ T(t) σ(t) c(t) dt
+- Transmittance: T(t) = exp(-∫σ(s)ds)
+- Training: photometric reconstruction loss
+- Positional encoding: high-frequency details
+- Hierarchical sampling: coarse + fine networks
+
+#### Extensions & Improvements
+- Instant-NGP: hash grid encoding, massive speedup
+- Mip-NeRF: anti-aliasing via cone tracing
+- NeRF in the Wild: appearance embeddings
+- Dynamic NeRFs: time-varying scenes
+
+### D.3 Neural Rendering Techniques
+
+#### Image-Based Rendering
+- Light field rendering: plenoptic function
+- Neural light fields: learned representations
+
+#### Neural Denoising
+**Deep Dive**:
+- Supervised learning: clean + noisy pairs
+- Self-supervised: kernel prediction
+- Architectures: U-Net, transformers
+- Feature buffers: normals, albedo, depth
+- Temporal stability
+
+#### Neural Reconstruction
+- Learned upsampling: super-resolution
+- Detail synthesis from coarse renders
+- Generative models: GANs for rendering
+
+### D.4 Inverse Rendering
+
+#### Material Estimation
+- BRDF from images: optimization
+- SVBRDFs: spatial variation
+- Differentiable material models
+
+#### Shape Reconstruction
+- Multi-view stereo with neural priors
+- SDF learning: neural implicit surfaces
+
+#### Lighting Estimation
+- Environment map from single image
+- Inverse lighting with neural rendering
+
+### D.5 Graphics Neural Networks
+- Graph neural networks on meshes
+- Point cloud processing: PointNet
+- 3D CNNs for volumetric data
+
+### Deliverables
+- **Project 25**: Implement basic NeRF, train on synthetic scene
+- **Project 26**: Build neural denoiser for path tracing
+- **Project 27**: Differentiable renderer for inverse problem
+- **Research Paper**: Survey neural rendering, compare reconstruction quality
+- **Problem Set**: Automatic differentiation, neural networks (10 problems)
+
+---
+
+## Branch E: 2D Rendering & Vector Graphics
+
+**Prerequisites**: Phase 1-2 (signals, geometry), Phase 5 (sampling)
+
+**Goal**: Understand 2D rendering: UI, fonts, compositing.
+
+### E.1 Vector Graphics Foundations
+
+#### Primitives
+- Lines: Bresenham algorithm
+- Circles: midpoint circle algorithm
+- Bézier curves: de Casteljau algorithm, subdivision
+- B-splines: knot vectors, basis functions
+
+#### Rasterization
+- Scanline conversion
+- Anti-aliasing: coverage masks, analytical area
+- Signed distance fields (SDFs) for sharp corners
+
+### E.2 Fonts & Text Rendering
+
+#### Font Technologies
+- TrueType: quadratic Bézier curves
+- OpenType: cubic Bézier + advanced typography
+- Hinting: grid-fitting for small sizes
+
+#### SDF Font Rendering
+- Distance field generation
+- Efficient GPU rendering
+- Multi-channel SDF (MSDF): sharp corners
+
+### E.3 Compositing Theory
+**Deep Dive**:
+- Alpha compositing: Porter-Duff operators
+- Over operator: C = αA + (1-α)B
+- Premultiplied alpha: efficiency
+- Layer blending: multiply, screen, overlay
+
+### E.4 GPU-Based 2D Rendering
+- Instanced rendering for many glyphs
+- Texture atlases: packing fonts/icons
+- Signed distance fields on GPU
+
+### E.5 Path Rendering
+- GPU path rendering: NV_path_rendering
+- Stencil-then-cover approach
+- Curve tessellation: adaptive subdivision
+
+### Deliverables
+- **Project 28**: Implement Bézier curve rasterization
+- **Project 29**: Build SDF font renderer
+- **Project 30**: Compositing engine with Porter-Duff operators
+
+---
+
+# FOUNDATIONAL SUPPORT MODULES
+
+These are short reference modules to be consulted as needed.
+
+---
+
+## Module X1: Linear Algebra Refresher
+- Vector spaces, bases, dimension
+- Linear transformations, matrices
+- Eigenvalues, eigenvectors, diagonalization
+- Singular value decomposition (SVD)
+- Least squares: pseudoinverse
+
+## Module X2: Multivariable Calculus Refresher
+- Partial derivatives, gradient
+- Chain rule in multiple dimensions
+- Jacobian matrix
+- Divergence, curl (brief)
+- Multiple integrals: 2D, 3D
+- Change of variables: Jacobian determinant
+
+## Module X3: Probability & Statistics Primer
+- Discrete and continuous distributions
+- Expected value, variance
+- Covariance, correlation
+- Conditional probability, Bayes rule
+- Central limit theorem
+- Confidence intervals
+
+## Module X4: Complex Analysis (Brief)
+- Complex numbers: i² = -1
+- Euler's formula: e^(iθ) = cos θ + i sin θ
+- Complex exponentials in Fourier analysis
+- Residue theorem (mention)
+
+## Module X5: Numerical Methods
+- Root finding: Newton-Raphson, bisection
+- Numerical integration: trapezoidal, Simpson's
+- Ordinary differential equations: Euler, Runge-Kutta
+- Finite differences vs finite elements
+
+---
+
+# READING LIST & REFERENCES
+
+## Essential Textbooks
+1. **Physically Based Rendering** (Pharr, Jakob, Humphreys) - 4th edition
+   - Primary reference for Branch A
+2. **Real-Time Rendering** (Akenine-Möller et al.) - 4th edition
+   - Primary reference for Branch C
+3. **Advanced Global Illumination** (Dutré, Bala, Bekaert)
+   - Deeper theory than PBRT
+4. **Ray Tracing Gems I & II** (Haines, Akenine-Möller et al.)
+   - Modern techniques, GPU ray tracing
+5. **Digital Image Processing** (Gonzalez, Woods)
+   - For Phase 1 (signals, sampling)
+
+## Seminal Papers
+- **Kajiya 1986**: The Rendering Equation
+- **Cook et al. 1984**: Distributed Ray Tracing
+- **Schlick 1994**: Fresnel Approximation
+- **Walter et al. 2007**: Microfacet Models (GGX)
+- **Heitz 2014**: Understanding the Masking-Shadowing Function
+- **Veach 1997**: Metropolis Light Transport (PhD thesis)
+- **Jensen 1996**: Global Illumination using Photon Maps
+- **Mildenhall et al. 2020**: NeRF
+
+## Advanced Topics
+- **Numerical Recipes** (Press et al.) - numerical methods
+- **Principles of Digital Image Synthesis** (Glassner) - comprehensive, out of print but valuable
+- **Monte Carlo Methods in Financial Engineering** (Glasserman) - advanced MC beyond rendering
+
+---
+
+# COURSE PHILOSOPHY & PEDAGOGY
+
+## Non-Linearity
+- Students can branch at any point after completing prerequisites
+- Multiple branches can be pursued in parallel
+- Project-driven: implementations cement understanding
+- Theory-first: understand why, then how
+
+## Depth Commitment
+- Every topic in the spine goes deep enough to derive from first principles
+- Proofs and derivations are not optional
+- If you can't derive it, you don't understand it
+
+## Comparison with PBRT
+- PBRT is an excellent practical guide
+- This course goes deeper on:
+  - Mathematical foundations (Fourier analysis, probability theory)
+  - Architectural considerations (SIMD, cache, GPU)
+  - Alternative paradigms (real-time, 2D, neural)
+- This course is less practical but more theoretical
+- Goal: understand rendering as a mathematical discipline, not just a recipe book
+
+## Assessment Philosophy
+- Projects: substantial implementations (2-4 weeks each)
+- Derivations: written proofs and mathematical derivations
+- Essays: analytical comparisons and critical thinking
+- Problem sets: mathematical exercises
+
+## Estimated Timeline
+- **Spine (Phase 0-7)**: 12-16 weeks (one semester)
+  - Phase 0: 1 week
+  - Phase 1: 2 weeks
+  - Phase 2: 2-3 weeks
+  - Phase 3: 1 week
+  - Phase 4: 1-2 weeks
+  - Phase 5: 3-4 weeks (most mathematically dense)
+  - Phase 6: 1 week
+  - Phase 7: 2 weeks
+- **Each Branch**: 6-10 weeks
+  - Branch A (PBR): 10 weeks
+  - Branch B (Spectral): 8 weeks
+  - Branch C (Real-time): 8 weeks
+  - Branch D (Neural): 6 weeks
+  - Branch E (2D): 4 weeks
+
+---
+
+# FINAL NOTES
+
+This structure allows you to:
+1. **Go deep on mathematics** in the spine (satisfies your physics/math appetite)
+2. **Cover rendering broadly** via branches (satisfies the "field" coverage)
+3. **Avoid being "yet another PBRT"** (spine is broader, branches are deeper in specific areas)
+4. **Stay excited** (every spine topic has depth; no "survey homework")
+
+The spine is genuinely universal—these mathematical tools (sampling, geometry, MC integration) appear everywhere: path tracing, real-time, 2D, neural, even non-rendering fields.
+
+You're not just teaching rendering. You're teaching the **mathematics and physics that make computational image synthesis possible**.
+
+That's a unique and valuable contribution.

@@ -32,7 +32,17 @@ const lectures = defineCollection({
     })
 });
 
+const meta = defineCollection({
+    loader: glob({ pattern: '*/.*/**.mdx', base: './src/content/series' }),
+    schema: z.object({
+        title: z.string(),
+        summary: z.string().optional(),
+        order: z.number().int().default(0)
+    })
+});
+
 export const collections = {
     series,
-    lectures
+    lectures,
+    meta
 };
