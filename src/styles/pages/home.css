@@ -1,0 +1,32 @@
+/* Home Page Styles */
+
+.home-main {
+    max-width: var(--home-max);
+    margin: 0 auto;
+    padding: 2.4rem 1.1rem;
+}
+
+.home-intro {
+    margin-bottom: 2.2rem;
+}
+
+.home-title {
+    margin-bottom: 0.7rem;
+    font-size: clamp(2.05rem, 4.4vw, 2.5rem);
+}
+
+.home-lead {
+    opacity: 0.88;
+    margin-bottom: 0.75rem;
+}
+
+.home-sublead {
+    opacity: 0.76;
+}
+
+.home-section-title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.45rem, 2.4vw, 1.75rem);
+    letter-spacing: 0.01em;
+    font-weight: 600;
+}

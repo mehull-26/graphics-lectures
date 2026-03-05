@@ -1,10 +1,9 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../../components/SiteLayout.astro';
-
-type SeriesEntry = CollectionEntry<'series'>;
-type LectureEntry = CollectionEntry<'lectures'>;
-type MetaEntry = CollectionEntry<'meta'>;
+import { withBase, toSeriesSlug, parseMetaPath } from '../../../utils/path';
+import { SITE_CONFIG, UI_TEXT, NAVIGATION } from '../../../config/site';
+import type { SeriesEntry, LectureEntry, MetaEntry } from '../../../types/content';
 
 export async function getStaticPaths() {
   const seriesEntries = await getCollection('series');
@@ -12,13 +11,13 @@ export async function getStaticPaths() {
   const metaEntries = await getCollection('meta');
 
   return seriesEntries.map((seriesEntry) => {
-    const seriesSlug = seriesEntry.id.split('/')[0];
+    const seriesSlug = toSeriesSlug(seriesEntry.id);
     const lectures = lectureEntries
-      .filter((lectureEntry) => lectureEntry.id.split('/')[0] === seriesSlug)
+      .filter((lectureEntry) => toSeriesSlug(lectureEntry.id) === seriesSlug)
       .sort((a, b) => a.data.lectureNumber - b.data.lectureNumber);
     
     const metaPages = metaEntries
-      .filter((metaEntry) => metaEntry.id.split('/')[0] === seriesSlug)
+      .filter((metaEntry) => toSeriesSlug(metaEntry.id) === seriesSlug)
       .sort((a, b) => a.data.order - b.data.order);
 
     return {
@@ -39,10 +38,9 @@ const { seriesEntry, lectures, metaPages } = Astro.props as {
 };
 
 const seriesSlug = Astro.params.series ?? '';
-const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
 ---
 
-<SiteLayout title={`${seriesEntry.data.title} | Graphics Lectures`}>
+<SiteLayout title={`${seriesEntry.data.title} | ${SITE_CONFIG.title}`}>
   <main class="home-main">
     <section class="home-intro">
       <h1 class="home-title">{seriesEntry.data.title}</h1>
@@ -51,14 +49,11 @@ const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '
 
     {metaPages.length > 0 && (
       <section>
-        <h2 class="home-section-title">Course Information</h2>
+        <h2 class="home-section-title">{UI_TEXT.sections.courseMaterials}</h2>
         
         <div class="meta-list">
           {metaPages.map((meta) => {
-            const parts = meta.id.split('/');
-            const folderName = parts[1].replace(/^\./, '');
-            const fileName = parts[2].replace(/\.mdx$/, '');
-            const metaSlug = `${folderName}/${fileName}`;
+            const { fullSlug: metaSlug } = parseMetaPath(meta.id);
             
             return (
               <a href={withBase(`series/${seriesSlug}/${metaSlug}`)} class="meta-item">
@@ -74,7 +69,7 @@ const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '
     )}
 
     <section>
-      <h2 class="home-section-title">Lectures</h2>
+      <h2 class="home-section-title">{UI_TEXT.sections.lectures}</h2>
 
       <div class="series-list">
         {lectures.map((lecture) => {
@@ -93,7 +88,7 @@ const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '
 
     <p class="page-return-link">
       <span class="return-link-icon" aria-hidden="true">↗</span>
-      <a class="return-link" href={withBase('')}>Return to home</a>
+      <a class="return-link" href={withBase('')}>{NAVIGATION.returnHome}</a>
     </p>
   </main>
 </SiteLayout>

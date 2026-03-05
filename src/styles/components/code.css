@@ -1,0 +1,72 @@
+/* Code Blocks and Syntax Highlighting */
+
+pre,
+code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 1.1rem;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    font-size: clamp(0.9rem, 0.96vw, 0.98rem);
+    line-height: 1.55;
+    border-radius: 12px;
+}
+
+:not(pre)>code {
+    color: var(--code-fg);
+    background: color-mix(in srgb, var(--bg) 95%, var(--fg) 5%);
+    border: 1px solid color-mix(in srgb, var(--border) 78%, var(--fg) 22%);
+    border-radius: 0.4rem;
+    padding: 0.08em 0.36em;
+    font-size: 0.9em;
+    line-height: 1;
+}
+
+/* Expressive Code Theme Overrides */
+
+.expressive-code {
+    margin: 1.4rem 0;
+    --ec-codeFontFml: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --ec-codeFontSize: clamp(0.9rem, 0.96vw, 0.98rem);
+    --ec-codeLineHt: 1.62;
+}
+
+.expressive-code pre {
+    font-family: var(--ec-codeFontFml);
+    font-size: var(--ec-codeFontSize);
+    line-height: var(--ec-codeLineHt);
+}
+
+:root[data-theme='dark'] .expressive-code:not([data-theme='light']),
+.expressive-code[data-theme='dark'] {
+    --ec-codeBg: #0d1218 !important;
+    --ec-frm-edBg: #181b21 !important;
+    --ec-frm-trmBg: #0d1218 !important;
+    --ec-frm-edTabBarBg: #0b1016 !important;
+    --ec-frm-trmTtbBg: #0b1016 !important;
+    --ec-brdCol: #252d3a !important;
+    --ec-gtrFg: #7e8ca3 !important;
+    --ec-gtrHlFg: #9dacbf !important;
+    --ec-codeFg: #d7e2f1 !important;
+    --ec-codeSelBg: #e5e7eb66 !important;
+    --ec-uiSelBg: #e5e7eb !important;
+    --ec-uiSelFg: #111827 !important;
+}
+
+:root:not([data-theme='dark']) .expressive-code:not([data-theme='dark']),
+.expressive-code[data-theme='light'] {
+    --ec-codeBg: #e3e5e8 !important;
+    --ec-frm-edBg: #f7f7f7 !important;
+    --ec-frm-trmBg: #e3e5e8 !important;
+    --ec-frm-edTabBarBg: #d9dde2 !important;
+    --ec-frm-trmTtbBg: #d9dde2 !important;
+    --ec-brdCol: #bcc3cc !important;
+    --ec-codeFg: #1f2933 !important;
+    --ec-codeSelBg: #1f293344 !important;
+    --ec-uiSelBg: #1f2933 !important;
+    --ec-uiSelFg: #f8fafc !important;
+}

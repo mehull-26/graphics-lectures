@@ -1,0 +1,114 @@
+---
+import { SITE_CONFIG, SOCIAL_LINKS, LICENSE_INFO } from '../config/site';
+
+interface Props {
+  pageTitle?: string;
+  pageUrl?: string;
+  seriesTitle?: string;
+}
+
+const { pageTitle, pageUrl, seriesTitle } = Astro.props;
+const currentYear = new Date().getFullYear();
+const fullUrl = pageUrl ? `https://mehull.dev${pageUrl}` : 'https://mehull.dev';
+
+const citation = pageTitle 
+  ? `Mehul Y. (${currentYear}). ${pageTitle}. ${seriesTitle || 'Graphics & Simulation Notes'}. Retrieved from ${fullUrl}`
+  : `Mehul Y. (${currentYear}). Graphics & Simulation Notes. Retrieved from https://mehull.dev`;
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-main">
+      <div class="footer-left">
+        <span class="copyright-text">© {currentYear} {SITE_CONFIG.author}</span>
+        <span class="footer-sep">•</span>
+        <a 
+          href={LICENSE_INFO.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="license-link"
+          title={LICENSE_INFO.fullName}
+        >
+          {LICENSE_INFO.name}
+        </a>
+      </div>
+
+      <nav class="footer-right" aria-label="Social links">
+        {SOCIAL_LINKS.github && (
+          <a 
+            href={SOCIAL_LINKS.github} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            GitHub
+          </a>
+        )}
+        {SOCIAL_LINKS.email && (
+          <a 
+            href={`mailto:${SOCIAL_LINKS.email}`}
+            class="social-link"
+          >
+            Email
+          </a>
+        )}
+        {SOCIAL_LINKS.linkedin && (
+          <a 
+            href={SOCIAL_LINKS.linkedin} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            LinkedIn
+          </a>
+        )}
+        <button 
+          class="cite-btn" 
+          id="cite-btn"
+          type="button"
+          aria-label="Copy citation"
+        >
+          Cite
+        </button>
+      </nav>
+    </div>
+
+    <div class="citation-popup" id="citation-popup" aria-live="polite">
+      <div class="citation-popup-content">
+        <div class="citation-popup-text">{citation}</div>
+        <div class="citation-popup-label">Citation copied</div>
+      </div>
+    </div>
+    
+    <div class="citation-text" id="citation-text" style="display: none;">{citation}</div>
+  </div>
+</footer>
+
+<script>
+  function setupCiteButton() {
+    const citeBtn = document.getElementById('cite-btn');
+    const citationText = document.getElementById('citation-text');
+    const popup = document.getElementById('citation-popup');
+    
+    if (!citeBtn || !citationText || !popup) return;
+
+    citeBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(citationText.textContent || '');
+        
+        // Show popup
+        popup.classList.add('show');
+        
+        // Hide popup after 3 seconds
+        setTimeout(() => {
+          popup.classList.remove('show');
+        }, 3000);
+      } catch (err) {
+        console.error('Failed to copy citation:', err);
+      }
+    });
+  }
+
+  setupCiteButton();
+  document.addEventListener('astro:page-load', setupCiteButton);
+</script>

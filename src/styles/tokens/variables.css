@@ -1,0 +1,102 @@
+/* CSS Custom Properties - Theme Variables */
+
+/* ============================================
+   DESIGN TOKENS - Single Source of Truth
+   Edit these values to change the design system
+   ============================================ */
+
+/* Colors - Theme Variables */
+:root {
+    /* Base colors */
+    --bg: #ffffff;
+    --fg: #101010;
+    --muted: #555555;
+    --border: #d9d9d9;
+    --link: #007bc3;
+    --code-bg: #f3f3f3;
+    --code-fg: #111111;
+    --selection-bg: #1f2933;
+    --selection-fg: #f8fafc;
+    --series-hover-bg: #1f2933;
+    --series-hover-fg: #f8fafc;
+    --cursor-blob: #ffffff;
+
+    /* Transition durations (in milliseconds) */
+    --transition-fast: 120ms;
+    --transition-normal: 160ms;
+    --transition-slow: 180ms;
+    --transition-xslow: 220ms;
+    --transition-cursor: 130ms;
+
+    /* Spacing & Sizing */
+    --border-radius-small: 0.25rem;
+    --border-radius: 0.625rem;
+    --border-radius-large: 0.75rem;
+    --spacing-tight: 0.8rem;
+    --spacing-normal: 1rem;
+    --spacing-loose: 1.2rem;
+
+    /* Typography */
+    --font-size-small: 0.72rem;
+    --font-size-normal: 1rem;
+    --font-size-large: 1.2rem;
+
+    /* Z-index layers */
+    --z-toc: 60;
+    --z-header: 100;
+    --z-cursor: 9999;
+
+    /* Content widths */
+    --content-max: 980px;
+    --home-max: 1000px;
+}
+
+:root[data-theme='dark'] {
+    --bg: #0b0b0b;
+    --fg: #f2f2f2;
+    --muted: #bcbcbc;
+    --border: #333333;
+    --link: #b8e5ff;
+    --code-bg: #161616;
+    --code-fg: #f2f2f2;
+    --selection-bg: #e5e7eb;
+    --selection-fg: #111827;
+    --series-hover-bg: #e5e7eb;
+    --series-hover-fg: #111827;
+    --cursor-blob: #f8fafc;
+}
+
+/* Monotonic palette - no color variation */
+:root[data-palette='monotonic'] {
+    --page-title-fg: var(--fg);
+    --h1-fg: var(--fg);
+    --h2-fg: var(--fg);
+    --h3-fg: var(--fg);
+    --h4-fg: var(--fg);
+    --heading-border: var(--border);
+    --strong-fg: var(--fg);
+    --em-fg: var(--fg);
+}
+
+/* Colorful palette - subtle, theme-consistent colors */
+:root[data-palette='colorful'] {
+    --page-title-fg: var(--fg);
+    --h1-fg: #7a2d6e;
+    --h2-fg: #a84632;
+    --h3-fg: #b56b2e;
+    --h4-fg: #2d7a6e;
+    --heading-border: #d8c8d8;
+    --strong-fg: #922d3d;
+    --em-fg: #6d5a8e;
+}
+
+:root[data-theme='dark'][data-palette='colorful'] {
+    --page-title-fg: var(--fg);
+    --h1-fg: #d8a0d0;
+    --h2-fg: #e88877;
+    --h3-fg: #f0b070;
+    --h4-fg: #70d8c0;
+    --heading-border: #4a3a4a;
+    --strong-fg: #f5a3b0;
+    --em-fg: #b8a8d8;
+}

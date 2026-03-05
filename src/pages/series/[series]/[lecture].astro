@@ -2,19 +2,18 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../../components/SiteLayout.astro';
 import TableOfContents from '../../../components/TableOfContents.astro';
-
-type LectureEntry = CollectionEntry<'lectures'>;
-type SeriesEntry = CollectionEntry<'series'>;
+import { withBase, toSeriesSlug, toLectureSlug, createSeriesMap } from '../../../utils/path';
+import { SITE_CONFIG } from '../../../config/site';
+import type { LectureEntry, SeriesEntry } from '../../../types/content';
 
 export async function getStaticPaths() {
   const seriesEntries = await getCollection('series');
   const lectureEntries = await getCollection('lectures');
-  const seriesBySlug = new Map(seriesEntries.map((entry) => [entry.id.split('/')[0], entry]));
+  const seriesBySlug = createSeriesMap(seriesEntries);
 
   return lectureEntries.map((lectureEntry) => {
-    const parts = lectureEntry.id.split('/');
-    const series = parts[0];
-    const lecture = parts[1];
+    const series = toSeriesSlug(lectureEntry.id);
+    const lecture = toLectureSlug(lectureEntry.id);
 
     return {
       params: { series, lecture },
@@ -34,7 +33,6 @@ const { lectureEntry, seriesEntry, seriesSlug } = Astro.props as {
 };
 
 const { Content } = await render(lectureEntry);
-const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
 const publishedDate = lectureEntry.data.publishedAt
   ? lectureEntry.data.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   : null;
@@ -44,7 +42,11 @@ const declaredResources = lectureEntry.data.resources ?? [];
 const resources = declaredResources;
 ---
 
-<SiteLayout title={`${lectureEntry.data.title} | Graphics Lectures`} isContentPage={true}>
+<SiteLayout 
+  title={`${lectureEntry.data.title} | ${SITE_CONFIG.title}`} 
+  isContentPage={true}
+  seriesTitle={seriesEntry?.data.title}
+>
   <main>
     {publishedDate ? <p class="muted">{publishedDate}</p> : null}
     <h1>{lectureEntry.data.title}</h1>

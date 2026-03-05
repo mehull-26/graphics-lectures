@@ -2,21 +2,17 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../../components/SiteLayout.astro';
 import TableOfContents from '../../../components/TableOfContents.astro';
-
-type MetaEntry = CollectionEntry<'meta'>;
-type SeriesEntry = CollectionEntry<'series'>;
+import { withBase, parseMetaPath, createSeriesMap } from '../../../utils/path';
+import { SITE_CONFIG } from '../../../config/site';
+import type { MetaEntry, SeriesEntry } from '../../../types/content';
 
 export async function getStaticPaths() {
   const seriesEntries = await getCollection('series');
   const metaEntries = await getCollection('meta');
-  const seriesBySlug = new Map(seriesEntries.map((entry) => [entry.id.split('/')[0], entry]));
+  const seriesBySlug = createSeriesMap(seriesEntries);
 
   return metaEntries.map((metaEntry) => {
-    const parts = metaEntry.id.split('/');
-    const seriesSlug = parts[0];
-    const folderName = parts[1].replace(/^\./, ''); // Remove leading dot
-    const fileName = parts[2].replace(/\.mdx$/, ''); // Remove .mdx extension
-    const slug = `${folderName}/${fileName}`;
+    const { seriesSlug, fullSlug: slug } = parseMetaPath(metaEntry.id);
 
     return {
       params: { series: seriesSlug, slug },
@@ -36,11 +32,14 @@ const { metaEntry, seriesEntry, seriesSlug } = Astro.props as {
 };
 
 const { Content } = await render(metaEntry);
-const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
-const sectionName = metaEntry.id.split('/')[1]?.replace(/^\./, '') ?? 'overview';
+const { folderName: sectionName } = parseMetaPath(metaEntry.id);
 ---
 
-<SiteLayout title={`${metaEntry.data.title} | Graphics Lectures`} isContentPage={true}>
+<SiteLayout 
+  title={`${metaEntry.data.title} | ${SITE_CONFIG.title}`} 
+  isContentPage={true}
+  seriesTitle={seriesEntry?.data.title}
+>
   <main>
     <h1>{metaEntry.data.title}</h1>
 

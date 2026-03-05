@@ -1,0 +1,41 @@
+---
+import { withBase } from '../utils/path';
+import { ICON_PATHS, EXTERNAL_RESOURCES } from '../config/site';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+  <link rel="icon" type="image/x-icon" href={withBase(ICON_PATHS.favicon)} />
+  <link rel="stylesheet" href={EXTERNAL_RESOURCES.katexCss} />
+  <script is:inline>
+    // Initialize theme/palette immediately to prevent FOUC
+    // This runs before any modules load
+    (() => {
+      const getStored = (key, validValues) => {
+        try {
+          const value = localStorage.getItem(key);
+          return validValues.includes(value) ? value : null;
+        } catch {
+          return null;
+        }
+      };
+
+      const theme = getStored('theme', ['dark', 'light']) 
+        ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      const palette = getStored('palette', ['colorful', 'monotonic']) ?? 'colorful';
+      document.documentElement.setAttribute('data-palette', palette);
+    })();
+  </script>
+</head>

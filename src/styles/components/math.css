@@ -1,0 +1,17 @@
+/* KaTeX Math Rendering */
+
+.katex {
+    font-size: 1.08em;
+}
+
+.katex-display {
+    margin: 1rem 0;
+    font-size: clamp(1.25rem, 1.2vw, 1.6rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.15rem 0;
+}
+
+.katex-display>.katex {
+    white-space: nowrap;
+}

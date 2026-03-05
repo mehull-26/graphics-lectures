@@ -8,14 +8,19 @@
         "build": "astro build",
         "preview": "astro preview",
         "predeploy": "npm run build",
-        "deploy": "gh-pages -d dist"
+        "deploy": "gh-pages -d dist",
+        "format": "prettier --write \"src/**/*.{astro,ts,tsx,js,jsx,css}\"",
+        "format:check": "prettier --check \"src/**/*.{astro,ts,tsx,js,jsx,css}\"",
+        "lint": "eslint src --ext .astro,.ts,.tsx,.js,.jsx",
+        "lint:fix": "eslint src --ext .astro,.ts,.tsx,.js,.jsx --fix",
+        "type-check": "astro check"
     },
     "dependencies": {
         "@astrojs/check": "^0.9.6",
-        "@astrojs/mdx": "^4.3.0",
+        "@astrojs/mdx": "^4.3.13",
         "@astrojs/react": "^4.4.2",
         "@expressive-code/plugin-line-numbers": "^0.41.6",
-        "astro": "^5.3.0",
+        "astro": "^5.18.0",
         "astro-expressive-code": "^0.41.6",
         "katex": "^0.16.11",
         "react": "^19.2.4",

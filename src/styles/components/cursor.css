@@ -1,0 +1,39 @@
+/* Custom Cursor */
+
+@media (pointer: fine) {
+
+    html.custom-cursor,
+    html.custom-cursor * {
+        cursor: none !important;
+    }
+
+    .cursor-blob {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: 999px;
+        pointer-events: none;
+        z-index: var(--z-cursor);
+        opacity: 0;
+        background: var(--cursor-blob);
+        mix-blend-mode: difference;
+        transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+        transition: opacity var(--transition-fast) ease, width var(--transition-cursor) ease, height var(--transition-cursor) ease;
+    }
+
+    .cursor-blob.is-visible {
+        opacity: 0.97;
+    }
+
+    .cursor-blob.is-hover {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .cursor-blob.is-pressed {
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+}

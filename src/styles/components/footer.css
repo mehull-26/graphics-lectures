@@ -1,0 +1,186 @@
+/* Footer Styles */
+
+.site-footer {
+    margin-top: 5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+}
+
+.footer-container {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+/* Main footer line */
+.footer-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.copyright-text {
+    color: var(--muted);
+}
+
+.footer-sep {
+    opacity: 0.5;
+}
+
+.license-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--transition-fast) ease;
+}
+
+.license-link:hover,
+.license-link:focus-visible {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+/* Social links - right side */
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.78rem;
+}
+
+.social-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--transition-fast) ease;
+}
+
+.social-link:hover,
+.social-link:focus-visible {
+    color: var(--link);
+}
+
+/* Cite button */
+.cite-btn {
+    color: var(--muted);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    font-size: 0.78rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: color var(--transition-fast) ease;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.cite-btn::before {
+    content: '';
+    display: inline-block;
+    width: 0.85rem;
+    height: 0.85rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z'%3E%3C/path%3E%3Cpath d='M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.8;
+}
+
+.cite-btn:hover,
+.cite-btn:focus-visible {
+    color: var(--link);
+}
+
+.cite-btn:hover::before,
+.cite-btn:focus-visible::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23007bc3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z'%3E%3C/path%3E%3Cpath d='M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z'%3E%3C/path%3E%3C/svg%3E");
+    opacity: 1;
+}
+
+/* Citation popup */
+.citation-popup {
+    position: fixed;
+    bottom: 5rem;
+    right: 4rem;
+    max-width: 380px;
+    background: color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity var(--transition-normal) ease, transform var(--transition-normal) ease;
+    z-index: 1000;
+}
+
+.citation-popup.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.citation-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.citation-popup-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+}
+
+.citation-popup-text {
+    font-size: 0.72rem;
+    color: var(--fg);
+    line-height: 1.5;
+    font-family: inherit;
+    word-break: break-word;
+}
+
+.citation-text {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .citation-popup {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+    }
+
+    .footer-container {
+        padding: 0 1.5rem;
+    }
+
+    .footer-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.7rem;
+    }
+
+    .footer-right {
+        font-size: 0.75rem;
+        gap: 0.8rem;
+    }
+}

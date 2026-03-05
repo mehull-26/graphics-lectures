@@ -1,34 +1,30 @@
 ---
 import { getCollection } from 'astro:content';
 import SiteLayout from '../components/SiteLayout.astro';
+import { withBase, toSeriesSlug } from '../utils/path';
+import { SITE_CONFIG, UI_TEXT } from '../config/site';
 
 const seriesEntries = (await getCollection('series')).sort(
   (a, b) => a.data.order - b.data.order
 );
-
-const toSeriesSlug = (entryId: string) => entryId.split('/')[0];
-const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
 ---
 
-<SiteLayout title="Graphics Lectures">
+<SiteLayout title={SITE_CONFIG.title}>
   <main class="home-main">
     <section class="home-intro">
-      <h1 class="home-title">Graphics &amp; Simulation Notes</h1>
+      <h1 class="home-title">{SITE_CONFIG.fullTitle}</h1>
 
       <p class="home-lead">
-        A structured set of lecture notes on rendering, physics, and simulation.
-        This site is a long-term technical archive rather than a blog.
+        {SITE_CONFIG.description}
       </p>
 
       <p class="home-sublead">
-        Each lecture focuses on building intuition first, then connecting physics,
-        mathematics, and implementation. Over time this will expand into multiple
-        series covering rendering, numerical methods, and simulation systems.
+        {SITE_CONFIG.tagline}
       </p>
     </section>
 
     <section>
-      <h2 class="home-section-title">Lecture Series</h2>
+      <h2 class="home-section-title">{UI_TEXT.sections.lectureSeries}</h2>
 
       <div class="series-list">
         {seriesEntries.map((entry) => {

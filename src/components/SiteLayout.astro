@@ -1,251 +1,45 @@
 ---
-import '../styles/site.css';
+import '../styles/index.css';
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import CustomCursor from './CustomCursor.astro';
+import { normalizePath } from '../utils/path';
+import { SITE_CONFIG } from '../config/site';
 
 interface Props {
   title: string;
+  description?: string;
   isContentPage?: boolean;
+  seriesTitle?: string;
 }
 
-const { title, isContentPage = false } = Astro.props;
-const withBase = (path: string) => `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+const { title, description = SITE_CONFIG.description, isContentPage = false, seriesTitle } = Astro.props;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 const rawPath = Astro.url.pathname;
-const normalizedPath = rawPath.startsWith(basePath)
-  ? rawPath.slice(basePath.length) || '/'
-  : rawPath;
-const isSeriesActive = normalizedPath === '/series' || normalizedPath.startsWith('/series/');
+const normalizedPath = normalizePath(rawPath, basePath);
 
-// Extract series slug from path if we're in a series context
-const seriesMatch = normalizedPath.match(/^\/series\/([^\/]+)/);
-const currentSeriesSlug = seriesMatch ? seriesMatch[1] : null;
-const seriesLink = currentSeriesSlug ? `series/${currentSeriesSlug}` : 'series';
+// Extract page title for footer (remove site name suffix)
+const pageTitle = title.includes('|') ? title.split('|')[0].trim() : null;
+const currentUrl = Astro.url.pathname;
 ---
 
 <!doctype html>
 <html lang="en" data-content-page={isContentPage ? 'true' : 'false'}>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-    <link rel="icon" type="image/x-icon" href={withBase('icon.ico')} />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
-    <script is:inline>
-      (() => {
-        let stored = null;
-        try {
-          const value = localStorage.getItem('theme');
-          if (value === 'dark' || value === 'light') {
-            stored = value;
-          }
-        } catch {
-        }
-
-        const initial = stored
-          ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', initial);
-
-        // Initialize palette
-        let storedPalette = null;
-        try {
-          const value = localStorage.getItem('palette');
-          if (value === 'monotonic' || value === 'colorful') {
-            storedPalette = value;
-          }
-        } catch {
-        }
-        const initialPalette = storedPalette ?? 'colorful';
-        document.documentElement.setAttribute('data-palette', initialPalette);
-      })();
-    </script>
-  </head>
+  <BaseHead title={title} description={description} />
   <body>
-    <div id="cursor-blob" class="cursor-blob" aria-hidden="true"></div>
+    <CustomCursor />
     <div class="site-shell">
-      <header class="site-header">
-        <a class="site-brand" href={withBase('')}> Mehul Yadav</a>
-        <nav class="site-nav" aria-label="Primary">
-          <a class:list={{ 'site-nav-link': true, active: isSeriesActive }} href={withBase(seriesLink)}>Series</a>
-          <button class="palette-toggle" id="palette-toggle" type="button" aria-label="Toggle palette">
-            <img class="palette-icon" src={withBase('palette.ico')} alt="" width="20" height="20" aria-hidden="true" />
-          </button>
-          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">
-            <img class="mode-icon" src={withBase('dark_mode.ico')} alt="" width="20" height="20" aria-hidden="true" />
-          </button>
-        </nav>
-      </header>
+      <Header currentPath={normalizedPath} />
       <slot />
+      <Footer pageTitle={pageTitle} pageUrl={currentUrl} seriesTitle={seriesTitle} />
     </div>
 
-    <script is:inline>
-      (() => {
-        const getSafeStoredTheme = () => {
-          try {
-            const value = localStorage.getItem('theme');
-            return value === 'dark' || value === 'light' ? value : null;
-          } catch {
-            return null;
-          }
-        };
-
-        const setSafeStoredTheme = (theme) => {
-          try {
-            localStorage.setItem('theme', theme);
-          } catch {
-          }
-        };
-
-        const getCurrentTheme = () => {
-          const attrTheme = document.documentElement.getAttribute('data-theme');
-          if (attrTheme === 'dark' || attrTheme === 'light') return attrTheme;
-
-          const stored = getSafeStoredTheme();
-          if (stored) return stored;
-
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        };
-
-        const applyTheme = (theme) => {
-          document.documentElement.setAttribute('data-theme', theme);
-          setSafeStoredTheme(theme);
-        };
-
-        const bindThemeToggle = () => {
-          const button = document.getElementById('theme-toggle');
-          if (!button || button.dataset.boundThemeToggle === 'true') return;
-
-          const syncToggleState = () => {
-            const current = getCurrentTheme();
-            const target = current === 'dark' ? 'light' : 'dark';
-            button.setAttribute('aria-label', `Switch to ${target} mode`);
-            button.setAttribute('title', `Switch to ${target} mode`);
-          };
-
-          button.addEventListener('click', () => {
-            const current = getCurrentTheme();
-            const next = current === 'dark' ? 'light' : 'dark';
-            applyTheme(next);
-            syncToggleState();
-          });
-
-          button.dataset.boundThemeToggle = 'true';
-          syncToggleState();
-        };
-
-        const bindPaletteToggle = () => {
-          const button = document.getElementById('palette-toggle');
-          if (!button || button.dataset.boundPaletteToggle === 'true') return;
-
-          const getSafeStoredPalette = () => {
-            try {
-              const value = localStorage.getItem('palette');
-              return value === 'monotonic' || value === 'colorful' ? value : null;
-            } catch {
-              return null;
-            }
-          };
-
-          const setSafeStoredPalette = (palette) => {
-            try {
-              localStorage.setItem('palette', palette);
-            } catch {
-            }
-          };
-
-          const getCurrentPalette = () => {
-            const attrPalette = document.documentElement.getAttribute('data-palette');
-            if (attrPalette === 'monotonic' || attrPalette === 'colorful') return attrPalette;
-            return getSafeStoredPalette() ?? 'colorful';
-          };
-
-          const applyPalette = (palette) => {
-            document.documentElement.setAttribute('data-palette', palette);
-            setSafeStoredPalette(palette);
-          };
-
-          const syncPaletteState = () => {
-            const current = getCurrentPalette();
-            const target = current === 'colorful' ? 'monotonic' : 'colorful';
-            button.setAttribute('aria-label', `Switch to ${target} palette`);
-            button.setAttribute('title', `Switch to ${target} palette`);
-          };
-
-          button.addEventListener('click', () => {
-            const current = getCurrentPalette();
-            const next = current === 'colorful' ? 'monotonic' : 'colorful';
-            applyPalette(next);
-            syncPaletteState();
-          });
-
-          button.dataset.boundPaletteToggle = 'true';
-          syncPaletteState();
-        };
-
-        const bindCustomCursor = () => {
-          const blob = document.getElementById('cursor-blob');
-          if (!blob || blob.dataset.boundCustomCursor === 'true') return;
-
-          if (!window.matchMedia('(pointer: fine)').matches) {
-            document.documentElement.classList.remove('custom-cursor');
-            blob.remove();
-            return;
-          }
-
-          document.documentElement.classList.add('custom-cursor');
-
-          const interactiveSelector = 'a, button, [role="button"], summary, input, textarea, select, label';
-          let latestX = -100;
-          let latestY = -100;
-          let frameId = 0;
-
-          const render = () => {
-            blob.style.transform = `translate3d(${latestX}px, ${latestY}px, 0) translate(-50%, -50%)`;
-            frameId = 0;
-          };
-
-          const handleMove = (event) => {
-            latestX = event.clientX;
-            latestY = event.clientY;
-
-            if (!blob.classList.contains('is-visible')) {
-              blob.classList.add('is-visible');
-            }
-
-            if (event.target instanceof Element) {
-              const interactive = event.target.closest(interactiveSelector);
-              blob.classList.toggle('is-hover', Boolean(interactive));
-            } else {
-              blob.classList.remove('is-hover');
-            }
-
-            if (!frameId) {
-              frameId = window.requestAnimationFrame(render);
-            }
-          };
-
-          const handleLeave = () => {
-            blob.classList.remove('is-visible');
-            blob.classList.remove('is-hover');
-          };
-
-          const handleDown = () => blob.classList.add('is-pressed');
-          const handleUp = () => blob.classList.remove('is-pressed');
-
-          window.addEventListener('pointermove', handleMove, { passive: true });
-          window.addEventListener('mousemove', handleMove, { passive: true });
-          window.addEventListener('pointerdown', handleDown, { passive: true });
-          window.addEventListener('pointerup', handleUp, { passive: true });
-          document.addEventListener('mouseleave', handleLeave);
-
-          blob.dataset.boundCustomCursor = 'true';
-        };
-
-        bindThemeToggle();
-        bindPaletteToggle();
-        bindCustomCursor();
-        document.addEventListener('astro:page-load', bindThemeToggle);
-        document.addEventListener('astro:page-load', bindPaletteToggle);
-        document.addEventListener('astro:page-load', bindCustomCursor);
-      })();
+    <script>
+      import { setupThemeSystem } from '../lib/theme-manager';
+      
+      // Setup theme toggles
+      setupThemeSystem();
     </script>
   </body>
 </html>

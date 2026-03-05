@@ -5,6 +5,7 @@ import expressiveCode from 'astro-expressive-code';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { fileURLToPath } from 'url';
 
 function remarkCodeFenceMeta() {
     return (tree) => {
@@ -36,6 +37,18 @@ export default defineConfig({
     site: 'https://mehull.dev',
     base: '/',
     output: 'static',
+    vite: {
+        resolve: {
+            alias: {
+                '@utils': fileURLToPath(new URL('./src/utils', import.meta.url)),
+                '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
+                '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+                '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
+                '@types': fileURLToPath(new URL('./src/types', import.meta.url)),
+                '@config': fileURLToPath(new URL('./src/config', import.meta.url)),
+            },
+        },
+    },
     integrations: [
         react(),
         expressiveCode({

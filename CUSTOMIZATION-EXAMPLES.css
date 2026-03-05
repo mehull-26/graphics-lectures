@@ -1,0 +1,77 @@
+/* ============================================
+   QUICK CUSTOMIZATION EXAMPLES
+   Copy any of these into variables.css
+   ============================================ */
+
+/* Example 1: Faster animations everywhere */
+:root {
+    --transition-fast: 80ms;
+    --transition-normal: 100ms;
+    --transition-slow: 120ms;
+    --transition-xslow: 180ms;
+}
+
+/* Example 2: Different accent color */
+:root {
+    --link: #0066cc;
+    /* Change from blue to darker blue */
+}
+
+:root[data-theme='dark'] {
+    --link: #66b3ff;
+    /* Lighter blue for dark mode */
+}
+
+/* Example 3: Wider content area */
+:root {
+    --content-max: 1200px;
+    /* Default is 980px */
+    --home-max: 1400px;
+    /* Default is 1000px */
+}
+
+/* Example 4: Different background colors */
+:root {
+    --bg: #fafafa;
+    /* Slightly gray instead of pure white */
+    --fg: #0a0a0a;
+    /* Slightly lighter black */
+}
+
+/* Example 5: Purple/Pink theme (colorful palette) */
+:root[data-palette='colorful'] {
+    --h1-fg: #8b008b;
+    /* Dark magenta */
+    --h2-fg: #9932cc;
+    /* Dark orchid */
+    --h3-fg: #ba55d3;
+    /* Medium orchid */
+    --h4-fg: #da70d6;
+    /* Orchid */
+    --link: #9370db;
+    /* Medium purple links */
+}
+
+/* Example 6: Minimal spacing (more compact) */
+:root {
+    --spacing-tight: 0.6rem;
+    --spacing-normal: 0.8rem;
+    --spacing-loose: 1rem;
+}
+
+/* Example 7: Smooth, slow animations */
+:root {
+    --transition-fast: 200ms;
+    --transition-normal: 300ms;
+    --transition-slow: 400ms;
+    --transition-xslow: 500ms;
+}
+
+/* ============================================
+   HOW TO USE:
+   1. Open src/styles/tokens/variables.css
+   2. Find the :root {} section
+   3. Copy the properties you want to change
+   4. Paste them into :root {}, replacing existing values
+   5. Save the file - changes appear immediately!
+   ============================================ */
