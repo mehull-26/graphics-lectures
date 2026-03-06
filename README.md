@@ -4,8 +4,8 @@ A well-architected Astro-based lecture archive for long-form technical series.
 
 ## Documentation
 
-- **[ENGINEERING.md](ENGINEERING.md)** - Modifying styles, components, and configuration
-- **[CONTENT-AUTHORING.md](CONTENT-AUTHORING.md)** - Creating lectures, series, and derivations
+- **[ENGINEERING.md](/src/content/ENGINEERING.md)** - Modifying styles, components, and configuration
+- **[CONTENT-AUTHORING.md](/src/content/CONTENT-AUTHORING.md)** - Creating lectures, series, and derivations
 
 ## Quick Start
 

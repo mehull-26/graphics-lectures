@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ENGINEERING.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="engineering-reference">Engineering Reference</h1>
+<p>Architecture, styling, component development, and configuration for the Graphics Lectures site.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#tech-stack">Tech Stack</a></li>
+<li><a href="#project-structure">Project Structure</a></li>
+<li><a href="#configuration-layer">Configuration Layer</a></li>
+<li><a href="#style-system">Style System</a></li>
+<li><a href="#component-system">Component System</a></li>
+<li><a href="#mdx-component-factory-pattern">MDX Component Factory Pattern</a></li>
+<li><a href="#library-systems">Library Systems</a></li>
+<li><a href="#routing--pages">Routing &amp; Pages</a></li>
+<li><a href="#type-system">Type System</a></li>
+<li><a href="#adding-a-new-mdx-component">Adding a New MDX Component</a></li>
+<li><a href="#extending-styles">Extending Styles</a></li>
+<li><a href="#path-aliases">Path Aliases</a></li>
+</ul>
+<hr>
+<h2 id="tech-stack">Tech Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Astro</td>
+<td>5.18</td>
+<td>Static site generation, routing, content collections</td>
+</tr>
+<tr>
+<td>React</td>
+<td>19.2</td>
+<td>MDX interactive components</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>5.9</td>
+<td>Strict typing throughout</td>
+</tr>
+<tr>
+<td><code>@astrojs/mdx</code></td>
+<td>—</td>
+<td>MDX pipeline with component mapping</td>
+</tr>
+<tr>
+<td><code>@astrojs/react</code></td>
+<td>—</td>
+<td>React integration for MDX components</td>
+</tr>
+<tr>
+<td>KaTeX</td>
+<td>0.16</td>
+<td>Math rendering</td>
+</tr>
+<tr>
+<td>Expressive Code</td>
+<td>—</td>
+<td>Syntax-highlighted code blocks</td>
+</tr>
+<tr>
+<td>remark-math + rehype-katex</td>
+<td>—</td>
+<td><code>$...$</code> and <code>$$...$$</code> → KaTeX</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="project-structure">Project Structure</h2>
+<pre class="hljs"><code><div>src/
+├── components/          # UI components
+│   ├── mdx/             # React components used inside MDX
+│   ├── BaseHead.astro
+│   ├── CustomCursor.astro
+│   ├── Footer.astro
+│   ├── Header.astro
+│   ├── LectureNav.astro
+│   ├── SiteLayout.astro
+│   └── TableOfContents.astro
+├── config/
+│   ├── mdx-components.ts   # Registry: which React components MDX can use
+│   └── site.ts             # All site-wide constants and configuration
+├── content/             # Content collections (MDX/Markdown)
+│   ├── config.ts        # Zod schemas for each collection
+│   ├── series/          # Series and lecture files
+│   └── derivations/     # Standalone derivation files
+├── lib/                 # Core business logic
+│   ├── cursor.ts
+│   ├── ref-preview.ts
+│   ├── storage.ts
+│   ├── theme-manager.ts
+│   ├── mdx/             # MDX component factories
+│   └── toc/             # Table of contents system
+├── pages/               # Astro route templates
+├── styles/
+│   ├── index.css        # Import manifest (controls load order)
+│   ├── responsive.css
+│   ├── base/            # reset.css, typography.css
+│   ├── components/      # Per-component stylesheets
+│   ├── layout/          # shell.css
+│   ├── pages/           # Page-specific overrides
+│   └── tokens/          # variables.css (design tokens)
+├── types/               # TypeScript definitions
+└── utils/               # Pure utility functions
+</div></code></pre>
+<hr>
+<h2 id="configuration-layer">Configuration Layer</h2>
+<h3 id="srcconfigsitets"><code>src/config/site.ts</code></h3>
+<p>Single source of truth for all site-wide values. Edit this file first for any branding or text changes.</p>
+<pre class="hljs"><code><div>SITE_CONFIG          <span class="hljs-comment">// title, fullTitle, author, description, tagline</span>
+UI_TEXT              <span class="hljs-comment">// all user-visible labels (TOC title, button text, ARIA labels)</span>
+EXTERNAL_RESOURCES   <span class="hljs-comment">// KaTeX CDN URL</span>
+CONTENT_CONFIG       <span class="hljs-comment">// defaultContentSelector, defaultHeadingSelector</span>
+SOCIAL_LINKS         <span class="hljs-comment">// github, email, linkedin</span>
+LICENSE_INFO         <span class="hljs-comment">// CC BY-NC-ND 4.0</span>
+PREVIEW_CONFIG       <span class="hljs-comment">// hover timing, popup sizing, highlight duration for ref-preview</span>
+</div></code></pre>
+<p><code>PREVIEW_CONFIG</code> controls the hover-preview behaviour on <code>&lt;EqRef&gt;</code>, <code>&lt;FigRef&gt;</code>, <code>&lt;TabRef&gt;</code>:</p>
+<pre class="hljs"><code><div>PREVIEW_CONFIG = {
+    hoverDelay: <span class="hljs-number">200</span>,         <span class="hljs-comment">// ms before popup appears</span>
+    hideDelay: <span class="hljs-number">150</span>,          <span class="hljs-comment">// ms before popup hides</span>
+    highlightDuration: <span class="hljs-number">2000</span>, <span class="hljs-comment">// ms element stays highlighted after click</span>
+    maxWidth: <span class="hljs-number">700</span>,           <span class="hljs-comment">// px, popup width cap</span>
+    maxHeight: <span class="hljs-number">500</span>,          <span class="hljs-comment">// px, popup height cap</span>
+    showEquationNumbersInPreview: <span class="hljs-literal">true</span>,
+}
+</div></code></pre>
+<h3 id="srcconfigmdx-componentsts"><code>src/config/mdx-components.ts</code></h3>
+<p>Registering a component here makes it available in every MDX file <strong>without</strong> an import:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> Details <span class="hljs-keyword">from</span> <span class="hljs-string">'../components/mdx/Details'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
+    <span class="hljs-comment">// ...existing</span>
+    Details,
+};
+</div></code></pre>
+<p>After registering here you still need to pass it via <code>components={{...}}</code> in the page template — see <a href="#adding-a-new-mdx-component">Adding a New MDX Component</a>.</p>
+<hr>
+<h2 id="style-system">Style System</h2>
+<p>Styles are modular. <code>src/styles/index.css</code> is the single import used by <code>SiteLayout.astro</code> and controls load order:</p>
+<pre class="hljs"><code><div>tokens/variables.css
+base/reset.css
+base/typography.css
+layout/shell.css
+components/header.css
+components/toc.css
+components/lecture-nav.css
+... (other components)
+pages/home.css
+responsive.css
+</div></code></pre>
+<p><strong>Never import individual CSS files directly</strong> from components. Add new files to <code>index.css</code> in the appropriate section.</p>
+<h3 id="design-tokens-srcstylestokensvariablescss">Design Tokens (<code>src/styles/tokens/variables.css</code>)</h3>
+<p>All colours, spacing, and timing are CSS custom properties. Every component uses tokens — never hardcode values.</p>
+<p><strong>Core tokens:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--bg</code>, <code>--fg</code></td>
+<td>Page background and foreground text</td>
+</tr>
+<tr>
+<td><code>--muted</code></td>
+<td>Secondary/subdued text</td>
+</tr>
+<tr>
+<td><code>--border</code></td>
+<td>Border and separator lines</td>
+</tr>
+<tr>
+<td><code>--link</code></td>
+<td>Anchor colour</td>
+</tr>
+<tr>
+<td><code>--code-bg</code>, <code>--code-fg</code></td>
+<td>Inline code styling</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Themes</strong> are applied via <code>data-theme=&quot;dark&quot;</code> on <code>&lt;html&gt;</code>. Both <code>dark</code> and <code>light</code> values are defined in the same file under <code>:root</code> and <code>[data-theme=&quot;dark&quot;]</code> blocks.</p>
+<p><strong>Palettes</strong> are applied via <code>data-palette=&quot;colorful&quot;</code> on <code>&lt;html&gt;</code>. In <code>colorful</code> mode the headings and emphasis get distinct colours per level. In <code>monotonic</code> mode everything falls back to <code>--fg</code>.</p>
+<p><strong>Other token groups:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-selector-tag">--transition-fast</span> / <span class="hljs-selector-tag">--transition-normal</span> / <span class="hljs-selector-tag">--transition-slow</span> / <span class="hljs-selector-tag">--transition-xslow</span>
+<span class="hljs-selector-tag">--spacing-tight</span> / <span class="hljs-selector-tag">--spacing-normal</span> / <span class="hljs-selector-tag">--spacing-loose</span>
+<span class="hljs-selector-tag">--radius-small</span> / <span class="hljs-selector-tag">--radius-normal</span> / <span class="hljs-selector-tag">--radius-large</span>
+<span class="hljs-selector-tag">--z-toc</span> / <span class="hljs-selector-tag">--z-header</span> / <span class="hljs-selector-tag">--z-cursor</span>
+<span class="hljs-selector-tag">--content-max-width</span>: 980<span class="hljs-selector-tag">px</span>
+</div></code></pre>
+<h3 id="adding-a-component-stylesheet">Adding a Component Stylesheet</h3>
+<ol>
+<li>Create <code>src/styles/components/my-component.css</code></li>
+<li>Add <code>@import './components/my-component.css';</code> to <code>src/styles/index.css</code> in the components section</li>
+</ol>
+<hr>
+<h2 id="component-system">Component System</h2>
+<h3 id="layout-components-astro">Layout Components (Astro)</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SiteLayout.astro</code></td>
+<td>Root layout: imports CSS, renders Header + Footer, sets <code>data-content-page</code> attribute</td>
+</tr>
+<tr>
+<td><code>BaseHead.astro</code></td>
+<td><code>&lt;head&gt;</code> management: charset, viewport, title, KaTeX CSS, FOUC-prevention script</td>
+</tr>
+<tr>
+<td><code>Header.astro</code></td>
+<td>Top nav with logo, series link, theme toggle (#theme-toggle), palette toggle (#palette-toggle)</td>
+</tr>
+<tr>
+<td><code>Footer.astro</code></td>
+<td>Copyright, license, social links, citation popup</td>
+</tr>
+<tr>
+<td><code>CustomCursor.astro</code></td>
+<td>Cursor blob overlay (only on <code>pointer: fine</code> devices)</td>
+</tr>
+<tr>
+<td><code>TableOfContents.astro</code></td>
+<td>Sticky TOC sidebar; props: <code>contentSelector?</code></td>
+</tr>
+<tr>
+<td><code>LectureNav.astro</code></td>
+<td>Right-fixed series navigation; props: <code>lectures[]</code>, <code>metaPages[]</code>, <code>seriesSlug</code>, <code>seriesTitle</code>, <code>currentPath</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>SiteLayout</code> accepts:</p>
+<pre class="hljs"><code><div>{
+    title: <span class="hljs-built_in">string</span>,
+    description?: <span class="hljs-built_in">string</span>,
+    isContentPage?: <span class="hljs-built_in">boolean</span>,   <span class="hljs-comment">// adds data-content-page attr, used for layout shifts</span>
+    seriesTitle?: <span class="hljs-built_in">string</span>,      <span class="hljs-comment">// passed to Footer for citation</span>
+}
+</div></code></pre>
+<h3 id="mdx-components-react">MDX Components (React)</h3>
+<p>All live in <code>src/components/mdx/</code>. They are React components rendered server-side during Astro build.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Details</code></td>
+<td>Collapsible section with variants (default/derivation/note/example)</td>
+</tr>
+<tr>
+<td><code>Equation</code></td>
+<td>Display-mode math with numbering and ID</td>
+</tr>
+<tr>
+<td><code>Figure</code></td>
+<td>Image/content figure with caption and numbering</td>
+</tr>
+<tr>
+<td><code>Table</code></td>
+<td>Table wrapper with above-caption and numbering</td>
+</tr>
+<tr>
+<td><code>EqRef</code></td>
+<td>Inline link to an equation, resolves display number</td>
+</tr>
+<tr>
+<td><code>FigRef</code></td>
+<td>Inline link to a figure</td>
+</tr>
+<tr>
+<td><code>TabRef</code></td>
+<td>Inline link to a table</td>
+</tr>
+<tr>
+<td><code>ImageBlock</code></td>
+<td>Single image with asset resolution and scale</td>
+</tr>
+<tr>
+<td><code>ImageRowBlock</code></td>
+<td>CSS grid of images with uniform sizing</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="mdx-component-factory-pattern">MDX Component Factory Pattern</h2>
+<p>Numbered content (Figure, Equation, Table) and their references (FigRef, EqRef, TabRef) are generated from shared factories in <code>src/lib/mdx/</code> to avoid duplication.</p>
+<h3 id="createnumberedcontentconfig--srclibmdxfactoriestsx"><code>createNumberedContent(config)</code> — <code>src/lib/mdx/factories.tsx</code></h3>
+<p>Creates a component that renders numbered, referenceable content:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { createNumberedContent } <span class="hljs-keyword">from</span> <span class="hljs-string">'../../lib/mdx/factories'</span>;
+
+<span class="hljs-keyword">const</span> MyBlock = createNumberedContent({
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'figure'</span>,      <span class="hljs-comment">// 'figure' | 'equation' | 'table'</span>
+    idPrefix: <span class="hljs-string">'fig-'</span>,    <span class="hljs-comment">// expected prefix on the id prop</span>
+    label: <span class="hljs-string">'Figure'</span>,     <span class="hljs-comment">// display label: "Figure 1.2"</span>
+});
+</div></code></pre>
+<p>The resulting component handles:</p>
+<ul>
+<li>Hierarchical numbering: <code>contextNumber=1, number=2</code> → <strong>Figure 1.2</strong></li>
+<li><code>data-ref-id</code>, <code>data-ref-type</code>, <code>data-ref-number</code> attributes (used by the hover-preview system)</li>
+<li>Auto-generating IDs from caption text if none is provided</li>
+</ul>
+<h3 id="createcontextwrappercomponent-contextnumber--srclibmdxutilsts"><code>createContextWrapper(Component, contextNumber)</code> — <code>src/lib/mdx/utils.ts</code></h3>
+<p>Pre-binds a <code>contextNumber</code> (the lecture or derivation number) to all numbered components on a page, so they automatically produce hierarchical numbers:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// In a page template:</span>
+<span class="hljs-keyword">const</span> FigureWithLecture = createContextWrapper(Figure, lectureEntry.data.lectureNumber);
+<span class="hljs-comment">// Now &lt;Figure id="fig-x" number={1} /&gt; automatically produces "Figure 1.1"</span>
+</div></code></pre>
+<h3 id="createcontentrefconfig--srclibmdxreffactorytsx"><code>createContentRef(config)</code> — <code>src/lib/mdx/refFactory.tsx</code></h3>
+<p>Creates inline reference link components:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { createContentRef } <span class="hljs-keyword">from</span> <span class="hljs-string">'../../lib/mdx/refFactory'</span>;
+
+<span class="hljs-keyword">const</span> MyRef = createContentRef({
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'figure'</span>,
+    idPrefix: <span class="hljs-string">'fig-'</span>,
+    defaultPrefix: <span class="hljs-string">'fig.'</span>,   <span class="hljs-comment">// text shown before number when no children: "fig. 1.2"</span>
+});
+</div></code></pre>
+<p>Cross-page references are supported via the <code>page</code> prop:</p>
+<pre class="hljs"><code><div>&lt;FigRef id=&quot;fig-diagram&quot; page=&quot;/series/rendering/lecture-02&quot; /&gt;
+</div></code></pre>
+<hr>
+<h2 id="library-systems">Library Systems</h2>
+<h3 id="theme-manager-srclibtheme-managerts">Theme Manager (<code>src/lib/theme-manager.ts</code>)</h3>
+<p>Manages <code>dark/light</code> theme and <code>colorful/monotonic</code> palette via DOM attributes and <code>localStorage</code>.</p>
+<ul>
+<li><code>initThemeSystem()</code> — call early in <code>&lt;head&gt;</code> to prevent FOUC</li>
+<li><code>setupThemeSystem()</code> — binds the toggle buttons; call on <code>DOMContentLoaded</code></li>
+</ul>
+<p>The toggle buttons must have IDs <code>#theme-toggle</code> and <code>#palette-toggle</code>.</p>
+<h3 id="table-of-contents-srclibtoc">Table of Contents (<code>src/lib/toc/</code>)</h3>
+<p>Automatically extracted from content headings. Key behaviours:</p>
+<ul>
+<li>Only the <strong>top 2 heading levels</strong> present in the content are included</li>
+<li>Scroll tracking highlights the active section</li>
+<li>Responsive: hidden below 980px viewport width</li>
+<li>Expand/collapse controls for nested items</li>
+</ul>
+<p>The <code>TableOfContents.astro</code> component handles initialisation via <code>setupToc()</code>. Pass a <code>contentSelector</code> if your content isn't in <code>&lt;article&gt;</code>.</p>
+<h3 id="ref-preview-srclibref-previewts">Ref Preview (<code>src/lib/ref-preview.ts</code>)</h3>
+<p>Hover popups and click-to-scroll for any element with <code>data-ref-link</code> attribute. Handles:</p>
+<ul>
+<li><strong>Same-page</strong>: highlights the target element directly</li>
+<li><strong>Cross-page</strong>: fetches the remote page and extracts the target HTML</li>
+<li><strong>Touch devices</strong>: hover disabled; click-to-navigate works instead</li>
+<li>Opens <code>&lt;details&gt;</code> elements that contain the target automatically</li>
+</ul>
+<p>Configured via <code>PREVIEW_CONFIG</code> in <code>src/config/site.ts</code>.</p>
+<h3 id="custom-cursor-srclibcursorts">Custom Cursor (<code>src/lib/cursor.ts</code>)</h3>
+<p>Renders a translucent blob that tracks the cursor. Only activates on <code>pointer: fine</code> (mouse/trackpad). Interactive elements (links, buttons) trigger a hover state.</p>
+<h3 id="storage-srclibstoragets">Storage (<code>src/lib/storage.ts</code>)</h3>
+<p>Type-safe <code>localStorage</code> wrapper used by the theme system. Guards against SSR and private browsing mode failures.</p>
+<hr>
+<h2 id="routing--pages">Routing &amp; Pages</h2>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td><code>pages/index.astro</code></td>
+<td>Home / series listing</td>
+</tr>
+<tr>
+<td><code>/series</code></td>
+<td><code>pages/series/index.astro</code></td>
+<td>All series</td>
+</tr>
+<tr>
+<td><code>/series/[series]</code></td>
+<td><code>pages/series/[series]/index.astro</code></td>
+<td>Single series overview</td>
+</tr>
+<tr>
+<td><code>/series/[series]/[lecture]</code></td>
+<td><code>pages/series/[series]/[lecture].astro</code></td>
+<td>Lecture page</td>
+</tr>
+<tr>
+<td><code>/derivations</code></td>
+<td><code>pages/derivations/index.astro</code></td>
+<td>All derivations</td>
+</tr>
+<tr>
+<td><code>/derivations/[derivationSlug]</code></td>
+<td><code>pages/derivations/[derivationSlug].astro</code></td>
+<td>Single derivation</td>
+</tr>
+</tbody>
+</table>
+<p>All routes are statically generated. <code>getStaticPaths()</code> in each page fetches the content collection and produces the path params.</p>
+<h3 id="registering-components-in-page-templates">Registering Components in Page Templates</h3>
+<p>After adding a component to <code>mdx-components.ts</code>, also add it to the <code>&lt;Content components={{...}} /&gt;</code> call in the relevant page template:</p>
+<pre class="hljs"><code><div>&lt;!-- src/pages/series/[series]/[lecture].astro --&gt;
+&lt;Content components={{
+    Figure: FigureWithLecture,
+    Equation: EquationWithLecture,
+    Details,       // ← add here
+    FigRef,
+    EqRef,
+}} /&gt;
+</div></code></pre>
+<p>Do the same for <code>src/pages/derivations/[derivationSlug].astro</code> if the component should also work in derivations.</p>
+<hr>
+<h2 id="type-system">Type System</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/types/content.ts</code></td>
+<td><code>SeriesEntry</code>, <code>LectureEntry</code>, <code>MetaEntry</code>, <code>DerivationEntry</code>, <code>NavigationLink</code></td>
+</tr>
+<tr>
+<td><code>src/types/theme.ts</code></td>
+<td><code>Theme</code>, <code>Palette</code>, branded <code>SeriesSlug</code> / <code>LectureSlug</code>, <code>STORAGE_KEYS</code>, <code>DATA_ATTRIBUTES</code></td>
+</tr>
+<tr>
+<td><code>src/types/index.ts</code></td>
+<td>Re-export barrel</td>
+</tr>
+</tbody>
+</table>
+<p>Content schemas (Zod) live in <code>src/content/config.ts</code>. Both the schemas and the TypeScript types must be kept in sync.</p>
+<hr>
+<h2 id="adding-a-new-mdx-component">Adding a New MDX Component</h2>
+<p>Full checklist for adding a component available in MDX:</p>
+<ol>
+<li><strong>Create</strong> <code>src/components/mdx/MyComponent.tsx</code></li>
+<li><strong>Register</strong> it in <code>src/config/mdx-components.ts</code></li>
+<li><strong>Add</strong> it to the <code>components={{}}</code> prop in:
+<ul>
+<li><code>src/pages/series/[series]/[lecture].astro</code></li>
+<li><code>src/pages/derivations/[derivationSlug].astro</code> (if needed)</li>
+</ul>
+</li>
+<li><strong>Add CSS</strong> in <code>src/styles/components/my-component.css</code> and import it in <code>src/styles/index.css</code></li>
+</ol>
+<hr>
+<h2 id="extending-styles">Extending Styles</h2>
+<h3 id="changing-a-design-token">Changing a Design Token</h3>
+<p>Edit <code>src/styles/tokens/variables.css</code>. All components pick up the change automatically.</p>
+<h3 id="overriding-a-component">Overriding a Component</h3>
+<p>Each component has its own CSS file. Find the relevant file in <code>src/styles/components/</code> and add/modify rules there. Avoid modifying <code>reset.css</code> or <code>typography.css</code> for component-specific overrides.</p>
+<h3 id="adding-a-new-theme-or-palette">Adding a New Theme or Palette</h3>
+<p>In <code>variables.css</code>:</p>
+<ol>
+<li>Define the new values inside a new attribute selector: <code>[data-theme=&quot;my-theme&quot;] { ... }</code></li>
+<li>Update <code>theme-manager.ts</code> to include the new value in the valid values list</li>
+<li>Add a toggle button in <code>Header.astro</code> and bind it in <code>theme-manager.ts</code></li>
+</ol>
+<hr>
+<h2 id="path-aliases">Path Aliases</h2>
+<p>Configured in <code>tsconfig.json</code> and <code>astro.config.mjs</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Alias</th>
+<th>Resolves to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@utils/*</code></td>
+<td><code>src/utils/*</code></td>
+</tr>
+<tr>
+<td><code>@lib/*</code></td>
+<td><code>src/lib/*</code></td>
+</tr>
+<tr>
+<td><code>@components/*</code></td>
+<td><code>src/components/*</code></td>
+</tr>
+<tr>
+<td><code>@styles/*</code></td>
+<td><code>src/styles/*</code></td>
+</tr>
+<tr>
+<td><code>@types/*</code></td>
+<td><code>src/types/*</code></td>
+</tr>
+<tr>
+<td><code>@config/*</code></td>
+<td><code>src/config/*</code></td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

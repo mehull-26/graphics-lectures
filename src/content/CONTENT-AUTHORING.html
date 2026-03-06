@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CONTENT-AUTHORING.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="content-authoring-guide">Content Authoring Guide</h1>
+<p>Everything you need to write lectures, derivations, and series pages.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#content-types-overview">Content Types Overview</a></li>
+<li><a href="#creating-a-series">Creating a Series</a></li>
+<li><a href="#creating-a-lecture">Creating a Lecture</a></li>
+<li><a href="#creating-a-derivation">Creating a Derivation</a></li>
+<li><a href="#creating-meta-pages">Creating Meta Pages</a></li>
+<li><a href="#mdx-components-reference">MDX Components Reference</a>
+<ul>
+<li><a href="#details-collapsible-sections">Details (Collapsible Sections)</a></li>
+<li><a href="#equations">Equations</a></li>
+<li><a href="#figures">Figures</a></li>
+<li><a href="#tables">Tables</a></li>
+<li><a href="#cross-references">Cross-References</a></li>
+<li><a href="#images">Images</a></li>
+</ul>
+</li>
+<li><a href="#math-syntax">Math Syntax</a></li>
+<li><a href="#cross-page-references">Cross-Page References</a></li>
+<li><a href="#file--asset-conventions">File &amp; Asset Conventions</a></li>
+</ul>
+<hr>
+<h2 id="content-types-overview">Content Types Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Location</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Series</td>
+<td><code>src/content/series/[series-slug]/series.md</code></td>
+<td>Groups a set of lectures</td>
+</tr>
+<tr>
+<td>Lecture</td>
+<td><code>src/content/series/[series-slug]/lecture-NN/lecture.mdx</code></td>
+<td>Individual lecture</td>
+</tr>
+<tr>
+<td>Meta Page</td>
+<td><code>src/content/series/[series-slug]/.meta/[slug].mdx</code></td>
+<td>Supplementary pages (syllabus, notes, etc.)</td>
+</tr>
+<tr>
+<td>Derivation</td>
+<td><code>src/content/derivations/derivation-NN/derivation.mdx</code></td>
+<td>Standalone mathematical derivation</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="creating-a-series">Creating a Series</h2>
+<p>Create <code>src/content/series/[series-slug]/series.md</code>:</p>
+<pre class="hljs"><code><div>---
+title: Rendering Foundations
+description: Core theory and implementation of physically based rendering.
+<span class="hljs-section">order: 1
+---</span>
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>string</td>
+<td>✅</td>
+<td>Displayed in nav and headings</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>string</td>
+<td>✅</td>
+<td>Short summary shown on series index</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>number</td>
+<td>—</td>
+<td>Controls sort order on the series listing (default: 0)</td>
+</tr>
+</tbody>
+</table>
+<p>The folder name (e.g., <code>rendering</code>) becomes the URL slug: <code>/series/rendering</code>.</p>
+<hr>
+<h2 id="creating-a-lecture">Creating a Lecture</h2>
+<p>Create <code>src/content/series/[series-slug]/lecture-NN/lecture.mdx</code>:</p>
+<pre class="hljs"><code><div>---
+title: Radiometry Foundations
+lectureNumber: 1
+summary: Core radiometric quantities and why they matter for physically based rendering.
+publishedAt: 2026-02-13
+readings:
+<span class="hljs-bullet">    - </span>label: PBRT Radiometry Chapter
+<span class="hljs-code">      href: https://pbr-book.org/4ed/Radiometry,_Spectra,_and_Color</span>
+assignments:
+<span class="hljs-bullet">    - </span>label: Assignment 1 - Radiometry worksheet
+<span class="hljs-code">      href: https://example.com/assignments/worksheet</span>
+resources:
+<span class="hljs-bullet">    - </span>label: Starter repository
+<span class="hljs-section">      href: https://github.com/your-org/starter
+---</span>
+
+<span class="hljs-section">## Section heading</span>
+
+Your lecture content here...
+</div></code></pre>
+<h3 id="frontmatter-fields">Frontmatter Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>string</td>
+<td>✅</td>
+<td>Page <code>&lt;h1&gt;</code> and <code>&lt;title&gt;</code></td>
+</tr>
+<tr>
+<td><code>lectureNumber</code></td>
+<td>integer</td>
+<td>✅</td>
+<td>Used for numbering figures/equations (e.g., &quot;Figure 1.2&quot;)</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td>string</td>
+<td>—</td>
+<td>Short description shown in metadata block</td>
+</tr>
+<tr>
+<td><code>publishedAt</code></td>
+<td>date (YYYY-MM-DD)</td>
+<td>—</td>
+<td>Displayed in header as &quot;Feb 13&quot;</td>
+</tr>
+<tr>
+<td><code>readings</code></td>
+<td><code>{label, href}[]</code></td>
+<td>—</td>
+<td>Linked reading list</td>
+</tr>
+<tr>
+<td><code>assignments</code></td>
+<td><code>{label, href}[]</code></td>
+<td>—</td>
+<td>Linked assignments</td>
+</tr>
+<tr>
+<td><code>resources</code></td>
+<td><code>{label, href}[]</code></td>
+<td>—</td>
+<td>Starter repos, slides, reference notes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="numbering">Numbering</h3>
+<p><code>lectureNumber</code> drives the prefix on all numbered content. <code>lectureNumber: 1</code> with <code>&lt;Equation number={3}&gt;</code> produces <strong>Equation 1.3</strong>.</p>
+<hr>
+<h2 id="creating-a-derivation">Creating a Derivation</h2>
+<p>Create <code>src/content/derivations/derivation-NN/derivation.mdx</code>:</p>
+<pre class="hljs"><code><div>---
+title: Derivation of the Rendering Equation
+derivationNumber: 1
+summary: Step-by-step derivation starting from energy conservation.
+publishedAt: 2026-03-01
+<span class="hljs-section">order: 1
+---</span>
+
+<span class="hljs-section">## Starting point</span>
+
+Your derivation content here...
+</div></code></pre>
+<h3 id="frontmatter-fields">Frontmatter Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>string</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td><code>derivationNumber</code></td>
+<td>integer</td>
+<td>✅</td>
+<td>Prefix for numbered content (&quot;Equation 1.2&quot;)</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td>string</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td><code>publishedAt</code></td>
+<td>date</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>integer</td>
+<td>—</td>
+<td>Sort order on derivations index (default: 0)</td>
+</tr>
+</tbody>
+</table>
+<p>URL: <code>/derivations/derivation-01</code></p>
+<hr>
+<h2 id="creating-meta-pages">Creating Meta Pages</h2>
+<p>Meta pages are supplementary content attached to a series (e.g., a syllabus, notation guide, or problem set index). They appear in the <strong>Course Materials</strong> section of the lecture nav.</p>
+<p>Create <code>src/content/series/[series-slug]/.meta/[slug].mdx</code>:</p>
+<pre class="hljs"><code><div>---
+title: Syllabus
+order: 1
+<span class="hljs-section">summary: Course schedule and grading breakdown.
+---</span>
+
+<span class="hljs-section">## Week 1</span>
+
+...
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>string</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>integer</td>
+<td>—</td>
+<td>Sort order in the nav (default: 0)</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td>string</td>
+<td>—</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="mdx-components-reference">MDX Components Reference</h2>
+<p>All components below are available in any lecture or derivation <code>.mdx</code> file without importing them.</p>
+<hr>
+<h3 id="details-collapsible-sections">Details (Collapsible Sections)</h3>
+<pre class="hljs"><code><div>&lt;Details summary=&quot;Derivation&quot; variant=&quot;derivation&quot;&gt;
+
+Content that starts collapsed.
+
+$E = \frac{d\Phi}{dA}$
+
+&lt;/Details&gt;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>summary</code></td>
+<td>string or JSX</td>
+<td><code>&quot;Show details&quot;</code></td>
+<td>Text shown in the summary bar</td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>default</code> | <code>derivation</code> | <code>note</code> | <code>example</code></td>
+<td><code>default</code></td>
+<td>Controls the colour accent</td>
+</tr>
+<tr>
+<td><code>defaultOpen</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Start expanded</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td>string</td>
+<td>—</td>
+<td>Optional emoji/character shown before the label</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>Accent Colour</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default</code></td>
+<td>Neutral</td>
+<td>General collapsible content</td>
+</tr>
+<tr>
+<td><code>derivation</code></td>
+<td>Blue</td>
+<td>Mathematical derivations</td>
+</tr>
+<tr>
+<td><code>note</code></td>
+<td>Purple</td>
+<td>Asides, clarifications, deeper dives</td>
+</tr>
+<tr>
+<td><code>example</code></td>
+<td>Green</td>
+<td>Worked examples</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<pre class="hljs"><code><div>&lt;Details summary=&quot;Proof&quot; variant=&quot;derivation&quot;&gt;
+
+Starting from flux $\Phi$...
+
+&lt;/Details&gt;
+
+&lt;Details summary=&quot;Common mistake&quot; variant=&quot;note&quot; icon=&quot;⚠️&quot;&gt;
+
+Don't confuse irradiance with radiance.
+
+&lt;/Details&gt;
+
+&lt;Details summary=&quot;Worked example&quot; variant=&quot;example&quot; defaultOpen={true}&gt;
+
+Given $E = 5 \, \text{W/m}^2$...
+
+&lt;/Details&gt;
+</div></code></pre>
+<hr>
+<h3 id="equations">Equations</h3>
+<p>Numbered, referenceable display math:</p>
+<pre class="hljs"><code><div>&lt;Equation id=&quot;eq-irradiance&quot; number={1}&gt;
+
+$$
+E = \frac{d\Phi}{dA}
+$$
+
+&lt;/Equation&gt;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>string</td>
+<td>✅</td>
+<td>Must be unique on the page; used by <code>&lt;EqRef&gt;</code></td>
+</tr>
+<tr>
+<td><code>number</code></td>
+<td>number</td>
+<td>✅</td>
+<td>Local number for this equation on the page</td>
+</tr>
+<tr>
+<td><code>caption</code></td>
+<td>string</td>
+<td>—</td>
+<td>Optional caption below the block</td>
+</tr>
+</tbody>
+</table>
+<p>The displayed number is: <strong><code>{lectureNumber}.{number}</code></strong> (e.g., &quot;Equation 1.3&quot;). The <code>lectureNumber</code> is injected automatically from the frontmatter — you never need to pass it manually.</p>
+<hr>
+<h3 id="figures">Figures</h3>
+<p>Numbered, referenceable figure wrappers:</p>
+<pre class="hljs"><code><div>&lt;Figure id=&quot;fig-radiometry-diagram&quot; number={1} caption=&quot;Geometric relationships in radiometry&quot;&gt;
+  &lt;ImageBlock name=&quot;radiometry.png&quot; alt=&quot;Radiometry diagram&quot; scale={0.6} /&gt;
+&lt;/Figure&gt;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>string</td>
+<td>✅</td>
+<td>Must be unique on the page; used by <code>&lt;FigRef&gt;</code></td>
+</tr>
+<tr>
+<td><code>number</code></td>
+<td>number</td>
+<td>✅</td>
+<td>Local figure number</td>
+</tr>
+<tr>
+<td><code>caption</code></td>
+<td>string</td>
+<td>—</td>
+<td>Caption displayed below the figure</td>
+</tr>
+</tbody>
+</table>
+<p>Any content can go inside a <code>&lt;Figure&gt;</code> — <code>&lt;ImageBlock&gt;</code>, <code>&lt;ImageRowBlock&gt;</code>, or inline HTML.</p>
+<hr>
+<h3 id="tables">Tables</h3>
+<p>Numbered table with caption rendered <strong>above</strong> the table (per convention):</p>
+<pre class="hljs"><code><div>&lt;Table id=&quot;tab-comparison&quot; number={1} caption=&quot;Radiometric quantities summary&quot;&gt;
+
+| Quantity | Symbol | Unit |
+|---|---|---|
+| Flux | $\Phi$ | W |
+| Irradiance | $E$ | W/m² |
+| Radiance | $L$ | W/m²·sr |
+
+&lt;/Table&gt;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>string</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td><code>number</code></td>
+<td>number</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td><code>caption</code></td>
+<td>string</td>
+<td>—</td>
+<td>Shown above the table</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="cross-references">Cross-References</h3>
+<p>Inline links that resolve to the correct display number and show a hover preview popup:</p>
+<pre class="hljs"><code><div>See &lt;EqRef id=&quot;eq-irradiance&quot; /&gt; for the definition.
+
+As shown in &lt;FigRef id=&quot;fig-radiometry-diagram&quot; /&gt;, the geometry is...
+
+The comparison in &lt;TabRef id=&quot;tab-comparison&quot; /&gt; lists all quantities.
+</div></code></pre>
+<p>All three components (<code>EqRef</code>, <code>FigRef</code>, <code>TabRef</code>) take the same props:</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>string</td>
+<td>✅</td>
+<td>The <code>id</code> of the target Figure/Equation/Table</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>string</td>
+<td>—</td>
+<td>URL of another page for cross-page references</td>
+</tr>
+<tr>
+<td><code>children</code></td>
+<td>string</td>
+<td>—</td>
+<td>Custom link text (overrides auto-generated number)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Custom text:</strong></p>
+<pre class="hljs"><code><div>&lt;EqRef id=&quot;eq-irradiance&quot;&gt;irradiance formula&lt;/EqRef&gt;
+</div></code></pre>
+<p><strong>Cross-page:</strong></p>
+<pre class="hljs"><code><div>&lt;FigRef id=&quot;fig-diagram&quot; page=&quot;/series/rendering/lecture-02&quot; /&gt;
+</div></code></pre>
+<p>The reference will fetch the target page at build/runtime to resolve the correct number.</p>
+<hr>
+<h3 id="images">Images</h3>
+<h4 id="single-image--imageblock">Single Image — <code>&lt;ImageBlock&gt;</code></h4>
+<pre class="hljs"><code><div>&lt;ImageBlock
+  name=&quot;radiometry.png&quot;
+  alt=&quot;Diagram showing radiometric angles&quot;
+  scale={0.6}
+/&gt;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>—</td>
+<td>Bare filename — resolved from the lecture's <code>assets/</code> folder</td>
+</tr>
+<tr>
+<td><code>src</code></td>
+<td>string</td>
+<td>—</td>
+<td>Explicit path or URL (alternative to <code>name</code>)</td>
+</tr>
+<tr>
+<td><code>alt</code></td>
+<td>string</td>
+<td>auto</td>
+<td>Alt text; auto-inferred from filename if omitted</td>
+</tr>
+<tr>
+<td><code>scale</code></td>
+<td>number</td>
+<td><code>1</code></td>
+<td>Width as a fraction of content width (0.1–1.0)</td>
+</tr>
+<tr>
+<td><code>caption</code></td>
+<td>string</td>
+<td>—</td>
+<td>Optional caption</td>
+</tr>
+</tbody>
+</table>
+<h4 id="image-grid--imagerowblock">Image Grid — <code>&lt;ImageRowBlock&gt;</code></h4>
+<pre class="hljs"><code><div>&lt;ImageRowBlock
+  perLine={3}
+  scale={0.9}
+  gapRem={0.5}
+  images={[
+    { name: 'step-01.png', alt: 'Step 1' },
+    { name: 'step-02.png', alt: 'Step 2' },
+    { name: 'step-03.png', alt: 'Step 3' },
+  ]}
+/&gt;
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>images</code></td>
+<td><code>{name?, src?, alt?}[]</code></td>
+<td>—</td>
+<td>List of images</td>
+</tr>
+<tr>
+<td><code>perLine</code></td>
+<td>number</td>
+<td><code>2</code></td>
+<td>Columns per row</td>
+</tr>
+<tr>
+<td><code>scale</code></td>
+<td>number</td>
+<td><code>1</code></td>
+<td>Scales all images uniformly</td>
+</tr>
+<tr>
+<td><code>gap</code></td>
+<td>number</td>
+<td>—</td>
+<td>Gap in pixels</td>
+</tr>
+<tr>
+<td><code>gapRem</code></td>
+<td>number</td>
+<td>—</td>
+<td>Gap in rems (preferred)</td>
+</tr>
+</tbody>
+</table>
+<p>The last row auto-centers if it has fewer items than <code>perLine</code>.</p>
+<hr>
+<h2 id="math-syntax">Math Syntax</h2>
+<p>Inline math uses single <code>$</code>:</p>
+<pre class="hljs"><code><div>The irradiance is $E = d\Phi / dA$ where $\Phi$ is flux.
+</div></code></pre>
+<p>Block/display math uses double <code>$$</code> (inside or outside <code>&lt;Equation&gt;</code>):</p>
+<pre class="hljs"><code><div>$$
+L = \frac{d^2\Phi}{dA \, d\omega \, \cos\theta}
+$$
+</div></code></pre>
+<p>Inside an <code>&lt;Equation&gt;</code> component the <code>$$</code> block gets the numbered wrapper:</p>
+<pre class="hljs"><code><div>&lt;Equation id=&quot;eq-radiance&quot; number={2}&gt;
+
+$$
+L = \frac{d^2\Phi}{dA \, d\omega \, \cos\theta}
+$$
+
+&lt;/Equation&gt;
+</div></code></pre>
+<p>KaTeX is used for rendering. Full KaTeX syntax reference: https://katex.org/docs/supported.html</p>
+<hr>
+<h2 id="cross-page-references">Cross-Page References</h2>
+<p>References can point to content on other pages by adding the <code>page</code> prop:</p>
+<pre class="hljs"><code><div>&lt;EqRef id=&quot;eq-rendering-equation&quot; page=&quot;/series/rendering/lecture-03&quot; /&gt;
+</div></code></pre>
+<p>The system fetches the remote page and extracts the referenced element to display the correct number in the hover preview. The <code>page</code> value should be the <strong>absolute path</strong> relative to the site root (no domain, no trailing slash).</p>
+<hr>
+<h2 id="file--asset-conventions">File &amp; Asset Conventions</h2>
+<h3 id="folder-structure-for-a-lecture">Folder structure for a lecture</h3>
+<pre class="hljs"><code><div>src/content/series/rendering/
+├── series.md
+├── lecture-01/
+│   ├── lecture.mdx
+│   └── assets/
+│       ├── radiometry.png
+│       └── diagram-02.png
+└── lecture-02/
+    ├── lecture.mdx
+    └── assets/
+</div></code></pre>
+<ul>
+<li>All images for a lecture go inside <code>assets/</code> next to the <code>lecture.mdx</code> file</li>
+<li>Reference them by bare filename: <code>name=&quot;radiometry.png&quot;</code></li>
+</ul>
+<h3 id="naming-conventions">Naming conventions</h3>
+<table>
+<thead>
+<tr>
+<th>Thing</th>
+<th>Convention</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Series folder</td>
+<td>kebab-case</td>
+<td><code>rendering-foundations</code></td>
+</tr>
+<tr>
+<td>Lecture folders</td>
+<td><code>lecture-NN</code> (zero-padded)</td>
+<td><code>lecture-01</code>, <code>lecture-12</code></td>
+</tr>
+<tr>
+<td>Derivation folders</td>
+<td><code>derivation-NN</code></td>
+<td><code>derivation-01</code></td>
+</tr>
+<tr>
+<td>Asset filenames</td>
+<td>kebab-case</td>
+<td><code>radiometry-diagram.png</code></td>
+</tr>
+<tr>
+<td>Figure IDs</td>
+<td><code>fig-[descriptive-name]</code></td>
+<td><code>fig-radiometry-diagram</code></td>
+</tr>
+<tr>
+<td>Equation IDs</td>
+<td><code>eq-[descriptive-name]</code></td>
+<td><code>eq-irradiance</code></td>
+</tr>
+<tr>
+<td>Table IDs</td>
+<td><code>tab-[descriptive-name]</code></td>
+<td><code>tab-quantities</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="id-uniqueness">ID uniqueness</h3>
+<p>Figure, equation, and table <code>id</code> values must be <strong>unique per page</strong>. Cross-page references work by <code>id</code> so keep names descriptive enough to avoid collisions between pages if you later link across them.</p>
+
+</body>
+</html>
