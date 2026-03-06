@@ -83,3 +83,46 @@
 .palette-toggle:focus-visible .palette-icon {
     transform: scale(1.1);
 }
+
+/* Font Scale Toggle */
+
+.font-scale-toggle {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 84%, var(--fg) 16%);
+    appearance: none;
+    color: var(--fg);
+    font: inherit;
+    line-height: 0;
+    width: 2.3rem;
+    height: 2.3rem;
+    padding: 0;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root[data-theme='dark'] .font-scale-toggle {
+    background: color-mix(in srgb, var(--bg) 74%, var(--fg) 26%);
+}
+
+.font-scale-icon {
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1;
+    transition: font-size 200ms ease;
+}
+
+:root[data-font-scale='sm'] .font-scale-icon {
+    font-size: 0.8rem;
+}
+
+:root[data-font-scale='md'] .font-scale-icon {
+    font-size: 1rem;
+}
+
+:root[data-font-scale='lg'] .font-scale-icon {
+    font-size: 1.2rem;
+}

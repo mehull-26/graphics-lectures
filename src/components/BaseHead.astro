@@ -35,6 +35,9 @@ const { title, description } = Astro.props;
       
       const palette = getStored('palette', ['colorful', 'monotonic']) ?? 'monotonic';
       document.documentElement.setAttribute('data-palette', palette);
+
+      const fontScale = getStored('fontScale', ['sm', 'md', 'lg']) ?? 'md';
+      document.documentElement.setAttribute('data-font-scale', fontScale);
     })();
   </script>
 </head>

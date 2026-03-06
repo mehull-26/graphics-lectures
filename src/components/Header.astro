@@ -24,6 +24,14 @@ const seriesLink = currentSeriesSlug ? `series/${currentSeriesSlug}` : 'series';
     >
       {NAVIGATION.items[0].label}
     </a>
+    <button
+      class="font-scale-toggle"
+      id="font-scale-toggle"
+      type="button"
+      aria-label="Cycle font size"
+    >
+      <span class="font-scale-icon" aria-hidden="true">A</span>
+    </button>
     <button 
       class="palette-toggle" 
       id="palette-toggle" 

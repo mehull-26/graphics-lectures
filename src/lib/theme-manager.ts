@@ -7,6 +7,7 @@ import { storage } from './storage';
 
 export type Theme = 'dark' | 'light';
 export type Palette = 'colorful' | 'monotonic';
+export type FontScale = 'sm' | 'md' | 'lg';
 
 interface ToggleConfig<T extends string> {
     /** Storage key for localStorage */
@@ -120,9 +121,24 @@ const paletteConfig: ToggleConfig<Palette> = {
     defaultValue: 'colorful'
 };
 
+// Font scale toggle configuration
+const fontScaleConfig: ToggleConfig<FontScale> = {
+    storageKey: 'fontScale',
+    attribute: 'data-font-scale',
+    validValues: ['sm', 'md', 'lg'] as const,
+    defaultValue: 'md'
+};
+
 // Create toggle managers
 export const themeManager = createToggle(themeConfig);
 export const paletteManager = createToggle(paletteConfig);
+export const fontScaleManager = createToggle(fontScaleConfig);
+
+const FONT_SCALE_CYCLE: Record<FontScale, FontScale> = {
+    sm: 'md',
+    md: 'lg',
+    lg: 'sm'
+};
 
 /**
  * Binds a toggle button to a manager
@@ -165,6 +181,7 @@ export function bindToggleButton<T extends string>(
 export function initThemeSystem(): void {
     themeManager.init();
     paletteManager.init();
+    fontScaleManager.init();
 }
 
 /**
@@ -195,7 +212,20 @@ export function bindPaletteToggle(): void {
  * Convenience function to set up all theme-related functionality
  * Call this once on DOMContentLoaded or immediately if DOM is ready
  */
+/**
+ * Binds the font scale toggle button
+ */
+export function bindFontScaleToggle(): void {
+    bindToggleButton(
+        'font-scale-toggle',
+        fontScaleManager,
+        (current) => FONT_SCALE_CYCLE[current],
+        'boundFontScaleToggle'
+    );
+}
+
 export function setupThemeSystem(): void {
     bindThemeToggle();
     bindPaletteToggle();
+    bindFontScaleToggle();
 }

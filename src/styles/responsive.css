@@ -30,7 +30,8 @@
     }
 
     .theme-toggle,
-    .palette-toggle {
+    .palette-toggle,
+    .font-scale-toggle {
         width: 1.8rem;
         height: 1.8rem;
     }
