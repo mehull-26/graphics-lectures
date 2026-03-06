@@ -13,8 +13,8 @@
     --muted: #555555;
     --border: #d9d9d9;
     --link: #007bc3;
-    --code-bg: #f3f3f3;
-    --code-fg: #111111;
+    --code-bg: #f4f4f3;
+    --code-fg: #1a1a1a;
     --selection-bg: #1f2933;
     --selection-fg: #f8fafc;
     --series-hover-bg: #1f2933;
@@ -57,8 +57,8 @@
     --muted: #bcbcbc;
     --border: #333333;
     --link: #b8e5ff;
-    --code-bg: #161616;
-    --code-fg: #f2f2f2;
+    --code-bg: #141414;
+    --code-fg: #e4e4e4;
     --selection-bg: #e5e7eb;
     --selection-fg: #111827;
     --series-hover-bg: #e5e7eb;
@@ -78,25 +78,41 @@
     --em-fg: var(--fg);
 }
 
-/* Colorful palette - subtle, theme-consistent colors */
+/* Colorful palette - warm-cool gradient, low saturation */
 :root[data-palette='colorful'] {
-    --page-title-fg: var(--fg);
-    --h1-fg: #7a2d6e;
-    --h2-fg: #a84632;
-    --h3-fg: #b56b2e;
-    --h4-fg: #2d7a6e;
-    --heading-border: #d8c8d8;
-    --strong-fg: #922d3d;
-    --em-fg: #6d5a8e;
+    --page-title-fg: #b52a1a;
+    --h1-fg: #b52a1a;
+    --h2-fg: #c06a10;
+    --h3-fg: #648f00;
+    --h4-fg: #18805c;
+    --heading-border: #d2cbc2;
+    --strong-fg: #a0203a;
+    --em-fg: #7a2da0;
+    --accent: #b52a1a;
+    --accent-subtle: #c06a10;
+    --blockquote-accent: #c06a10;
+    --selection-bg: #b52a1a;
+    --selection-fg: #fff;
+    --series-hover-bg: #b52a1a;
+    --series-hover-fg: #fff;
+    --cursor-blob: #b52a1a;
 }
 
 :root[data-theme='dark'][data-palette='colorful'] {
-    --page-title-fg: var(--fg);
-    --h1-fg: #d8a0d0;
-    --h2-fg: #e88877;
-    --h3-fg: #f0b070;
-    --h4-fg: #70d8c0;
-    --heading-border: #4a3a4a;
-    --strong-fg: #f5a3b0;
-    --em-fg: #b8a8d8;
+    --page-title-fg: #f0816a;
+    --h1-fg: #f0816a;
+    --h2-fg: #e8a050;
+    --h3-fg: #b8cc60;
+    --h4-fg: #58d8a8;
+    --heading-border: #3a3530;
+    --strong-fg: #f07888;
+    --em-fg: #c888e8;
+    --accent: #f0816a;
+    --accent-subtle: #e8a050;
+    --blockquote-accent: #e8a050;
+    --selection-bg: #f0816a;
+    --selection-fg: #0b0b0b;
+    --series-hover-bg: #f0816a;
+    --series-hover-fg: #0b0b0b;
+    --cursor-blob: #f0816a;
 }

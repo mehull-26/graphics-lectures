@@ -43,30 +43,40 @@ pre {
 
 :root[data-theme='dark'] .expressive-code:not([data-theme='light']),
 .expressive-code[data-theme='dark'] {
-    --ec-codeBg: #0d1218 !important;
-    --ec-frm-edBg: #181b21 !important;
-    --ec-frm-trmBg: #0d1218 !important;
-    --ec-frm-edTabBarBg: #0b1016 !important;
-    --ec-frm-trmTtbBg: #0b1016 !important;
-    --ec-brdCol: #252d3a !important;
-    --ec-gtrFg: #7e8ca3 !important;
-    --ec-gtrHlFg: #9dacbf !important;
-    --ec-codeFg: #d7e2f1 !important;
-    --ec-codeSelBg: #e5e7eb66 !important;
-    --ec-uiSelBg: #e5e7eb !important;
-    --ec-uiSelFg: #111827 !important;
+    --ec-codeBg: #141414 !important;
+    --ec-frm-edBg: #1a1a1a !important;
+    --ec-frm-trmBg: #141414 !important;
+    --ec-frm-edTabBarBg: #101010 !important;
+    --ec-frm-trmTtbBg: #101010 !important;
+    --ec-brdCol: #2c2c2c !important;
+    --ec-gtrFg: #555555 !important;
+    --ec-gtrHlFg: #808080 !important;
+    --ec-codeFg: #e4e4e4 !important;
+    --ec-codeSelBg: #f2f2f230 !important;
+    --ec-uiSelBg: #e5e5e5 !important;
+    --ec-uiSelFg: #111111 !important;
+    --ec-frm-inlBtnFg: #e4e4e4 !important;
+    --ec-frm-inlBtnBg: #e4e4e4 !important;
+    --ec-frm-inlBtnBrd: #e4e4e4 !important;
+    --ec-frm-tooltipSuccessBg: #2c2c2c !important;
+    --ec-frm-tooltipSuccessFg: #e4e4e4 !important;
 }
 
 :root:not([data-theme='dark']) .expressive-code:not([data-theme='dark']),
 .expressive-code[data-theme='light'] {
-    --ec-codeBg: #e3e5e8 !important;
-    --ec-frm-edBg: #f7f7f7 !important;
-    --ec-frm-trmBg: #e3e5e8 !important;
-    --ec-frm-edTabBarBg: #d9dde2 !important;
-    --ec-frm-trmTtbBg: #d9dde2 !important;
-    --ec-brdCol: #bcc3cc !important;
-    --ec-codeFg: #1f2933 !important;
-    --ec-codeSelBg: #1f293344 !important;
-    --ec-uiSelBg: #1f2933 !important;
-    --ec-uiSelFg: #f8fafc !important;
+    --ec-codeBg: #f4f4f3 !important;
+    --ec-frm-edBg: #fafaf9 !important;
+    --ec-frm-trmBg: #f4f4f3 !important;
+    --ec-frm-edTabBarBg: #eeeeed !important;
+    --ec-frm-trmTtbBg: #eeeeed !important;
+    --ec-brdCol: #d9d9d9 !important;
+    --ec-codeFg: #1a1a1a !important;
+    --ec-codeSelBg: #10101028 !important;
+    --ec-uiSelBg: #1a1a1a !important;
+    --ec-uiSelFg: #fafafa !important;
+    --ec-frm-inlBtnFg: #1a1a1a !important;
+    --ec-frm-inlBtnBg: #1a1a1a !important;
+    --ec-frm-inlBtnBrd: #1a1a1a !important;
+    --ec-frm-tooltipSuccessBg: #1a1a1a !important;
+    --ec-frm-tooltipSuccessFg: #fafafa !important;
 }

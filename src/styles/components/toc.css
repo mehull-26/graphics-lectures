@@ -127,7 +127,7 @@
     width: 0.22rem;
     height: 0.22rem;
     border-radius: 999px;
-    background: var(--link);
+    background: var(--accent, var(--link));
     transform: translateY(-50%);
 }
 

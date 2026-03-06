@@ -25,7 +25,7 @@
     font-weight: 600;
     letter-spacing: 0.015em;
     color: var(--fg);
-    background: transparent;
+    background: color-mix(in srgb, var(--bg) 96%, var(--fg) 4%);
     border-bottom: 1px solid transparent;
     transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -127,42 +127,42 @@
 
 /* Variants */
 .details-derivation {
-    border-color: color-mix(in srgb, #3b82f6 30%, var(--border) 70%);
-    background: color-mix(in srgb, #3b82f6 3%, var(--bg) 97%);
+    border-color: color-mix(in srgb, #4a7ab5 35%, var(--border) 65%);
+    background: color-mix(in srgb, #4a7ab5 5%, var(--bg) 95%);
 }
 
 .details-derivation[open] {
-    border-color: color-mix(in srgb, #3b82f6 50%, var(--border) 50%);
+    border-color: color-mix(in srgb, #4a7ab5 50%, var(--border) 50%);
 }
 
 .details-derivation .details-summary {
-    color: color-mix(in srgb, #3b82f6 85%, var(--fg) 15%);
+    color: color-mix(in srgb, #4a7ab5 65%, var(--fg) 35%);
 }
 
 .details-note {
-    border-color: color-mix(in srgb, #8b5cf6 30%, var(--border) 70%);
-    background: color-mix(in srgb, #8b5cf6 3%, var(--bg) 97%);
+    border-color: color-mix(in srgb, #b57a3a 35%, var(--border) 65%);
+    background: color-mix(in srgb, #b57a3a 5%, var(--bg) 95%);
 }
 
 .details-note[open] {
-    border-color: color-mix(in srgb, #8b5cf6 50%, var(--border) 50%);
+    border-color: color-mix(in srgb, #b57a3a 50%, var(--border) 50%);
 }
 
 .details-note .details-summary {
-    color: color-mix(in srgb, #8b5cf6 85%, var(--fg) 15%);
+    color: color-mix(in srgb, #b57a3a 65%, var(--fg) 35%);
 }
 
 .details-example {
-    border-color: color-mix(in srgb, #10b981 30%, var(--border) 70%);
-    background: color-mix(in srgb, #10b981 3%, var(--bg) 97%);
+    border-color: color-mix(in srgb, #3a8a5c 35%, var(--border) 65%);
+    background: color-mix(in srgb, #3a8a5c 5%, var(--bg) 95%);
 }
 
 .details-example[open] {
-    border-color: color-mix(in srgb, #10b981 50%, var(--border) 50%);
+    border-color: color-mix(in srgb, #3a8a5c 50%, var(--border) 50%);
 }
 
 .details-example .details-summary {
-    color: color-mix(in srgb, #10b981 85%, var(--fg) 15%);
+    color: color-mix(in srgb, #3a8a5c 65%, var(--fg) 35%);
 }
 
 /* Legacy support - keep basic styling for plain <details> elements */

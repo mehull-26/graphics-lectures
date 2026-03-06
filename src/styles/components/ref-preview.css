@@ -57,6 +57,7 @@
 /* Strip equation's own margins and tighten number gap inside preview */
 .ref-preview-content .numbered-content-equation {
     margin: 0 !important;
+    padding: 0 0.75rem;
     width: 100%;
 }
 
