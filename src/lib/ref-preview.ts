@@ -292,12 +292,28 @@ function supportsHover(): boolean {
  */
 function isElementInViewport(el: HTMLElement): boolean {
     const rect = el.getBoundingClientRect();
+    const vInset = window.innerHeight * 0.15; // exclude top/bottom 15% of viewport
     return (
-        rect.top < window.innerHeight &&
-        rect.bottom > 0 &&
+        rect.top < window.innerHeight - vInset &&
+        rect.bottom > vInset &&
         rect.left < window.innerWidth &&
         rect.right > 0
     );
+}
+
+/**
+ * Check if an element is actually visible — in the viewport AND not hidden inside a closed <details>
+ */
+function isElementVisible(el: HTMLElement): boolean {
+    // Walk up the DOM: if any ancestor <details> is closed, the element is hidden
+    let node: HTMLElement | null = el;
+    while (node) {
+        if (node.tagName === 'DETAILS' && !(node as HTMLDetailsElement).open) {
+            return false;
+        }
+        node = node.parentElement;
+    }
+    return isElementInViewport(el);
 }
 
 /**
@@ -340,10 +356,11 @@ function setupRefLink(link: HTMLElement) {
             state.hoverTimeout = window.setTimeout(() => {
                 if (!state.isHovering) return;
 
-                // For same-page references: if target is in viewport, highlight instead of preview
+                // For same-page references: if target is visible (in viewport and not inside a closed dropdown),
+                // highlight it instead of showing a popup
                 if (!pageUrl) {
                     const target = findTargetElement(targetId);
-                    if (target && isElementInViewport(target)) {
+                    if (target && isElementVisible(target)) {
                         highlightElement(target);
                         return;
                     }
