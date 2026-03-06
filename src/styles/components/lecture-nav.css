@@ -1,0 +1,137 @@
+/* Lecture Navigation Styles */
+
+.lecture-nav-shell {
+    position: fixed;
+    top: 6.5rem;
+    left: calc(50% + var(--content-max) / 2 + 2rem);
+    width: 280px;
+    max-height: calc(100vh - 7.5rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: var(--z-toc);
+    padding: 0.25rem 0.35rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.lecture-nav-shell::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.lecture-nav-title {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 0.7rem;
+}
+
+.lecture-nav-section {
+    margin-bottom: 1.2rem;
+}
+
+.lecture-nav-section:last-child {
+    margin-bottom: 0;
+}
+
+.lecture-nav-section-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    opacity: 0.6;
+    margin: 0 0 0.4rem 0;
+    padding-left: 0.45rem;
+}
+
+.lecture-nav-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lecture-nav-item {
+    margin: 0;
+    min-width: 0;
+}
+
+.lecture-nav-link {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    max-width: 100%;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    line-height: 1.15;
+    padding: 0.3rem 0.45rem;
+    padding-left: 1.05rem;
+    border-left: 2px solid transparent;
+    border-radius: 0.25rem;
+    position: relative;
+    transition: color var(--transition-fast) ease;
+}
+
+.lecture-nav-link:hover {
+    color: var(--fg);
+    background: color-mix(in srgb, var(--bg) 90%, var(--fg) 10%);
+    text-decoration: none;
+}
+
+.lecture-nav-link.is-active {
+    color: var(--fg);
+    font-weight: 620;
+}
+
+.lecture-nav-link.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0.08rem;
+    top: 50%;
+    width: 0.22rem;
+    height: 0.22rem;
+    border-radius: 999px;
+    background: var(--link);
+    transform: translateY(-50%);
+}
+
+.lecture-nav-link.is-active:hover {
+    background: color-mix(in srgb, var(--bg) 90%, var(--fg) 10%);
+}
+
+.lecture-nav-number {
+    flex-shrink: 0;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.lecture-nav-link.is-active .lecture-nav-number {
+    opacity: 1;
+    font-weight: 620;
+}
+
+.lecture-nav-text {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hide on smaller screens (similar to TOC) */
+@media (max-width: 1600px) {
+    .lecture-nav-shell {
+        display: none;
+    }
+}
+
+/* Adjust positioning for very wide screens */
+@media (min-width: 2000px) {
+    .lecture-nav-shell {
+        right: calc((100vw - 1800px) / 2 - 320px);
+    }
+}

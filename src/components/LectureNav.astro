@@ -1,0 +1,91 @@
+---
+/**
+ * LectureNav Component
+ * 
+ * Fixed-position navigation panel on the right side of the page that provides
+ * quick access to all lectures and meta pages within a series. Mirrors the TOC
+ * design but for series navigation instead of page navigation.
+ * 
+ * Features:
+ * - Two-section hierarchy (Course Materials, Lecture Series)
+ * - Active page highlighting with blue dot indicator (matching TOC)
+ * - Responsive: hidden below 1600px width
+ * - Fixed positioning next to content area
+ * 
+ * @component
+ */
+import { withBase, toSeriesSlug, parseMetaPath } from '../utils/path';
+import type { LectureEntry, MetaEntry } from '../types/content';
+
+interface Props {
+  /** Array of lecture entries in the series */
+  lectures: LectureEntry[];
+  /** Array of meta page entries in the series */
+  metaPages: MetaEntry[];
+  /** Slug of the current series */
+  seriesSlug: string;
+  /** Display title of the series */
+  seriesTitle: string;
+  /** Current page pathname for active state detection */
+  currentPath: string;
+}
+
+const { lectures, metaPages, seriesSlug, seriesTitle, currentPath } = Astro.props;
+
+// Normalize current path for comparison
+const normalizedCurrentPath = currentPath.replace(/^\/+|\/+$/g, '');
+---
+
+<aside class="lecture-nav-shell" aria-label="Lecture Navigation">
+  <div class="lecture-nav-title">{seriesTitle}</div>
+  <nav class="lecture-nav">
+    {metaPages.length > 0 && (
+      <div class="lecture-nav-section">
+        <div class="lecture-nav-section-title">Course Materials</div>
+        <ul class="lecture-nav-list">
+          {metaPages.map((meta) => {
+            const { fullSlug: metaSlug } = parseMetaPath(meta.id);
+            const metaPath = `series/${seriesSlug}/${metaSlug}`;
+            const isActive = normalizedCurrentPath === metaPath;
+            
+            return (
+              <li class="lecture-nav-item">
+                <a 
+                  href={withBase(metaPath)} 
+                  class:list={['lecture-nav-link', { 'is-active': isActive }]}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {meta.data.title}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )}
+    
+    <div class="lecture-nav-section">
+      <div class="lecture-nav-section-title">Lecture Series</div>
+      <ul class="lecture-nav-list">
+        {lectures.map((lecture) => {
+          const lectureSlug = lecture.id.split('/')[1];
+          const lecturePath = `series/${seriesSlug}/${lectureSlug}`;
+          const isActive = normalizedCurrentPath === lecturePath;
+          
+          return (
+            <li class="lecture-nav-item">
+              <a 
+                href={withBase(lecturePath)} 
+                class:list={['lecture-nav-link', { 'is-active': isActive }]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span class="lecture-nav-number">{lecture.data.lectureNumber}.</span>
+                <span class="lecture-nav-text">{lecture.data.title}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </nav>
+</aside>

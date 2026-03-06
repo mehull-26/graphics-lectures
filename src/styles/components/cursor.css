@@ -7,6 +7,12 @@
         cursor: none !important;
     }
 
+    /* Restore default cursor for preview popup */
+    html.custom-cursor .ref-preview-popup,
+    html.custom-cursor .ref-preview-popup * {
+        cursor: default !important;
+    }
+
     .cursor-blob {
         position: fixed;
         top: 0;

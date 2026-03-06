@@ -19,14 +19,17 @@
 /* 4. Components - UI Elements */
 @import './components/header.css';
 @import './components/toc.css';
+@import './components/lecture-nav.css';
 @import './components/cursor.css';
 @import './components/buttons.css';
 @import './components/cards.css';
 @import './components/code.css';
 @import './components/math.css';
+@import './components/numbered-content.css';
 @import './components/meta.css';
 @import './components/details.css';
 @import './components/footer.css';
+@import './components/ref-preview.css';
 
 /* 5. Pages - Page-Specific Styles */
 @import './pages/home.css';

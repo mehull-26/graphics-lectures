@@ -1,0 +1,177 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { withBase, toDerivationSlug } from '../../utils/path';
+import { createContextWrapper } from '../../lib/mdx/utils';
+import { SITE_CONFIG } from '../../config/site';
+import type { DerivationEntry } from '../../types/content';
+import ImageBlock from '../../components/mdx/ImageBlock';
+import ImageRowBlock from '../../components/mdx/ImageRowBlock';
+import Figure from '../../components/mdx/Figure';
+import Equation from '../../components/mdx/Equation';
+import Table from '../../components/mdx/Table';
+import FigRef from '../../components/mdx/FigRef';
+import EqRef from '../../components/mdx/EqRef';
+import TabRef from '../../components/mdx/TabRef';
+
+export async function getStaticPaths() {
+  const derivationEntries = await getCollection('derivations');
+
+  return derivationEntries.map((derivationEntry) => {
+    const slug = toDerivationSlug(derivationEntry.id);
+
+    return {
+      params: { derivationSlug: slug },
+      props: { derivationEntry }
+    };
+  });
+}
+
+const { derivationEntry } = Astro.props as {
+  derivationEntry: DerivationEntry;
+};
+
+const { Content } = await render(derivationEntry);
+const publishedDate = derivationEntry.data.publishedAt
+  ? derivationEntry.data.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  : null;
+
+// Create wrapper components with derivationNumber pre-bound using utility function
+const FigureWithDerivation = createContextWrapper(Figure, derivationEntry.data.derivationNumber);
+const EquationWithDerivation = createContextWrapper(Equation, derivationEntry.data.derivationNumber);
+const TableWithDerivation = createContextWrapper(Table, derivationEntry.data.derivationNumber);
+---
+
+<SiteLayout 
+  title={`${derivationEntry.data.title} | ${SITE_CONFIG.title}`} 
+  isContentPage={true}
+>
+  <main>
+    <a href={withBase('derivations')} class="back-to-series">
+      <span class="back-arrow" aria-hidden="true">←</span>
+      <span>Back to Derivations</span>
+    </a>
+    {publishedDate ? <p class="muted">{publishedDate}</p> : null}
+    <h1>{derivationEntry.data.title}</h1>
+    <div class="meta">
+      <p class="meta-label">Derivation metadata</p>
+      <dl class="meta-grid">
+        {derivationEntry.data.summary ? (
+          <div class="meta-row meta-row-summary">
+            <dt>Summary</dt>
+            <dd>{derivationEntry.data.summary}</dd>
+          </div>
+        ) : null}
+        <div class="meta-row">
+          <dt>Derivation</dt>
+          <dd>D{derivationEntry.data.derivationNumber}</dd>
+        </div>
+        {publishedDate ? (
+          <div class="meta-row">
+            <dt>Published</dt>
+            <dd>{publishedDate}</dd>
+          </div>
+        ) : null}
+      </dl>
+    </div>
+
+    <TableOfContents contentSelector="article" />
+
+    <article>
+      <Content components={{ 
+        ImageBlock, 
+        ImageRowBlock, 
+        Figure: FigureWithDerivation,
+        Equation: EquationWithDerivation,
+        Table: TableWithDerivation,
+        FigRef, 
+        EqRef,
+        TabRef
+      }} />
+    </article>
+    <p class="page-return-link">
+      <span class="return-link-icon" aria-hidden="true">↗</span>
+      <a class="return-link" href={withBase('derivations')}>
+        Return to Derivations
+      </a>
+    </p>
+  </main>
+</SiteLayout>
+
+<script>
+  import { setupRefPreview } from '../../lib/ref-preview';
+  
+  // Update reference numbers after page loads
+  async function updateReferenceNumbers() {
+    // Get all reference links (regardless of target ID pattern)
+    const allRefs = document.querySelectorAll('[data-ref-link]');
+    
+    for (const link of allRefs) {
+      const hasCustomText = link.getAttribute('data-has-custom-text') === 'true';
+      if (hasCustomText) continue;
+      
+      const targetId = link.getAttribute('data-ref-target');
+      const pageUrl = link.getAttribute('data-ref-page');
+      if (!targetId) continue;
+      
+      let target = document.querySelector(`[data-ref-id="${targetId}"]`);
+      
+      // If not found locally and has page URL, fetch from other page
+      if (!target && pageUrl) {
+        try {
+          const response = await fetch(pageUrl);
+          if (response.ok) {
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            target = doc.querySelector(`[data-ref-id="${targetId}"]`);
+          }
+        } catch (error) {
+          console.warn(`Failed to fetch cross-page reference from ${pageUrl}:`, error);
+        }
+      }
+      
+      if (target) {
+        const refType = target.getAttribute('data-ref-type');
+        const actualNumber = target.getAttribute('data-ref-number');
+        
+        if (actualNumber && refType) {
+          const prefix = refType === 'figure' ? 'fig' : refType === 'equation' ? 'eq' : refType === 'table' ? 'tab' : refType;
+          link.textContent = `${prefix}.${actualNumber}`;
+        }
+      }
+    }
+  }
+  
+  // Check for duplicate IDs and warn
+  function checkDuplicateIds() {
+    const seenIds = new Map<string, number>();
+    document.querySelectorAll('[data-ref-id]').forEach(el => {
+      const id = el.getAttribute('data-ref-id');
+      if (!id) return;
+      
+      if (seenIds.has(id)) {
+        seenIds.set(id, (seenIds.get(id) || 0) + 1);
+      } else {
+        seenIds.set(id, 1);
+      }
+    });
+    
+    seenIds.forEach((count, id) => {
+      if (count > 1) {
+        console.warn(`Duplicate reference ID found: "${id}" appears ${count} times`);
+      }
+    });
+  }
+  
+  updateReferenceNumbers();
+  checkDuplicateIds();
+  setupRefPreview();
+  
+  document.addEventListener('astro:page-load', () => {
+    updateReferenceNumbers();
+    checkDuplicateIds();
+    setupRefPreview();
+  });
+</script>

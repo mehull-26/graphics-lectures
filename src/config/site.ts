@@ -118,3 +118,23 @@ export const LICENSE_INFO = {
     /** License URL */
     url: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
 } as const;
+
+export const PREVIEW_CONFIG = {
+    /** Hover delay before showing preview (ms) */
+    hoverDelay: 200,
+
+    /** Duration to highlight target after scroll (ms) */
+    highlightDuration: 2000,
+
+    /** Maximum width of preview popup (px) */
+    maxWidth: 700,
+
+    /** Maximum height of preview popup (px) */
+    maxHeight: 500,
+
+    /** Delay before hiding preview when mouse leaves (ms) */
+    hideDelay: 150,
+
+    /** Show equation numbers in preview as badge in top-right corner */
+    showEquationNumbersInPreview: true,
+} as const;

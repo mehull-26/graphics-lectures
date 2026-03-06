@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import { withBase, toDerivationSlug } from '../../utils/path';
+import { SITE_CONFIG } from '../../config/site';
+import type { DerivationEntry } from '../../types/content';
+
+const derivationEntries = (await getCollection('derivations'))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<SiteLayout title={`Derivation Archive | ${SITE_CONFIG.title}`}>
+  <main class="home-main">
+    <section class="home-intro">
+      <h1 class="home-title">Derivation Archive</h1>
+      <p class="home-sublead">Complete mathematical derivations referenced throughout the lecture series.</p>
+    </section>
+
+    <section>
+      <div class="series-list">
+        {derivationEntries.map((derivation) => {
+          const slug = toDerivationSlug(derivation.id);
+          return (
+            <a href={withBase(`derivations/${slug}`)} class="series-card">
+              <div class="series-card-title">D{derivation.data.derivationNumber}. {derivation.data.title}</div>
+              {derivation.data.summary ? (
+                <div class="series-card-summary">{derivation.data.summary}</div>
+              ) : null}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <p class="page-return-link">
+      <span class="return-link-icon" aria-hidden="true">↗</span>
+      <a class="return-link" href={withBase('')}>Return to Home</a>
+    </p>
+  </main>
+</SiteLayout>

@@ -1,0 +1,158 @@
+/**
+ * Numbered Content Components (Figures, Equations, Tables)
+ * Unified styling for all numbered academic content
+ */
+
+/* Base styles for all numbered content */
+.numbered-content {
+    margin: 2rem auto;
+    scroll-margin-top: 6rem;
+}
+
+/* Figure-specific styles */
+.numbered-content-figure {
+    display: block;
+}
+
+.numbered-content-figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Equation-specific styles */
+.numbered-content-equation {
+    margin: 1.75rem 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.numbered-content-equation .numbered-content-body {
+    flex: 0 1 auto;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.numbered-content-equation .numbered-content-number {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9em;
+    user-select: none;
+    padding: 0.25rem 0.5rem;
+}
+
+.numbered-content-equation .numbered-content-caption {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.85em;
+}
+
+/* Table-specific styles */
+.numbered-content-table {
+    max-width: 100%;
+    overflow-x: auto;
+    background: var(--bg);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    border: 1px solid var(--border);
+}
+
+.numbered-content-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.numbered-content-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.numbered-content-table thead {
+    border-bottom: 2px solid var(--border);
+}
+
+.numbered-content-table th {
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    color: var(--fg);
+    background: color-mix(in srgb, var(--bg) 95%, var(--fg) 5%);
+}
+
+.numbered-content-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+.numbered-content-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.numbered-content-table tbody tr:hover {
+    background: color-mix(in srgb, var(--bg) 97%, var(--fg) 3%);
+}
+
+/* Caption styles */
+.numbered-content-caption {
+    margin-top: 0.75rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85em;
+    line-height: 1.5;
+}
+
+.numbered-content-caption-above {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.numbered-content-label {
+    color: var(--fg);
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .numbered-content {
+        margin: 1.5rem auto;
+    }
+
+    .numbered-content-table {
+        padding: 0.75rem;
+    }
+
+    .numbered-content-table th,
+    .numbered-content-table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85em;
+    }
+
+    .numbered-content-equation .numbered-content-number {
+        right: 0.5rem;
+        font-size: 0.8em;
+    }
+}
+
+/* Print styles */
+@media print {
+    .numbered-content {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .numbered-content-caption {
+        break-before: avoid;
+        page-break-before: avoid;
+    }
+}

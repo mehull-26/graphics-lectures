@@ -41,8 +41,20 @@ const meta = defineCollection({
     })
 });
 
+const derivations = defineCollection({
+    loader: glob({ pattern: 'derivation-*/derivation.mdx', base: './src/content/derivations' }),
+    schema: z.object({
+        title: z.string(),
+        derivationNumber: z.number().int().positive(),
+        summary: z.string().default(''),
+        publishedAt: z.date().optional(),
+        order: z.number().int().default(0)
+    })
+});
+
 export const collections = {
     series,
     lectures,
-    meta
+    meta,
+    derivations
 };

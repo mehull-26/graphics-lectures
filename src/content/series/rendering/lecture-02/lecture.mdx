@@ -1,0 +1,63 @@
+---
+title: The Rendering Equation
+lectureNumber: 2
+summary: Building on radiometric foundations to derive the rendering equation.
+publishedAt: 2026-02-20
+readings:
+    - label: PBRT Rendering Equation
+      href: https://pbr-book.org/4ed/Light_Transport
+---
+
+## Building on Radiometry
+
+In the previous lecture, we established the fundamental radiometric quantities. Now we'll use them to derive the rendering equation.
+
+Recall from <FigRef id="fig-radiometry-diagram" page="/series/rendering/lecture-01" /> the geometric setup. The irradiance equation <EqRef id="eq-irradiance" page="/series/rendering/lecture-01" /> gave us:
+
+$$
+E = \frac{d\Phi}{dA}
+$$
+
+And radiance <EqRef id="eq-radiance" page="/series/rendering/lecture-01" /> extended this to directional quantities:
+
+$$
+L = \frac{d^2\Phi}{dA \, d\omega \, \cos\theta}
+$$
+
+## The Rendering Equation
+
+The rendering equation describes how light bounces through a scene:
+
+<Equation id="eq-rendering" number="1">
+
+$$
+L_o(\mathbf{p}, \omega_o) = L_e(\mathbf{p}, \omega_o) + \int_{\Omega} f_r(\mathbf{p}, \omega_i, \omega_o) L_i(\mathbf{p}, \omega_i) (\omega_i \cdot \mathbf{n}) \, d\omega_i
+$$
+
+</Equation>
+
+This equation (<EqRef id="eq-rendering" />) states that outgoing radiance equals emitted radiance plus reflected radiance from all incoming directions.
+
+> **Note:** For a complete mathematical derivation of the rendering equation from first principles, see [Derivation D1: Rendering Equation Derivation](/derivations/derivation-01/).
+
+<Figure id="fig-rendering-diagram" number="1" caption="The rendering equation geometry showing incoming and outgoing light directions">
+<ImageBlock
+  name="radiometry.png"
+  alt="Rendering equation diagram"
+  scale={0.5}
+/>
+</Figure>
+
+As shown in <FigRef id="fig-rendering-diagram" />, we integrate over the hemisphere of incoming directions. Each incoming ray's contribution depends on:
+
+1. The BRDF $f_r$ (bidirectional reflectance distribution function)
+2. The incoming radiance $L_i$ (which we learned about in <EqRef id="eq-radiance" page="/series/rendering/lecture-01" />)
+3. The cosine term $\omega_i \cdot \mathbf{n}$
+
+## Path Tracing
+
+Path tracing solves <EqRef id="eq-rendering" /> by Monte Carlo integration. We randomly sample directions from the hemisphere and average their contributions.
+
+Try hovering over the cross-page references above to see previews from lecture 1! The geometric foundations from <FigRef id="fig-radiometry-diagram" page="/series/rendering/lecture-01" /> directly inform how we set up the rendering equation shown in <FigRef id="fig-rendering-diagram" />.
+
+We can always refer <FigRef id="lol" page="/series/rendering/lecture-01" /> for the same.

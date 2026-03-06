@@ -21,9 +21,14 @@ export type LectureEntry = CollectionEntry<'lectures'>;
 export type MetaEntry = CollectionEntry<'meta'>;
 
 /**
+ * Derivation entry type from content collections
+ */
+export type DerivationEntry = CollectionEntry<'derivations'>;
+
+/**
  * Union of all content entry types
  */
-export type ContentEntry = SeriesEntry | LectureEntry | MetaEntry;
+export type ContentEntry = SeriesEntry | LectureEntry | MetaEntry | DerivationEntry;
 
 /**
  * Series data structure

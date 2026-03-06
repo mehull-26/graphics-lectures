@@ -2,34 +2,60 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../../components/SiteLayout.astro';
 import TableOfContents from '../../../components/TableOfContents.astro';
+import LectureNav from '../../../components/LectureNav.astro';
 import { withBase, toSeriesSlug, toLectureSlug, createSeriesMap } from '../../../utils/path';
+import { createContextWrapper } from '../../../lib/mdx/utils';
 import { SITE_CONFIG } from '../../../config/site';
-import type { LectureEntry, SeriesEntry } from '../../../types/content';
+import type { LectureEntry, SeriesEntry, MetaEntry } from '../../../types/content';
+import ImageBlock from '../../../components/mdx/ImageBlock';
+import ImageRowBlock from '../../../components/mdx/ImageRowBlock';
+import Figure from '../../../components/mdx/Figure';
+import Equation from '../../../components/mdx/Equation';
+import Table from '../../../components/mdx/Table';
+import FigRef from '../../../components/mdx/FigRef';
+import EqRef from '../../../components/mdx/EqRef';
+import TabRef from '../../../components/mdx/TabRef';
+import Details from '../../../components/mdx/Details';
 
 export async function getStaticPaths() {
   const seriesEntries = await getCollection('series');
   const lectureEntries = await getCollection('lectures');
+  const metaEntries = await getCollection('meta');
   const seriesBySlug = createSeriesMap(seriesEntries);
 
   return lectureEntries.map((lectureEntry) => {
     const series = toSeriesSlug(lectureEntry.id);
     const lecture = toLectureSlug(lectureEntry.id);
 
+    // Get all lectures in this series for navigation
+    const seriesLectures = lectureEntries
+      .filter((entry) => toSeriesSlug(entry.id) === series)
+      .sort((a, b) => a.data.lectureNumber - b.data.lectureNumber);
+    
+    // Get all meta pages in this series for navigation
+    const seriesMetaPages = metaEntries
+      .filter((entry) => toSeriesSlug(entry.id) === series)
+      .sort((a, b) => a.data.order - b.data.order);
+
     return {
       params: { series, lecture },
       props: {
         lectureEntry,
         seriesEntry: seriesBySlug.get(series) ?? null,
-        seriesSlug: series
+        seriesSlug: series,
+        allLectures: seriesLectures,
+        allMetaPages: seriesMetaPages
       }
     };
   });
 }
 
-const { lectureEntry, seriesEntry, seriesSlug } = Astro.props as {
+const { lectureEntry, seriesEntry, seriesSlug, allLectures, allMetaPages } = Astro.props as {
   lectureEntry: LectureEntry;
   seriesEntry: SeriesEntry | null;
   seriesSlug: string;
+  allLectures: LectureEntry[];
+  allMetaPages: MetaEntry[];
 };
 
 const { Content } = await render(lectureEntry);
@@ -40,6 +66,11 @@ const readings = lectureEntry.data.readings ?? [];
 const assignments = lectureEntry.data.assignments ?? [];
 const declaredResources = lectureEntry.data.resources ?? [];
 const resources = declaredResources;
+
+// Create wrapper components with lectureNumber pre-bound using utility function
+const FigureWithLecture = createContextWrapper(Figure, lectureEntry.data.lectureNumber);
+const EquationWithLecture = createContextWrapper(Equation, lectureEntry.data.lectureNumber);
+const TableWithLecture = createContextWrapper(Table, lectureEntry.data.lectureNumber);
 ---
 
 <SiteLayout 
@@ -111,9 +142,26 @@ const resources = declaredResources;
     </div>
 
     <TableOfContents contentSelector="article" />
+    <LectureNav 
+      lectures={allLectures} 
+      metaPages={allMetaPages} 
+      seriesSlug={seriesSlug}
+      seriesTitle={seriesEntry?.data.title ?? seriesSlug}
+      currentPath={Astro.url.pathname}
+    />
 
     <article>
-      <Content />
+      <Content components={{ 
+        ImageBlock, 
+        ImageRowBlock, 
+        Figure: FigureWithLecture,
+        Equation: EquationWithLecture,
+        Table: TableWithLecture,
+        FigRef, 
+        EqRef,
+        TabRef,
+        Details
+      }} />
     </article>
     <p class="page-return-link">
       <span class="return-link-icon" aria-hidden="true">↗</span>
@@ -123,3 +171,82 @@ const resources = declaredResources;
     </p>
   </main>
 </SiteLayout>
+
+<script>
+  import { setupRefPreview } from '../../../lib/ref-preview';
+  
+  // Update reference numbers after page loads
+  async function updateReferenceNumbers() {
+    // Get all reference links (regardless of target ID pattern)
+    const allRefs = document.querySelectorAll('[data-ref-link]');
+    
+    for (const link of allRefs) {
+      const hasCustomText = link.getAttribute('data-has-custom-text') === 'true';
+      if (hasCustomText) continue;
+      
+      const targetId = link.getAttribute('data-ref-target');
+      const pageUrl = link.getAttribute('data-ref-page');
+      if (!targetId) continue;
+      
+      let target = document.querySelector(`[data-ref-id="${targetId}"]`);
+      
+      // If not found locally and has page URL, fetch from other page
+      if (!target && pageUrl) {
+        try {
+          const response = await fetch(pageUrl);
+          if (response.ok) {
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            target = doc.querySelector(`[data-ref-id="${targetId}"]`);
+          }
+        } catch (error) {
+          console.warn(`Failed to fetch cross-page reference from ${pageUrl}:`, error);
+        }
+      }
+      
+      if (target) {
+        const refType = target.getAttribute('data-ref-type');
+        const actualNumber = target.getAttribute('data-ref-number');
+        
+        if (actualNumber && refType) {
+          const prefix = refType === 'figure' ? 'fig' : refType === 'equation' ? 'eq' : refType;
+          link.textContent = `${prefix}.${actualNumber}`;
+        }
+      }
+    }
+  }
+  
+  // Check for duplicate IDs and warn
+  function checkDuplicateIds() {
+    const seenIds = new Map<string, number>();
+    document.querySelectorAll('[data-ref-id]').forEach(el => {
+      const id = el.getAttribute('data-ref-id');
+      if (!id) return;
+      
+      if (seenIds.has(id)) {
+        seenIds.set(id, (seenIds.get(id) || 0) + 1);
+      } else {
+        seenIds.set(id, 1);
+      }
+    });
+    
+    const duplicates = Array.from(seenIds.entries()).filter(([_, count]) => count > 1);
+    if (duplicates.length > 0) {
+      console.error('🚨 DUPLICATE IDs DETECTED:');
+      duplicates.forEach(([id, count]) => {
+        console.error(`  ⚠️  "${id}" is used ${count} times`);
+      });
+    }
+  }
+  
+  updateReferenceNumbers();
+  checkDuplicateIds();
+  setupRefPreview();
+  
+  document.addEventListener('astro:page-load', () => {
+    updateReferenceNumbers();
+    checkDuplicateIds();
+    setupRefPreview();
+  });
+</script>

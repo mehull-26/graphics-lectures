@@ -1,0 +1,183 @@
+/* Reference Preview Popup Styles */
+
+/* Reference links */
+.ref-link {
+    position: relative;
+    color: var(--link);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--link);
+    cursor: pointer;
+    transition: border-bottom-color var(--transition-fast) ease;
+}
+
+.ref-link:hover {
+    border-bottom-color: transparent;
+}
+
+/* Preview popup container */
+.ref-preview-popup {
+    position: fixed;
+    max-width: 600px;
+    min-width: 400px;
+    background: color-mix(in srgb, var(--bg) 95%, var(--fg) 5%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+    transition: opacity var(--transition-normal) ease, transform var(--transition-normal) ease;
+    z-index: 10000;
+    overflow: hidden;
+}
+
+.ref-preview-popup.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    cursor: default;
+}
+
+/* Force visible cursor on all popup contents */
+.ref-preview-popup.show *,
+.ref-preview-popup.show *::before,
+.ref-preview-popup.show *::after {
+    cursor: default !important;
+}
+
+/* Preview content wrapper */
+.ref-preview-content {
+    padding: 0.75rem 1rem;
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Style elements within preview */
+.ref-preview-content figure {
+    margin: 0;
+}
+
+.ref-preview-content img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.ref-preview-content figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.8em;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.4;
+}
+
+.ref-preview-content .katex-display,
+.ref-preview-content .katex {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+/* Equation wrapper in preview */
+.ref-preview-content [data-ref-type="equation"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0.5rem auto !important;
+    padding: 0 !important;
+}
+
+.ref-preview-content [data-ref-type="equation"]>div:first-child {
+    flex: 0 1 auto;
+}
+
+.ref-preview-content [data-ref-type="equation"]>div:last-child {
+    position: absolute;
+    right: 0.5rem;
+    color: var(--muted);
+    font-size: 0.9em;
+}
+
+/* Scrollbar styling for preview content */
+.ref-preview-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ref-preview-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ref-preview-content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+.ref-preview-content::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+}
+
+/* Target highlight animation when scrolled to */
+@keyframes ref-highlight {
+    0% {
+        background-color: transparent;
+        outline: 2px solid transparent;
+    }
+
+    10% {
+        background-color: color-mix(in srgb, var(--link) 10%, transparent 90%);
+        outline: 2px solid var(--link);
+    }
+
+    100% {
+        background-color: transparent;
+        outline: 2px solid transparent;
+    }
+}
+
+.ref-target-highlight {
+    animation: ref-highlight 2s ease-in-out;
+    border-radius: 8px;
+    scroll-margin-top: 6rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .ref-preview-popup {
+        max-width: calc(100vw - 2rem);
+        min-width: unset;
+        left: 1rem !important;
+        right: 1rem !important;
+    }
+
+    .ref-preview-content {
+        padding: 1rem;
+        max-height: 350px;
+    }
+}
+
+/* Dark mode adjustments */
+:root[data-theme='dark'] .ref-preview-popup {
+    background: color-mix(in srgb, var(--bg) 92%, var(--fg) 8%);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .ref-preview-popup {
+        transition: opacity var(--transition-fast) ease;
+        transform: none;
+    }
+
+    .ref-preview-popup.show {
+        transform: none;
+    }
+
+    .ref-target-highlight {
+        animation: none;
+        outline: 2px solid var(--link);
+    }
+}

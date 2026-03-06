@@ -1,0 +1,62 @@
+---
+title: Rendering Equation Derivation
+derivationNumber: 1
+summary: Complete derivation of the rendering equation from first principles.
+publishedAt: 2026-03-01
+order: 1
+---
+
+## Introduction
+
+This derivation shows how the rendering equation emerges naturally from the radiometric definitions we established in the lecture series.
+
+## Starting from Radiance
+
+Recall from the lecture series that radiance <EqRef id="eq-radiance" page="/series/rendering/lecture-01" /> is defined as:
+
+<Equation id="eq-radiance-def" number="1">
+
+$$
+L(\mathbf{x}, \omega) = \frac{d^2\Phi}{dA \, d\omega \, \cos\theta}
+$$
+
+</Equation>
+
+This represents the power per unit area per unit solid angle in a given direction.
+
+## The Integral Formulation
+
+By integrating over all incoming directions at a surface point, we arrive at the rendering equation:
+
+<Equation id="eq-rendering" number="2">
+
+$$
+L_o(\mathbf{x}, \omega_o) = L_e(\mathbf{x}, \omega_o) + \int_{\Omega} f_r(\mathbf{x}, \omega_i, \omega_o) L_i(\mathbf{x}, \omega_i) \cos\theta_i \, d\omega_i
+$$
+
+</Equation>
+
+Where:
+- $L_o$ is the outgoing radiance
+- $L_e$ is the emitted radiance
+- $f_r$ is the BRDF (bidirectional reflectance distribution function)
+- $L_i$ is the incoming radiance
+- $\Omega$ is the hemisphere of incoming directions
+
+## Key Properties
+
+<Table id="tab-properties" number ="1" caption="Key properties of the rendering equation">
+
+| Property | Description |
+|----------|-------------|
+| Linearity | The equation is linear in radiance |
+| Recursion | Incoming radiance depends on other outgoing radiance |
+| Energy Conservation | $\int_{\Omega} f_r(\omega_i, \omega_o) \cos\theta_i \, d\omega_i \leq 1$ |
+
+</Table>
+
+As shown in <TabRef id="tab-properties" />, the rendering equation exhibits several important mathematical properties that inform our solution strategies.
+
+## Conclusion
+
+This derivation establishes the theoretical foundation for all physically based rendering algorithms. See <FigRef id="fig-radiometry-diagram" page="/series/rendering/lecture-01" /> for the geometric interpretation.

@@ -1,10 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 import SiteLayout from '../components/SiteLayout.astro';
-import { withBase, toSeriesSlug } from '../utils/path';
+import { withBase, toSeriesSlug, toDerivationSlug } from '../utils/path';
 import { SITE_CONFIG, UI_TEXT } from '../config/site';
 
 const seriesEntries = (await getCollection('series')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const derivationEntries = (await getCollection('derivations')).sort(
   (a, b) => a.data.order - b.data.order
 );
 ---
@@ -23,7 +27,7 @@ const seriesEntries = (await getCollection('series')).sort(
       </p>
     </section>
 
-    <section>
+    <section class="home-section">
       <h2 class="home-section-title">{UI_TEXT.sections.lectureSeries}</h2>
 
       <div class="series-list">
@@ -46,5 +50,23 @@ const seriesEntries = (await getCollection('series')).sort(
         })}
       </div>
     </section>
+
+    {derivationEntries.length > 0 && (
+      <section class="home-section">
+        <h2 class="home-section-title">Derivation Archive</h2>
+
+        <div class="series-list">
+          <a
+            href={withBase('derivations')}
+            class="series-card"
+          >
+            <div class="series-card-title">Mathematical Derivations</div>
+            <div class="series-card-summary">
+              Complete derivations ({derivationEntries.length} available) referenced throughout the lecture series.
+            </div>
+          </a>
+        </div>
+      </section>
+    )}
   </main>
 </SiteLayout>

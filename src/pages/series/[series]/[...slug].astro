@@ -2,33 +2,60 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import SiteLayout from '../../../components/SiteLayout.astro';
 import TableOfContents from '../../../components/TableOfContents.astro';
-import { withBase, parseMetaPath, createSeriesMap } from '../../../utils/path';
+import LectureNav from '../../../components/LectureNav.astro';
+import { withBase, parseMetaPath, createSeriesMap, toSeriesSlug } from '../../../utils/path';
 import { SITE_CONFIG } from '../../../config/site';
-import type { MetaEntry, SeriesEntry } from '../../../types/content';
+import type { MetaEntry, SeriesEntry, LectureEntry } from '../../../types/content';
+import ImageBlock from '../../../components/mdx/ImageBlock';
+import ImageRowBlock from '../../../components/mdx/ImageRowBlock';
+import Figure from '../../../components/mdx/Figure';
+import Equation from '../../../components/mdx/Equation';
+import Table from '../../../components/mdx/Table';
+import FigRef from '../../../components/mdx/FigRef';
+import EqRef from '../../../components/mdx/EqRef';
+import TabRef from '../../../components/mdx/TabRef';
 
 export async function getStaticPaths() {
   const seriesEntries = await getCollection('series');
   const metaEntries = await getCollection('meta');
+  const lectureEntries = await getCollection('lectures');
   const seriesBySlug = createSeriesMap(seriesEntries);
 
   return metaEntries.map((metaEntry) => {
     const { seriesSlug, fullSlug: slug } = parseMetaPath(metaEntry.id);
+
+    // Get all lectures in this series for navigation
+    const seriesLectures = lectureEntries
+      .filter((entry) => toSeriesSlug(entry.id) === seriesSlug)
+      .sort((a, b) => a.data.lectureNumber - b.data.lectureNumber);
+    
+    // Get all meta pages in this series for navigation
+    const seriesMetaPages = metaEntries
+      .filter((entry) => {
+        const { seriesSlug: entrySeriesSlug } = parseMetaPath(entry.id);
+        return entrySeriesSlug === seriesSlug;
+      })
+      .sort((a, b) => a.data.order - b.data.order);
 
     return {
       params: { series: seriesSlug, slug },
       props: {
         metaEntry,
         seriesEntry: seriesBySlug.get(seriesSlug) ?? null,
-        seriesSlug
+        seriesSlug,
+        allLectures: seriesLectures,
+        allMetaPages: seriesMetaPages
       }
     };
   });
 }
 
-const { metaEntry, seriesEntry, seriesSlug } = Astro.props as {
+const { metaEntry, seriesEntry, seriesSlug, allLectures, allMetaPages } = Astro.props as {
   metaEntry: MetaEntry;
   seriesEntry: SeriesEntry | null;
   seriesSlug: string;
+  allLectures: LectureEntry[];
+  allMetaPages: MetaEntry[];
 };
 
 const { Content } = await render(metaEntry);
@@ -41,6 +68,10 @@ const { folderName: sectionName } = parseMetaPath(metaEntry.id);
   seriesTitle={seriesEntry?.data.title}
 >
   <main>
+    <a href={withBase(`series/${seriesSlug}`)} class="back-to-series">
+      <span class="back-arrow" aria-hidden="true">←</span>
+      <span>Back to {seriesEntry?.data.title ?? 'series'}</span>
+    </a>
     <h1>{metaEntry.data.title}</h1>
 
     <div class="meta">
@@ -64,9 +95,16 @@ const { folderName: sectionName } = parseMetaPath(metaEntry.id);
     </div>
 
     <TableOfContents contentSelector=".meta-content" />
+    <LectureNav 
+      lectures={allLectures} 
+      metaPages={allMetaPages} 
+      seriesSlug={seriesSlug}
+      seriesTitle={seriesEntry?.data.title ?? seriesSlug}
+      currentPath={Astro.url.pathname}
+    />
     
     <div class="meta-content">
-      <Content />
+      <Content components={{ ImageBlock, ImageRowBlock, Figure, Equation, Table, FigRef, EqRef, TabRef }} />
     </div>
 
     <p class="page-return-link">
@@ -75,6 +113,50 @@ const { folderName: sectionName } = parseMetaPath(metaEntry.id);
     </p>
   </main>
 </SiteLayout>
+
+<script>
+  // Update reference numbers after page loads
+  function updateReferenceNumbers() {
+    // Update figure references
+    document.querySelectorAll('[data-ref-link][data-ref-target^="fig-"]').forEach(link => {
+      const targetId = link.getAttribute('data-ref-target');
+      if (!targetId) return;
+      
+      const target = document.querySelector(`[data-ref-id="${targetId}"]`);
+      if (target) {
+        const actualNumber = target.getAttribute('data-ref-number');
+        const currentText = link.textContent?.trim() || '';
+        // Extract just the part after "fig."
+        const currentSuffix = currentText.replace(/^fig\./, '');
+        // Only update if current suffix is NOT just a number (i.e., it's an ID like "radiometry-diagram")
+        if (actualNumber && currentText.startsWith('fig.') && isNaN(Number(currentSuffix))) {
+          link.textContent = `fig.${actualNumber}`;
+        }
+      }
+    });
+    
+    // Update equation references
+    document.querySelectorAll('[data-ref-link][data-ref-target^="eq-"]').forEach(link => {
+      const targetId = link.getAttribute('data-ref-target');
+      if (!targetId) return;
+      
+      const target = document.querySelector(`[data-ref-id="${targetId}"]`);
+      if (target) {
+        const actualNumber = target.getAttribute('data-ref-number');
+        const currentText = link.textContent?.trim() || '';
+        // Extract just the part after "eq."
+        const currentSuffix = currentText.replace(/^eq\./, '');
+        // Only update if current suffix is NOT just a number (i.e., it's an ID like "irradiance")
+        if (actualNumber && currentText.startsWith('eq.') && isNaN(Number(currentSuffix))) {
+          link.textContent = `eq.${actualNumber}`;
+        }
+      }
+    });
+  }
+  
+  updateReferenceNumbers();
+  document.addEventListener('astro:page-load', updateReferenceNumbers);
+</script>
 
 <style>
   .meta-content {

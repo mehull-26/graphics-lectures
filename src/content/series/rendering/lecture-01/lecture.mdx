@@ -18,41 +18,58 @@ resources:
       href: https://example.com/radiometry-reference
 ---
 
-import ImageBlock from '../../../../components/mdx/ImageBlock';
-import ImageRowBlock from '../../../../components/mdx/ImageRowBlock';
-
-
-
 ## What this lecture covers
 
 - Why radiometry is the right language for light transport.
-- The relationship between flux, irradiance, and radiance.
+- The relationship between flux, irradiance, and radiance (see <EqRef id="eq-irradiance" /> and <EqRef id="eq-radiance" />).
 - How these quantities appear in rendering equations.
 
-<details>
-<summary>Derivation</summary>
+Understanding the geometry of light transport is essential. As shown in <FigRef id="fig-radiometry-diagram" />, we measure light from different perspectives depending on what question we're asking.
 
-Starting from flux $\Phi$, irradiance over a differential area is:
-$E = d\Phi / dA$
+<Details summary="Derivation" icon="🔬" variant="derivation">
 
-For directional dependence, radiance is:
-$L = d²\Phi / (dA\,d\omega\,\cos\theta)$
-</details>
+Starting from flux $\Phi$, irradiance over a differential area is defined by <EqRef id="eq-irradiance" />.
+
+<Equation id="eq-irradiance" number="1">
+
+$$
+E = \frac{d\Phi}{dA}
+$$
+
+</Equation>
+
+For directional dependence, we introduce radiance (<EqRef id="eq-radiance" />):
+
+<Equation id="eq-radiance" number="2">
+
+$$
+L = \frac{d^2\Phi}{dA \, d\omega \, \cos\theta}
+$$
+
+</Equation>
+
+These two fundamental quantities form the basis of all light transport calculations.
+
+</Details>
 
 ---
 
 ## Basic math test
 [what](www.example.com)
 
+The irradiance equation (<EqRef id="eq-irradiance" />) describes how flux spreads over an area. When we need directional information, we use the radiance formulation from <EqRef id="eq-radiance" />.
+
 Inline math:  $E = dΦ / dA$
 
 Block math:
+<Equation number="2">
 
 $$
 L = d²Φ / (dA · dω · cosθ)
 $$
+</Equation>
 
-If equations render correctly, KaTeX/MathJax is configured.
+If equations render correctly, KaTeX/MathJax is configured. Hover over any equation reference above to see a preview!
 
 ---
 
@@ -70,17 +87,17 @@ vec3 trace(const Ray& ray) {
 
 ## Image component examples
 
+The radiometry diagram below (<FigRef id="fig-radiometry-diagram" />) illustrates the key geometric relationships we need to understand for light transport.
+
+<Figure id="fig-radiometry-diagram" number="1" caption="Geometric relationships in radiometry, showing how light interacts with surfaces at different angles">
 <ImageBlock
   name="radiometry.png"
   alt="Radiometry diagram (single image block)"
   scale={0.45}
-  caption='this is a caption'
 />
-Hello what the hell. kreom ipsumHello what the hell. kreom ipsum
-Hello what the hell. kreom ipsum
-Hello what the hell. kreom ipsum
-Hello what the hell. kreom ipsum
+</Figure>
 
+<Figure id="lol" number="2" caption="at different angles">
 <ImageRowBlock
   perLine={6}
   scale={0.92}
@@ -90,5 +107,8 @@ Hello what the hell. kreom ipsum
     { name: 'radiometry.png', alt: 'Radiometry diagram B' },
   ]}
 />
+</Figure>
 
+Try hovering over the figure reference <FigRef id="lol"/> above to see a preview! When you're studying light transport, you'll frequently refer back to <FigRef id="fig-radiometry-diagram" /> to understand the geometric setup.
 what?? 
+
