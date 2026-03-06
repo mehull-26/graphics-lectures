@@ -30,11 +30,10 @@ const { title, description } = Astro.props;
         }
       };
 
-      const theme = getStored('theme', ['dark', 'light']) 
-        ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const theme = getStored('theme', ['dark', 'light']) ?? 'light';
       document.documentElement.setAttribute('data-theme', theme);
       
-      const palette = getStored('palette', ['colorful', 'monotonic']) ?? 'colorful';
+      const palette = getStored('palette', ['colorful', 'monotonic']) ?? 'monotonic';
       document.documentElement.setAttribute('data-palette', palette);
     })();
   </script>

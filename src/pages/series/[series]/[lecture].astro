@@ -48,6 +48,10 @@ const resources = declaredResources;
   seriesTitle={seriesEntry?.data.title}
 >
   <main>
+    <a href={withBase(`series/${seriesSlug}`)} class="back-to-series">
+      <span class="back-arrow" aria-hidden="true">←</span>
+      <span>Back to {seriesEntry?.data.title ?? 'series'}</span>
+    </a>
     {publishedDate ? <p class="muted">{publishedDate}</p> : null}
     <h1>{lectureEntry.data.title}</h1>
     <div class="meta">
