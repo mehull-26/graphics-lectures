@@ -23,34 +23,29 @@
 /* Equation-specific styles */
 .numbered-content-equation {
     margin: 1.75rem 0;
-    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     padding: 0;
 }
 
 .numbered-content-equation .numbered-content-body {
-    flex: 0 1 auto;
     text-align: center;
     padding: 0;
     margin: 0;
+    max-width: 100%;
 }
 
 .numbered-content-equation .numbered-content-number {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
+    margin-top: 0.5rem;
+    font-size: 0.85em;
     color: var(--muted);
-    font-size: 0.9em;
     user-select: none;
-    padding: 0.25rem 0.5rem;
 }
 
 .numbered-content-equation .numbered-content-caption {
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
     color: var(--muted);
     font-size: 0.85em;
 }

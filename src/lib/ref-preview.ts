@@ -44,6 +44,9 @@ function createPopup(): HTMLDivElement {
     const content = document.createElement('div');
     content.className = 'ref-preview-content';
     content.style.maxHeight = `${PREVIEW_MAX_HEIGHT}px`;
+    content.style.padding = '0.75rem 1rem';
+    content.style.overflowY = 'auto';
+    content.style.overflowX = 'auto';
     popup.appendChild(content);
 
     document.body.appendChild(popup);
@@ -81,58 +84,7 @@ async function fetchTargetFromPage(targetId: string, pageUrl: string): Promise<H
  * Clone and prepare preview content from target element
  */
 function preparePreviewContent(target: HTMLElement): HTMLElement {
-    const refType = target.getAttribute('data-ref-type');
-
-    // For equations, extract the rendered math content and show number in top-right
-    if (refType === 'equation') {
-        // Extract the KaTeX rendered math element (the actual equation content)
-        const mathElement = target.querySelector('.katex-display, .katex');
-        if (!mathElement) {
-            // Fallback: clone entire target if KaTeX element not found
-            const clone = target.cloneNode(true) as HTMLElement;
-            clone.removeAttribute('id');
-            return clone;
-        }
-
-        // Get equation number from data attribute (source of truth)
-        const equationNumber = target.getAttribute('data-ref-number') || '';
-
-        // Create wrapper with relative positioning for badge
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'relative';
-        wrapper.style.paddingTop = '2rem'; // Space for badge
-        wrapper.style.paddingBottom = '1rem';
-
-        // Add equation number badge in top-right
-        if (equationNumber && PREVIEW_CONFIG.showEquationNumbersInPreview) {
-            const badge = document.createElement('div');
-            badge.textContent = `(${equationNumber})`;
-            badge.style.position = 'absolute';
-            badge.style.top = '0.5rem';
-            badge.style.right = '0.5rem';
-            badge.style.fontSize = '0.9em';
-            badge.style.color = 'var(--muted)';
-            badge.style.opacity = '0.8';
-            badge.style.fontWeight = '500';
-            badge.style.userSelect = 'none';
-            badge.style.pointerEvents = 'none';
-            wrapper.appendChild(badge);
-        }
-
-        // Clone just the math content (clean, without React wrapper structure)
-        const mathClone = mathElement.cloneNode(true) as HTMLElement;
-        mathClone.style.maxWidth = '100%';
-        mathClone.style.margin = '0 auto';
-        mathClone.style.display = 'block';
-        wrapper.appendChild(mathClone);
-
-        return wrapper;
-    }
-
-    // For figures and other content, clone the whole element
     const clone = target.cloneNode(true) as HTMLElement;
-
-    // Remove ID to avoid duplicates
     clone.removeAttribute('id');
 
     // Scale down images if present

@@ -17,8 +17,8 @@
 /* Preview popup container */
 .ref-preview-popup {
     position: fixed;
+    width: fit-content;
     max-width: 600px;
-    min-width: 400px;
     background: color-mix(in srgb, var(--bg) 95%, var(--fg) 5%);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -29,7 +29,7 @@
     pointer-events: none;
     transition: opacity var(--transition-normal) ease, transform var(--transition-normal) ease;
     z-index: 10000;
-    overflow: hidden;
+    overflow: clip;
 }
 
 .ref-preview-popup.show {
@@ -51,10 +51,19 @@
     padding: 0.75rem 1rem;
     max-height: 450px;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
 }
 
-/* Style elements within preview */
+/* Strip equation's own margins and tighten number gap inside preview */
+.ref-preview-content .numbered-content-equation {
+    margin: 0 !important;
+    width: 100%;
+}
+
+.ref-preview-content .numbered-content-equation .numbered-content-number {
+    margin-top: 1rem;
+}
+
 .ref-preview-content figure {
     margin: 0;
 }
@@ -65,41 +74,6 @@
     height: auto;
     border-radius: 6px;
     border: 1px solid var(--border);
-}
-
-.ref-preview-content figcaption {
-    margin-top: 0.5rem;
-    font-size: 0.8em;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.4;
-}
-
-.ref-preview-content .katex-display,
-.ref-preview-content .katex {
-    margin: 0;
-    font-size: 1.1em;
-}
-
-/* Equation wrapper in preview */
-.ref-preview-content [data-ref-type="equation"] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    margin: 0.5rem auto !important;
-    padding: 0 !important;
-}
-
-.ref-preview-content [data-ref-type="equation"]>div:first-child {
-    flex: 0 1 auto;
-}
-
-.ref-preview-content [data-ref-type="equation"]>div:last-child {
-    position: absolute;
-    right: 0.5rem;
-    color: var(--muted);
-    font-size: 0.9em;
 }
 
 /* Scrollbar styling for preview content */
@@ -148,7 +122,6 @@
 @media (max-width: 767px) {
     .ref-preview-popup {
         max-width: calc(100vw - 2rem);
-        min-width: unset;
         left: 1rem !important;
         right: 1rem !important;
     }

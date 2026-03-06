@@ -10,6 +10,13 @@
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0.15rem 0;
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.katex-display::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Edge */
 }
 
 .katex-display>.katex {

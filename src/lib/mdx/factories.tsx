@@ -44,7 +44,7 @@ export function createNumberedContent(config: ContentConfig) {
                         {children}
                     </div>
                     <div className="numbered-content-number" aria-label={`Equation ${displayNumber}`}>
-                        ({displayNumber})
+                        <strong className="numbered-content-label">eq.{displayNumber}</strong>
                     </div>
                     {caption && (
                         <div className="numbered-content-caption">

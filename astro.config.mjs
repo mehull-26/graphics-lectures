@@ -63,10 +63,7 @@ export default defineConfig({
                 showCopyToClipboardButton: true
             }
         }),
-        mdx({
-            remarkPlugins: [remarkMath, remarkCodeFenceMeta],
-            rehypePlugins: [rehypeKatex]
-        })
+        mdx()
     ],
     markdown: {
         syntaxHighlight: false,
