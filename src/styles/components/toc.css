@@ -188,7 +188,7 @@
     background: color-mix(in srgb, var(--bg) 90%, var(--fg) 10%);
 }
 
-@media (max-width: 979px) {
+@media (max-width: 919px) {
     .toc-shell {
         display: none !important;
     }

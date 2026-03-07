@@ -26,9 +26,9 @@ export interface TocConfig {
 
 const DEFAULT_CONFIG: Required<TocConfig> = {
     baseWidth: 286,
-    minWidth: 194,
+    minWidth: 170,
     gutter: 16,
-    minViewportWidth: 980,
+    minViewportWidth: 920,
     tightBreakpoint: 244,
     compactBreakpoint: 220,
     headerSelector: '.site-header',
@@ -102,7 +102,8 @@ export class TocTracker {
 
         const mainRect = main.getBoundingClientRect();
         const leftSpace = mainRect.left;
-        const availableWidth = leftSpace - this.config.gutter - 8;
+        const effectiveGutter = window.innerWidth < 1320 ? Math.max(8, this.config.gutter - 6) : this.config.gutter;
+        const availableWidth = leftSpace - effectiveGutter - 8;
         const targetWidth = Math.min(this.config.baseWidth, availableWidth);
         const enoughRoom =
             window.innerWidth >= this.config.minViewportWidth &&
@@ -111,7 +112,7 @@ export class TocTracker {
         this.tocElement.classList.toggle('is-hidden', !enoughRoom);
 
         if (enoughRoom) {
-            const desiredLeft = leftSpace - targetWidth - this.config.gutter;
+            const desiredLeft = leftSpace - targetWidth - effectiveGutter;
             this.tocElement.style.setProperty('--toc-current-width', `${targetWidth}px`);
             this.tocElement.style.left = `${desiredLeft}px`;
             this.tocElement.classList.toggle('is-tight', targetWidth < this.config.tightBreakpoint);
@@ -127,9 +128,7 @@ export class TocTracker {
      * Determines which heading is currently active based on scroll position
      */
     public getActiveHeadingId(): string | null {
-        const header = document.querySelector(this.config.headerSelector);
-        const topOffset = (header ? header.getBoundingClientRect().height : 0) + this.config.topOffset;
-        const triggerLine = topOffset + Math.max(0, (window.innerHeight - topOffset) * this.config.triggerLinePercentage);
+        const { triggerLine } = this.getScrollMetrics();
 
         let current = this.headings[0];
         for (const heading of this.headings) {
@@ -141,6 +140,25 @@ export class TocTracker {
         }
 
         return current?.id ?? null;
+    }
+
+    private getScrollMetrics(): { topOffset: number; triggerLine: number } {
+        const header = document.querySelector(this.config.headerSelector);
+        const topOffset = (header ? header.getBoundingClientRect().height : 0) + this.config.topOffset;
+        const triggerLine = topOffset + Math.max(0, (window.innerHeight - topOffset) * this.config.triggerLinePercentage);
+        return { topOffset, triggerLine };
+    }
+
+    public scrollHeadingToTriggerLine(headingId: string, behavior: ScrollBehavior = 'smooth'): boolean {
+        const heading = this.headings.find((item) => item.id === headingId);
+        if (!heading) return false;
+
+        const { triggerLine } = this.getScrollMetrics();
+        const absoluteTop = window.scrollY + heading.getBoundingClientRect().top;
+        const targetTop = Math.max(0, absoluteTop - triggerLine);
+
+        window.scrollTo({ top: targetTop, behavior });
+        return true;
     }
 
     /**
@@ -205,9 +223,35 @@ export function bindTocControls(
     tocElement: HTMLElement,
     tracker: TocTracker
 ): void {
+    const navElement = tocElement.querySelector<HTMLElement>('[data-toc-nav]');
     const expandButton = tocElement.querySelector<HTMLButtonElement>('[data-toc-expand]');
     const topButton = tocElement.querySelector<HTMLButtonElement>('[data-toc-top]');
     const bottomButton = tocElement.querySelector<HTMLButtonElement>('[data-toc-bottom]');
+
+    if (navElement) {
+        navElement.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest('a.toc-link') as HTMLAnchorElement | null;
+            if (!link) return;
+
+            const href = link.getAttribute('href') ?? '';
+            if (!href.startsWith('#')) return;
+
+            event.preventDefault();
+
+            const headingId = decodeURIComponent(href.slice(1));
+            const behavior: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+            const scrolled = tracker.scrollHeadingToTriggerLine(headingId, behavior);
+
+            if (scrolled && window.location.hash !== `#${encodeURIComponent(headingId)}`) {
+                history.pushState(null, '', `#${encodeURIComponent(headingId)}`);
+            }
+
+            tracker.openPathFor(headingId);
+        });
+    }
 
     if (expandButton) {
         expandButton.addEventListener('click', () => {

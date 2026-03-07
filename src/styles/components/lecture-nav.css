@@ -1,10 +1,11 @@
 /* Lecture Navigation Styles */
 
 .lecture-nav-shell {
+    --lecture-nav-gap: clamp(0.65rem, 1.2vw, 2rem);
     position: fixed;
     top: 6.5rem;
-    left: calc(50% + var(--content-max) / 2 + 2rem);
-    width: 280px;
+    left: calc(50% + var(--content-max) / 2 + var(--lecture-nav-gap));
+    width: clamp(188px, 15vw, 280px);
     max-height: calc(100vh - 7.5rem);
     overflow-y: auto;
     overflow-x: hidden;
@@ -122,16 +123,16 @@
     text-overflow: ellipsis;
 }
 
-/* Hide on smaller screens (similar to TOC) */
-@media (max-width: 1600px) {
+@media (max-width: 1680px) {
     .lecture-nav-shell {
-        display: none;
+        --lecture-nav-gap: clamp(0.45rem, 0.9vw, 1.2rem);
+        width: clamp(178px, 13.2vw, 250px);
     }
 }
 
-/* Adjust positioning for very wide screens */
-@media (min-width: 2000px) {
+/* Hide only when there is not enough safe room beside content */
+@media (max-width: 1419px) {
     .lecture-nav-shell {
-        right: calc((100vw - 1800px) / 2 - 320px);
+        display: none;
     }
 }
