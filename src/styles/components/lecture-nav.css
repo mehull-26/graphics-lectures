@@ -5,7 +5,7 @@
     position: fixed;
     top: 6.5rem;
     left: calc(50% + var(--content-max) / 2 + var(--lecture-nav-gap));
-    width: clamp(188px, 15vw, 280px);
+    width: clamp(168px, 13.8vw, 260px);
     max-height: calc(100vh - 7.5rem);
     overflow-y: auto;
     overflow-x: hidden;
@@ -125,13 +125,13 @@
 
 @media (max-width: 1680px) {
     .lecture-nav-shell {
-        --lecture-nav-gap: clamp(0.45rem, 0.9vw, 1.2rem);
-        width: clamp(178px, 13.2vw, 250px);
+        --lecture-nav-gap: clamp(0.4rem, 0.85vw, 1.05rem);
+        width: clamp(158px, 12.3vw, 230px);
     }
 }
 
 /* Hide only when there is not enough safe room beside content */
-@media (max-width: 1419px) {
+@media (max-width: 1319px) {
     .lecture-nav-shell {
         display: none;
     }

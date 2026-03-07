@@ -30,6 +30,8 @@
 @import './components/details.css';
 @import './components/footer.css';
 @import './components/ref-preview.css';
+@import './components/side-panel-tooltips.css';
+@import './components/side-panel-popups.css';
 
 /* 5. Pages - Page-Specific Styles */
 @import './pages/home.css';

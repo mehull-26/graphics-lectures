@@ -37,8 +37,12 @@ const currentUrl = Astro.url.pathname;
 
     <script>
       import { setupThemeSystem } from '../lib/theme-manager';
+      import { setupSidePanelLabelTooltips } from '../lib/side-panel-label-tooltip';
+      import { setupSidePanelPopups } from '../lib/side-panel-popups';
 
       setupThemeSystem();
+      setupSidePanelLabelTooltips();
+      setupSidePanelPopups();
     </script>
   </body>
 </html>

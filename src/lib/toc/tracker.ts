@@ -26,9 +26,9 @@ export interface TocConfig {
 
 const DEFAULT_CONFIG: Required<TocConfig> = {
     baseWidth: 286,
-    minWidth: 170,
+    minWidth: 150,
     gutter: 16,
-    minViewportWidth: 920,
+    minViewportWidth: 860,
     tightBreakpoint: 244,
     compactBreakpoint: 220,
     headerSelector: '.site-header',
@@ -102,7 +102,7 @@ export class TocTracker {
 
         const mainRect = main.getBoundingClientRect();
         const leftSpace = mainRect.left;
-        const effectiveGutter = window.innerWidth < 1320 ? Math.max(8, this.config.gutter - 6) : this.config.gutter;
+        const effectiveGutter = window.innerWidth < 1240 ? Math.max(6, this.config.gutter - 8) : this.config.gutter;
         const availableWidth = leftSpace - effectiveGutter - 8;
         const targetWidth = Math.min(this.config.baseWidth, availableWidth);
         const enoughRoom =
